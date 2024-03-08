@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 )
 
@@ -24,6 +25,9 @@ func (s *MemberService) GetMembership(ctx context.Context) (*Member, error) {
 	if err != nil {
 		return nil, err
 	}
-	fact := &Member{}
-
+	member := &Member{}
+	if err := json.NewDecoder(resp.Body).Decode(member); err != nil {
+		return nil, err
+	}
+	return member, nil
 }
