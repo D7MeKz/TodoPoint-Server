@@ -1,0 +1,6 @@
+Project todoPoint {
+  database_type: 'MySQL'
+  Note: '''
+    # Member Database
+  '''
+}

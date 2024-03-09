@@ -2,13 +2,12 @@ package test
 
 import (
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"todopoint/member/api"
-	"todopoint/member/types"
-
-	"github.com/stretchr/testify/assert"
+	"todopoint/member/internal/pkg/model"
 )
 
 func TestJsonHandler(t *testing.T) {
@@ -20,7 +19,7 @@ func TestJsonHandler(t *testing.T) {
 	mux.ServeHTTP(res, req)
 
 	assert.Equal(http.StatusOK, res.Code)
-	var list []types.Member
+	var list []model.Member
 	err := json.NewDecoder(res.Body).Decode(&list)
 	assert.Nil(err)
 	assert.Equal(2, len(list))

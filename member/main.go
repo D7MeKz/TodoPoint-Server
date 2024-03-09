@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	err := http.ListenAndServe(":3000", api.MakeWebHanlder())
+	err := http.ListenAndServe(":3000", api.MakeWebHandler())
 	if err != nil {
 		return
 	}
