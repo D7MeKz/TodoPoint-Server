@@ -1,5 +1,5 @@
 build:
-	@go build -o bin/member
+	@go build -o ./bin/member
 
 run: build
 	./bin/member

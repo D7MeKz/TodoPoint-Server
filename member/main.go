@@ -1,13 +1,9 @@
-package member
+package main
 
 import (
-	"log"
+	"net/http"
 )
 
 func main() {
-	svc := NewMemberService("http://localhost")
-	apiServer := NewApiServer(svc)
-
-	log.Fatal(apiServer.Start(":3000"))
-
+	http.ListenAndServe(":3000", MakeWebHanlder())
 }

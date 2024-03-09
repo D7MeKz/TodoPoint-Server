@@ -1,37 +1,36 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
-type ApiServer struct {
-	svc Service
-}
-
-func NewApiServer(svc Service) *ApiServer {
-	return &ApiServer{
-		svc: svc,
-	}
-}
-
-func (s *ApiServer) Start(listenAddr string) error {
-	http.HandleFunc("/", s.handleMember)
-	return http.ListenAndServe(listenAddr, nil)
-}
-
-func (s *ApiServer) handleMember(w http.ResponseWriter, r *http.Request) {
-	member, err := s.svc.GetMembership(context.Background())
-	if err != nil {
-		writeJson(w, http.StatusUnprocessableEntity, map[string]any{"error": err.Error()})
-		return
-	}
-	writeJson(w, http.StatusOK, member)
-
-}
 func writeJson(w http.ResponseWriter, s int, v any) error {
 	w.WriteHeader(s)
 	w.Header().Add("Content-Type", "application/json")
 	return json.NewEncoder(w).Encode(v)
+}
+
+func MakeWebHanlder() http.Handler {
+	mux := mux.NewRouter()
+	mux.HandleFunc("/members", GetMemberListHandler).Methods("GET")
+	// test data
+	members = make(map[int]Member)
+	members[0] = Member{1, "helloworld", "hello", "hellopw"}
+	members[1] = Member{2, "helloworld2", "hello2", "hellopw2"}
+	lastId = 2
+
+	return mux
+}
+
+func GetMemberListHandler(w http.ResponseWriter, r *http.Request) {
+	type Members []Member // list
+	list := make(Members, 0)
+	for _, member := range members {
+		list = append(list, member)
+	}
+	writeJson(w, http.StatusOK, list)
+
 }
