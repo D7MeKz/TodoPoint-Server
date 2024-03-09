@@ -2,8 +2,12 @@ package main
 
 import (
 	"net/http"
+	"todopoint/member/api"
 )
 
 func main() {
-	http.ListenAndServe(":3000", MakeWebHanlder())
+	err := http.ListenAndServe(":3000", api.MakeWebHanlder())
+	if err != nil {
+		return
+	}
 }
