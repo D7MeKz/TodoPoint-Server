@@ -1,6 +1,23 @@
-Project todoPoint {
+Project TodoPoint {
   database_type: 'MySQL'
   Note: '''
     # Member Database
   '''
+}
+
+Table members as Mem {
+    id int [pk, increment]
+    user_id varchar
+    username varchar
+    password varchar
+    created_at datetime [default: `now()`]
+}
+
+Table tasks as t{
+    id int [pk, increment]
+    task_name varchar
+    status varchar
+    user_id int [ref: > Mem.id]
+    create_at datetime [default: `now()`]
+    modified_at datetime
 }
