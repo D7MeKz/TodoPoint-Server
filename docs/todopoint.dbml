@@ -5,19 +5,28 @@ Project TodoPoint {
   '''
 }
 
-Table members as Mem {
+Table Member as Mem {
     id int [pk, increment]
-    user_id varchar
+    email varchar
     username varchar
     password varchar
     created_at datetime [default: `now()`]
 }
 
-Table tasks as t{
+Table Task as t{
     id int [pk, increment]
-    task_name varchar
-    status varchar
+    title varchar
+    total_status varchar
     user_id int [ref: > Mem.id]
-    create_at datetime [default: `now()`]
+    created_at datetime [default: `now()`]
+    modified_at datetime
+}
+
+Table Subtask as st{
+    id int [pk, increment]
+    title varchar
+    status varchar
+    task_id int [ref: > t.id]
+    created_at datetime [default: `now()`]
     modified_at datetime
 }
