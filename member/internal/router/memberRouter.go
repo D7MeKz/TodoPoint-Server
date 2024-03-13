@@ -7,10 +7,10 @@ import (
 )
 
 func registerMemberRouter(r *mux.Router) {
-	memberRouter := r.PathPrefix("/member").Subrouter()
-	memberRouter.HandleFunc("/", controller.CreateMemberController).Methods(http.MethodPost)
+	memberRouter := r.PathPrefix("/members").Subrouter()
+	memberRouter.HandleFunc("/register", controller.CreateMemberController).Methods(http.MethodPost)
 	memberRouter.HandleFunc("/{id}", controller.GetMemberByIDController).Methods(http.MethodGet)
-	memberRouter.HandleFunc("/", controller.GetAllMembersController).Methods(http.MethodGet)
-	memberRouter.HandleFunc("/{id}", controller.DeleteMemberController).Methods(http.MethodDelete)
-	memberRouter.HandleFunc("/{id}", controller.UpdateMemberController).Methods(http.MethodPut)
+	memberRouter.HandleFunc("/all", controller.GetAllMembersController).Methods(http.MethodGet)
+	memberRouter.HandleFunc("/delete/{id}", controller.DeleteMemberController).Methods(http.MethodGet)
+	memberRouter.HandleFunc("/update/{id}", controller.UpdateMemberController).Methods(http.MethodPost)
 }
