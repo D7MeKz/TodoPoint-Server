@@ -18,6 +18,8 @@ type BankAccount struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID string `json:"user_id,omitempty"`
 	// BankName holds the value of the "bank_name" field.
 	BankName string `json:"bank_name,omitempty"`
 	// BankAccount holds the value of the "bank_account" field.
@@ -34,7 +36,7 @@ func (*BankAccount) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case bankaccount.FieldID:
 			values[i] = new(sql.NullInt64)
-		case bankaccount.FieldBankName:
+		case bankaccount.FieldUserID, bankaccount.FieldBankName:
 			values[i] = new(sql.NullString)
 		case bankaccount.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -61,6 +63,12 @@ func (ba *BankAccount) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			ba.ID = int(value.Int64)
+		case bankaccount.FieldUserID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				ba.UserID = value.String
+			}
 		case bankaccount.FieldBankName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field bank_name", values[i])
@@ -115,6 +123,9 @@ func (ba *BankAccount) String() string {
 	var builder strings.Builder
 	builder.WriteString("BankAccount(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", ba.ID))
+	builder.WriteString("user_id=")
+	builder.WriteString(ba.UserID)
+	builder.WriteString(", ")
 	builder.WriteString("bank_name=")
 	builder.WriteString(ba.BankName)
 	builder.WriteString(", ")

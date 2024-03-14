@@ -16,6 +16,7 @@ type BankAccount struct {
 func (BankAccount) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("id"),
+		field.String("user_id"),
 		field.String("bank_name"),
 		field.UUID("bank_account", uuid.UUID{}).Default(uuid.New),
 		field.Time("created_at").Default(time.Now()),

@@ -21,6 +21,12 @@ type BankAccountCreate struct {
 	hooks    []Hook
 }
 
+// SetUserID sets the "user_id" field.
+func (bac *BankAccountCreate) SetUserID(s string) *BankAccountCreate {
+	bac.mutation.SetUserID(s)
+	return bac
+}
+
 // SetBankName sets the "bank_name" field.
 func (bac *BankAccountCreate) SetBankName(s string) *BankAccountCreate {
 	bac.mutation.SetBankName(s)
@@ -108,6 +114,9 @@ func (bac *BankAccountCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (bac *BankAccountCreate) check() error {
+	if _, ok := bac.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "BankAccount.user_id"`)}
+	}
 	if _, ok := bac.mutation.BankName(); !ok {
 		return &ValidationError{Name: "bank_name", err: errors.New(`ent: missing required field "BankAccount.bank_name"`)}
 	}
@@ -148,6 +157,10 @@ func (bac *BankAccountCreate) createSpec() (*BankAccount, *sqlgraph.CreateSpec) 
 	if id, ok := bac.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := bac.mutation.UserID(); ok {
+		_spec.SetField(bankaccount.FieldUserID, field.TypeString, value)
+		_node.UserID = value
 	}
 	if value, ok := bac.mutation.BankName(); ok {
 		_spec.SetField(bankaccount.FieldBankName, field.TypeString, value)

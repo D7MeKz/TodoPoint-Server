@@ -96,7 +96,7 @@ func Driver(driver dialect.Driver) Option {
 }
 
 // Open opens a database/sql.DB specified by the driver name and
-// the data source name, and returns a new client attached to it.
+// the dto source name, and returns a new client attached to it.
 // Optional parameters can be added for configuring the client.
 func Open(driverName, dataSourceName string, options ...Option) (*Client, error) {
 	switch driverName {

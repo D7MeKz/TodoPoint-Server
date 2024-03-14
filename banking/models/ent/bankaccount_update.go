@@ -29,6 +29,20 @@ func (bau *BankAccountUpdate) Where(ps ...predicate.BankAccount) *BankAccountUpd
 	return bau
 }
 
+// SetUserID sets the "user_id" field.
+func (bau *BankAccountUpdate) SetUserID(s string) *BankAccountUpdate {
+	bau.mutation.SetUserID(s)
+	return bau
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (bau *BankAccountUpdate) SetNillableUserID(s *string) *BankAccountUpdate {
+	if s != nil {
+		bau.SetUserID(*s)
+	}
+	return bau
+}
+
 // SetBankName sets the "bank_name" field.
 func (bau *BankAccountUpdate) SetBankName(s string) *BankAccountUpdate {
 	bau.mutation.SetBankName(s)
@@ -112,6 +126,9 @@ func (bau *BankAccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := bau.mutation.UserID(); ok {
+		_spec.SetField(bankaccount.FieldUserID, field.TypeString, value)
+	}
 	if value, ok := bau.mutation.BankName(); ok {
 		_spec.SetField(bankaccount.FieldBankName, field.TypeString, value)
 	}
@@ -139,6 +156,20 @@ type BankAccountUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *BankAccountMutation
+}
+
+// SetUserID sets the "user_id" field.
+func (bauo *BankAccountUpdateOne) SetUserID(s string) *BankAccountUpdateOne {
+	bauo.mutation.SetUserID(s)
+	return bauo
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (bauo *BankAccountUpdateOne) SetNillableUserID(s *string) *BankAccountUpdateOne {
+	if s != nil {
+		bauo.SetUserID(*s)
+	}
+	return bauo
 }
 
 // SetBankName sets the "bank_name" field.
@@ -253,6 +284,9 @@ func (bauo *BankAccountUpdateOne) sqlSave(ctx context.Context) (_node *BankAccou
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := bauo.mutation.UserID(); ok {
+		_spec.SetField(bankaccount.FieldUserID, field.TypeString, value)
 	}
 	if value, ok := bauo.mutation.BankName(); ok {
 		_spec.SetField(bankaccount.FieldBankName, field.TypeString, value)

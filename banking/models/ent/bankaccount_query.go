@@ -261,12 +261,12 @@ func (baq *BankAccountQuery) Clone() *BankAccountQuery {
 // Example:
 //
 //	var v []struct {
-//		BankName string `json:"bank_name,omitempty"`
+//		UserID string `json:"user_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.BankAccount.Query().
-//		GroupBy(bankaccount.FieldBankName).
+//		GroupBy(bankaccount.FieldUserID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (baq *BankAccountQuery) GroupBy(field string, fields ...string) *BankAccountGroupBy {
@@ -284,11 +284,11 @@ func (baq *BankAccountQuery) GroupBy(field string, fields ...string) *BankAccoun
 // Example:
 //
 //	var v []struct {
-//		BankName string `json:"bank_name,omitempty"`
+//		UserID string `json:"user_id,omitempty"`
 //	}
 //
 //	client.BankAccount.Query().
-//		Select(bankaccount.FieldBankName).
+//		Select(bankaccount.FieldUserID).
 //		Scan(ctx, &v)
 func (baq *BankAccountQuery) Select(fields ...string) *BankAccountSelect {
 	baq.ctx.Fields = append(baq.ctx.Fields, fields...)

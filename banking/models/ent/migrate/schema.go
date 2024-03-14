@@ -11,6 +11,7 @@ var (
 	// BankAccountsColumns holds the columns for the "bank_accounts" table.
 	BankAccountsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "user_id", Type: field.TypeString},
 		{Name: "bank_name", Type: field.TypeString},
 		{Name: "bank_account", Type: field.TypeUUID},
 		{Name: "created_at", Type: field.TypeTime},

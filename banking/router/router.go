@@ -5,10 +5,11 @@ import (
 	"todopoint/banking/controller"
 )
 
-func NewRouter(r *gin.Engine) {
-	banking := r.Group("/banking")
+func NewRouter(controller *controller.BankAccountController) *gin.Engine {
+	engine := gin.Default()
+	router := engine.Group("/banking")
 	{
-		banking.POST("/account/register", controller.RegisterAccount)
+		router.POST("/account/register", controller.RegisterAccount)
 	}
-
+	return engine
 }

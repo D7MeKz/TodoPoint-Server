@@ -34,6 +34,7 @@ type BankAccountMutation struct {
 	op            Op
 	typ           string
 	id            *int
+	user_id       *string
 	bank_name     *string
 	bank_account  *uuid.UUID
 	created_at    *time.Time
@@ -145,6 +146,42 @@ func (m *BankAccountMutation) IDs(ctx context.Context) ([]int, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetUserID sets the "user_id" field.
+func (m *BankAccountMutation) SetUserID(s string) {
+	m.user_id = &s
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *BankAccountMutation) UserID() (r string, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the BankAccount entity.
+// If the BankAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *BankAccountMutation) OldUserID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *BankAccountMutation) ResetUserID() {
+	m.user_id = nil
 }
 
 // SetBankName sets the "bank_name" field.
@@ -289,7 +326,10 @@ func (m *BankAccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *BankAccountMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 4)
+	if m.user_id != nil {
+		fields = append(fields, bankaccount.FieldUserID)
+	}
 	if m.bank_name != nil {
 		fields = append(fields, bankaccount.FieldBankName)
 	}
@@ -307,6 +347,8 @@ func (m *BankAccountMutation) Fields() []string {
 // schema.
 func (m *BankAccountMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case bankaccount.FieldUserID:
+		return m.UserID()
 	case bankaccount.FieldBankName:
 		return m.BankName()
 	case bankaccount.FieldBankAccount:
@@ -322,6 +364,8 @@ func (m *BankAccountMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *BankAccountMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case bankaccount.FieldUserID:
+		return m.OldUserID(ctx)
 	case bankaccount.FieldBankName:
 		return m.OldBankName(ctx)
 	case bankaccount.FieldBankAccount:
@@ -337,6 +381,13 @@ func (m *BankAccountMutation) OldField(ctx context.Context, name string) (ent.Va
 // type.
 func (m *BankAccountMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case bankaccount.FieldUserID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
 	case bankaccount.FieldBankName:
 		v, ok := value.(string)
 		if !ok {
@@ -407,6 +458,9 @@ func (m *BankAccountMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *BankAccountMutation) ResetField(name string) error {
 	switch name {
+	case bankaccount.FieldUserID:
+		m.ResetUserID()
+		return nil
 	case bankaccount.FieldBankName:
 		m.ResetBankName()
 		return nil
