@@ -28,10 +28,10 @@ func main() {
 	// Set Router
 	store := repo.NewStore()
 	accountService := service.NewBankAccountService(store)
-	accountController := controller.NewBankAccountController(accountService)
+	accountController := controller.NewBankAccountController(*accountService)
 	routes := router.NewRouter(accountController)
 	server := &http.Server{
-		Addr:           ":8888",
+		Addr:           ":3000",
 		Handler:        routes,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,

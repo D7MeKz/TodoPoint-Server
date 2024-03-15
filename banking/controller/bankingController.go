@@ -13,7 +13,7 @@ type BankAccountController struct {
 	service service.BankAccountService
 }
 
-func NewBankAccountController(s *service.BankAccountService) *BankAccountController {
+func NewBankAccountController(s service.BankAccountService) *BankAccountController {
 	return &BankAccountController{
 		service: s,
 	}

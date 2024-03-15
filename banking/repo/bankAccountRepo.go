@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"context"
 	"github.com/gin-gonic/gin"
 	"log"
 	"todopoint/banking/config"
@@ -10,7 +9,6 @@ import (
 )
 
 type Store struct {
-	ctx    context.Context
 	client *ent.BankAccountClient
 }
 
