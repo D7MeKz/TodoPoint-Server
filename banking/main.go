@@ -3,8 +3,11 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"time"
-	"todopoint/banking/config"
+	"todopoint/common/db/config"
+
 	"todopoint/banking/controller"
 	"todopoint/banking/repo"
 	"todopoint/banking/router"
@@ -13,7 +16,7 @@ import (
 
 func main() {
 	// Init DB
-	client, err := config.NewEntClient()
+	client, err := config.NewEntClient(filepath.Dir(os.Args[0]))
 	if err != nil {
 		log.Printf("err : %s", err)
 	}
