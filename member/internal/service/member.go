@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 	"log"
-	"todopoint/member/internal/config"
-	"todopoint/member/internal/ent"
+	"todopoint/common/db/config"
+	"todopoint/common/db/ent"
 	"todopoint/member/internal/model"
 )
 

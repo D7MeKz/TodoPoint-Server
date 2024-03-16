@@ -15,15 +15,17 @@ Table Member as Mem {
 
 Table Point as p {
     id int [pk, increment]
-    total int
-    user_id int [ref: > Mem.id]
-    point_details list [ref: > pd.id]
+    point int
+    type string
+    created_at datetime [default: `now()`]
+    pointinfo_id int [ref: > pd.id]
 }
 
-Table PointDetail as pd {
+Table PointInfo as pd {
     id int [pk, increment]
-    point int
+    total_point int
     created_at datetime [default: `now()`]
+    user_id int [ref: - Mem.id]
 }
 
 Table Task as t{
@@ -31,9 +33,9 @@ Table Task as t{
     title varchar
     total_status varchar
     user_id int [ref: > Mem.id]
-    point_detail PointDetail [ref: > pd.id]
+    success_point int [ref: - p.id]
     created_at datetime [default: `now()`]
-    modified_at datetime
+    modified_at datetime [default: `now()`]
 }
 
 Table Subtask as st{
@@ -41,7 +43,7 @@ Table Subtask as st{
     title varchar
     status varchar
     task_id int [ref: > t.id]
-    point int
+    point int [ref: - p.id]
     created_at datetime [default: `now()`]
     modified_at datetime
 }

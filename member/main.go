@@ -4,15 +4,18 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"time"
-	"todopoint/member/internal/config"
+	"todopoint/common/db/config"
 	"todopoint/member/internal/middleware"
 	"todopoint/member/internal/router"
 )
 
 func main() {
 	// init Ent Client
-	client, err := config.NewEntClient()
+	client, err := config.NewEntClient(filepath.Dir(os.Args[0]))
+
 	if err != nil {
 		log.Printf("err : %s", err)
 	}
