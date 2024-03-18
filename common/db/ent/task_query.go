@@ -27,7 +27,7 @@ type TaskQuery struct {
 	predicates       []predicate.Task
 	withSubtask      *SubTaskQuery
 	withSuccessPoint *PointQuery
-	withUserID       *MemberQuery
+	withUser         *MemberQuery
 	withFKs          bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -109,8 +109,8 @@ func (tq *TaskQuery) QuerySuccessPoint() *PointQuery {
 	return query
 }
 
-// QueryUserID chains the current query on the "user_id" edge.
-func (tq *TaskQuery) QueryUserID() *MemberQuery {
+// QueryUser chains the current query on the "user" edge.
+func (tq *TaskQuery) QueryUser() *MemberQuery {
 	query := (&MemberClient{config: tq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := tq.prepareQuery(ctx); err != nil {
@@ -123,7 +123,7 @@ func (tq *TaskQuery) QueryUserID() *MemberQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(task.Table, task.FieldID, selector),
 			sqlgraph.To(member.Table, member.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, task.UserIDTable, task.UserIDPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, true, task.UserTable, task.UserPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
@@ -325,7 +325,7 @@ func (tq *TaskQuery) Clone() *TaskQuery {
 		predicates:       append([]predicate.Task{}, tq.predicates...),
 		withSubtask:      tq.withSubtask.Clone(),
 		withSuccessPoint: tq.withSuccessPoint.Clone(),
-		withUserID:       tq.withUserID.Clone(),
+		withUser:         tq.withUser.Clone(),
 		// clone intermediate query.
 		sql:  tq.sql.Clone(),
 		path: tq.path,
@@ -354,14 +354,14 @@ func (tq *TaskQuery) WithSuccessPoint(opts ...func(*PointQuery)) *TaskQuery {
 	return tq
 }
 
-// WithUserID tells the query-builder to eager-load the nodes that are connected to
-// the "user_id" edge. The optional arguments are used to configure the query builder of the edge.
-func (tq *TaskQuery) WithUserID(opts ...func(*MemberQuery)) *TaskQuery {
+// WithUser tells the query-builder to eager-load the nodes that are connected to
+// the "user" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TaskQuery) WithUser(opts ...func(*MemberQuery)) *TaskQuery {
 	query := (&MemberClient{config: tq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	tq.withUserID = query
+	tq.withUser = query
 	return tq
 }
 
@@ -447,7 +447,7 @@ func (tq *TaskQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Task, e
 		loadedTypes = [3]bool{
 			tq.withSubtask != nil,
 			tq.withSuccessPoint != nil,
-			tq.withUserID != nil,
+			tq.withUser != nil,
 		}
 	)
 	if tq.withSubtask != nil {
@@ -486,10 +486,10 @@ func (tq *TaskQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Task, e
 			return nil, err
 		}
 	}
-	if query := tq.withUserID; query != nil {
-		if err := tq.loadUserID(ctx, query, nodes,
-			func(n *Task) { n.Edges.UserID = []*Member{} },
-			func(n *Task, e *Member) { n.Edges.UserID = append(n.Edges.UserID, e) }); err != nil {
+	if query := tq.withUser; query != nil {
+		if err := tq.loadUser(ctx, query, nodes,
+			func(n *Task) { n.Edges.User = []*Member{} },
+			func(n *Task, e *Member) { n.Edges.User = append(n.Edges.User, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -556,7 +556,7 @@ func (tq *TaskQuery) loadSuccessPoint(ctx context.Context, query *PointQuery, no
 	}
 	return nil
 }
-func (tq *TaskQuery) loadUserID(ctx context.Context, query *MemberQuery, nodes []*Task, init func(*Task), assign func(*Task, *Member)) error {
+func (tq *TaskQuery) loadUser(ctx context.Context, query *MemberQuery, nodes []*Task, init func(*Task), assign func(*Task, *Member)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
 	byID := make(map[int]*Task)
 	nids := make(map[int]map[*Task]struct{})
@@ -568,11 +568,11 @@ func (tq *TaskQuery) loadUserID(ctx context.Context, query *MemberQuery, nodes [
 		}
 	}
 	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(task.UserIDTable)
-		s.Join(joinT).On(s.C(member.FieldID), joinT.C(task.UserIDPrimaryKey[0]))
-		s.Where(sql.InValues(joinT.C(task.UserIDPrimaryKey[1]), edgeIDs...))
+		joinT := sql.Table(task.UserTable)
+		s.Join(joinT).On(s.C(member.FieldID), joinT.C(task.UserPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(task.UserPrimaryKey[1]), edgeIDs...))
 		columns := s.SelectedColumns()
-		s.Select(joinT.C(task.UserIDPrimaryKey[1]))
+		s.Select(joinT.C(task.UserPrimaryKey[1]))
 		s.AppendSelect(columns...)
 		s.SetDistinct(false)
 	})
@@ -609,7 +609,7 @@ func (tq *TaskQuery) loadUserID(ctx context.Context, query *MemberQuery, nodes [
 	for _, n := range neighbors {
 		nodes, ok := nids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected "user_id" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected "user" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)

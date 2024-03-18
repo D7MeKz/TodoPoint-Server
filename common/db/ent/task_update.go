@@ -132,19 +132,19 @@ func (tu *TaskUpdate) SetSuccessPoint(p *Point) *TaskUpdate {
 	return tu.SetSuccessPointID(p.ID)
 }
 
-// AddUserIDIDs adds the "user_id" edge to the Member entity by IDs.
-func (tu *TaskUpdate) AddUserIDIDs(ids ...int) *TaskUpdate {
-	tu.mutation.AddUserIDIDs(ids...)
+// AddUserIDs adds the "user" edge to the Member entity by IDs.
+func (tu *TaskUpdate) AddUserIDs(ids ...int) *TaskUpdate {
+	tu.mutation.AddUserIDs(ids...)
 	return tu
 }
 
-// AddUserID adds the "user_id" edges to the Member entity.
-func (tu *TaskUpdate) AddUserID(m ...*Member) *TaskUpdate {
+// AddUser adds the "user" edges to the Member entity.
+func (tu *TaskUpdate) AddUser(m ...*Member) *TaskUpdate {
 	ids := make([]int, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
 	}
-	return tu.AddUserIDIDs(ids...)
+	return tu.AddUserIDs(ids...)
 }
 
 // Mutation returns the TaskMutation object of the builder.
@@ -164,25 +164,25 @@ func (tu *TaskUpdate) ClearSuccessPoint() *TaskUpdate {
 	return tu
 }
 
-// ClearUserID clears all "user_id" edges to the Member entity.
-func (tu *TaskUpdate) ClearUserID() *TaskUpdate {
-	tu.mutation.ClearUserID()
+// ClearUser clears all "user" edges to the Member entity.
+func (tu *TaskUpdate) ClearUser() *TaskUpdate {
+	tu.mutation.ClearUser()
 	return tu
 }
 
-// RemoveUserIDIDs removes the "user_id" edge to Member entities by IDs.
-func (tu *TaskUpdate) RemoveUserIDIDs(ids ...int) *TaskUpdate {
-	tu.mutation.RemoveUserIDIDs(ids...)
+// RemoveUserIDs removes the "user" edge to Member entities by IDs.
+func (tu *TaskUpdate) RemoveUserIDs(ids ...int) *TaskUpdate {
+	tu.mutation.RemoveUserIDs(ids...)
 	return tu
 }
 
-// RemoveUserID removes "user_id" edges to Member entities.
-func (tu *TaskUpdate) RemoveUserID(m ...*Member) *TaskUpdate {
+// RemoveUser removes "user" edges to Member entities.
+func (tu *TaskUpdate) RemoveUser(m ...*Member) *TaskUpdate {
 	ids := make([]int, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
 	}
-	return tu.RemoveUserIDIDs(ids...)
+	return tu.RemoveUserIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -294,12 +294,12 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if tu.mutation.UserIDCleared() {
+	if tu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   task.UserIDTable,
-			Columns: task.UserIDPrimaryKey,
+			Table:   task.UserTable,
+			Columns: task.UserPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
@@ -307,12 +307,12 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tu.mutation.RemovedUserIDIDs(); len(nodes) > 0 && !tu.mutation.UserIDCleared() {
+	if nodes := tu.mutation.RemovedUserIDs(); len(nodes) > 0 && !tu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   task.UserIDTable,
-			Columns: task.UserIDPrimaryKey,
+			Table:   task.UserTable,
+			Columns: task.UserPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
@@ -323,12 +323,12 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tu.mutation.UserIDIDs(); len(nodes) > 0 {
+	if nodes := tu.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   task.UserIDTable,
-			Columns: task.UserIDPrimaryKey,
+			Table:   task.UserTable,
+			Columns: task.UserPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
@@ -460,19 +460,19 @@ func (tuo *TaskUpdateOne) SetSuccessPoint(p *Point) *TaskUpdateOne {
 	return tuo.SetSuccessPointID(p.ID)
 }
 
-// AddUserIDIDs adds the "user_id" edge to the Member entity by IDs.
-func (tuo *TaskUpdateOne) AddUserIDIDs(ids ...int) *TaskUpdateOne {
-	tuo.mutation.AddUserIDIDs(ids...)
+// AddUserIDs adds the "user" edge to the Member entity by IDs.
+func (tuo *TaskUpdateOne) AddUserIDs(ids ...int) *TaskUpdateOne {
+	tuo.mutation.AddUserIDs(ids...)
 	return tuo
 }
 
-// AddUserID adds the "user_id" edges to the Member entity.
-func (tuo *TaskUpdateOne) AddUserID(m ...*Member) *TaskUpdateOne {
+// AddUser adds the "user" edges to the Member entity.
+func (tuo *TaskUpdateOne) AddUser(m ...*Member) *TaskUpdateOne {
 	ids := make([]int, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
 	}
-	return tuo.AddUserIDIDs(ids...)
+	return tuo.AddUserIDs(ids...)
 }
 
 // Mutation returns the TaskMutation object of the builder.
@@ -492,25 +492,25 @@ func (tuo *TaskUpdateOne) ClearSuccessPoint() *TaskUpdateOne {
 	return tuo
 }
 
-// ClearUserID clears all "user_id" edges to the Member entity.
-func (tuo *TaskUpdateOne) ClearUserID() *TaskUpdateOne {
-	tuo.mutation.ClearUserID()
+// ClearUser clears all "user" edges to the Member entity.
+func (tuo *TaskUpdateOne) ClearUser() *TaskUpdateOne {
+	tuo.mutation.ClearUser()
 	return tuo
 }
 
-// RemoveUserIDIDs removes the "user_id" edge to Member entities by IDs.
-func (tuo *TaskUpdateOne) RemoveUserIDIDs(ids ...int) *TaskUpdateOne {
-	tuo.mutation.RemoveUserIDIDs(ids...)
+// RemoveUserIDs removes the "user" edge to Member entities by IDs.
+func (tuo *TaskUpdateOne) RemoveUserIDs(ids ...int) *TaskUpdateOne {
+	tuo.mutation.RemoveUserIDs(ids...)
 	return tuo
 }
 
-// RemoveUserID removes "user_id" edges to Member entities.
-func (tuo *TaskUpdateOne) RemoveUserID(m ...*Member) *TaskUpdateOne {
+// RemoveUser removes "user" edges to Member entities.
+func (tuo *TaskUpdateOne) RemoveUser(m ...*Member) *TaskUpdateOne {
 	ids := make([]int, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
 	}
-	return tuo.RemoveUserIDIDs(ids...)
+	return tuo.RemoveUserIDs(ids...)
 }
 
 // Where appends a list predicates to the TaskUpdate builder.
@@ -652,12 +652,12 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if tuo.mutation.UserIDCleared() {
+	if tuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   task.UserIDTable,
-			Columns: task.UserIDPrimaryKey,
+			Table:   task.UserTable,
+			Columns: task.UserPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
@@ -665,12 +665,12 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tuo.mutation.RemovedUserIDIDs(); len(nodes) > 0 && !tuo.mutation.UserIDCleared() {
+	if nodes := tuo.mutation.RemovedUserIDs(); len(nodes) > 0 && !tuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   task.UserIDTable,
-			Columns: task.UserIDPrimaryKey,
+			Table:   task.UserTable,
+			Columns: task.UserPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
@@ -681,12 +681,12 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tuo.mutation.UserIDIDs(); len(nodes) > 0 {
+	if nodes := tuo.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   task.UserIDTable,
-			Columns: task.UserIDPrimaryKey,
+			Table:   task.UserTable,
+			Columns: task.UserPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),

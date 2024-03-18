@@ -107,19 +107,19 @@ func (tc *TaskCreate) SetSuccessPoint(p *Point) *TaskCreate {
 	return tc.SetSuccessPointID(p.ID)
 }
 
-// AddUserIDIDs adds the "user_id" edge to the Member entity by IDs.
-func (tc *TaskCreate) AddUserIDIDs(ids ...int) *TaskCreate {
-	tc.mutation.AddUserIDIDs(ids...)
+// AddUserIDs adds the "user" edge to the Member entity by IDs.
+func (tc *TaskCreate) AddUserIDs(ids ...int) *TaskCreate {
+	tc.mutation.AddUserIDs(ids...)
 	return tc
 }
 
-// AddUserID adds the "user_id" edges to the Member entity.
-func (tc *TaskCreate) AddUserID(m ...*Member) *TaskCreate {
+// AddUser adds the "user" edges to the Member entity.
+func (tc *TaskCreate) AddUser(m ...*Member) *TaskCreate {
 	ids := make([]int, len(m))
 	for i := range m {
 		ids[i] = m[i].ID
 	}
-	return tc.AddUserIDIDs(ids...)
+	return tc.AddUserIDs(ids...)
 }
 
 // Mutation returns the TaskMutation object of the builder.
@@ -262,12 +262,12 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := tc.mutation.UserIDIDs(); len(nodes) > 0 {
+	if nodes := tc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   task.UserIDTable,
-			Columns: task.UserIDPrimaryKey,
+			Table:   task.UserTable,
+			Columns: task.UserPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),

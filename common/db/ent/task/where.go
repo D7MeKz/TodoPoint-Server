@@ -306,21 +306,21 @@ func HasSuccessPointWith(preds ...predicate.Point) predicate.Task {
 	})
 }
 
-// HasUserID applies the HasEdge predicate on the "user_id" edge.
-func HasUserID() predicate.Task {
+// HasUser applies the HasEdge predicate on the "user" edge.
+func HasUser() predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, UserIDTable, UserIDPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, true, UserTable, UserPrimaryKey...),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasUserIDWith applies the HasEdge predicate on the "user_id" edge with a given conditions (other predicates).
-func HasUserIDWith(preds ...predicate.Member) predicate.Task {
+// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
+func HasUserWith(preds ...predicate.Member) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		step := newUserIDStep()
+		step := newUserStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

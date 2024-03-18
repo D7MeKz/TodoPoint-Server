@@ -28,6 +28,6 @@ func (Task) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("subtask", SubTask.Type).Unique(),
 		edge.To("success_point", Point.Type).Unique(),
-		edge.From("user_id", Member.Type).Ref("tasks"),
+		edge.From("user", Member.Type).Ref("tasks"),
 	}
 }

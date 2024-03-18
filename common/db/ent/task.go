@@ -40,8 +40,8 @@ type TaskEdges struct {
 	Subtask *SubTask `json:"subtask,omitempty"`
 	// SuccessPoint holds the value of the success_point edge.
 	SuccessPoint *Point `json:"success_point,omitempty"`
-	// UserID holds the value of the user_id edge.
-	UserID []*Member `json:"user_id,omitempty"`
+	// User holds the value of the user edge.
+	User []*Member `json:"user,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
@@ -69,13 +69,13 @@ func (e TaskEdges) SuccessPointOrErr() (*Point, error) {
 	return nil, &NotLoadedError{edge: "success_point"}
 }
 
-// UserIDOrErr returns the UserID value or an error if the edge
+// UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading.
-func (e TaskEdges) UserIDOrErr() ([]*Member, error) {
+func (e TaskEdges) UserOrErr() ([]*Member, error) {
 	if e.loadedTypes[2] {
-		return e.UserID, nil
+		return e.User, nil
 	}
-	return nil, &NotLoadedError{edge: "user_id"}
+	return nil, &NotLoadedError{edge: "user"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -166,9 +166,9 @@ func (t *Task) QuerySuccessPoint() *PointQuery {
 	return NewTaskClient(t.config).QuerySuccessPoint(t)
 }
 
-// QueryUserID queries the "user_id" edge of the Task entity.
-func (t *Task) QueryUserID() *MemberQuery {
-	return NewTaskClient(t.config).QueryUserID(t)
+// QueryUser queries the "user" edge of the Task entity.
+func (t *Task) QueryUser() *MemberQuery {
+	return NewTaskClient(t.config).QueryUser(t)
 }
 
 // Update returns a builder for updating this Task.

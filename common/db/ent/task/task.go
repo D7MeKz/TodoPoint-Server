@@ -26,8 +26,8 @@ const (
 	EdgeSubtask = "subtask"
 	// EdgeSuccessPoint holds the string denoting the success_point edge name in mutations.
 	EdgeSuccessPoint = "success_point"
-	// EdgeUserID holds the string denoting the user_id edge name in mutations.
-	EdgeUserID = "user_id"
+	// EdgeUser holds the string denoting the user edge name in mutations.
+	EdgeUser = "user"
 	// Table holds the table name of the task in the database.
 	Table = "tasks"
 	// SubtaskTable is the table that holds the subtask relation/edge.
@@ -44,11 +44,11 @@ const (
 	SuccessPointInverseTable = "points"
 	// SuccessPointColumn is the table column denoting the success_point relation/edge.
 	SuccessPointColumn = "task_success_point"
-	// UserIDTable is the table that holds the user_id relation/edge. The primary key declared below.
-	UserIDTable = "member_tasks"
-	// UserIDInverseTable is the table name for the Member entity.
+	// UserTable is the table that holds the user relation/edge. The primary key declared below.
+	UserTable = "member_tasks"
+	// UserInverseTable is the table name for the Member entity.
 	// It exists in this package in order to avoid circular dependency with the "member" package.
-	UserIDInverseTable = "members"
+	UserInverseTable = "members"
 )
 
 // Columns holds all SQL columns for task fields.
@@ -67,9 +67,9 @@ var ForeignKeys = []string{
 }
 
 var (
-	// UserIDPrimaryKey and UserIDColumn2 are the table columns denoting the
-	// primary key for the user_id relation (M2M).
-	UserIDPrimaryKey = []string{"member_id", "task_id"}
+	// UserPrimaryKey and UserColumn2 are the table columns denoting the
+	// primary key for the user relation (M2M).
+	UserPrimaryKey = []string{"member_id", "task_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -136,17 +136,17 @@ func BySuccessPointField(field string, opts ...sql.OrderTermOption) OrderOption 
 	}
 }
 
-// ByUserIDCount orders the results by user_id count.
-func ByUserIDCount(opts ...sql.OrderTermOption) OrderOption {
+// ByUserCount orders the results by user count.
+func ByUserCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newUserIDStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newUserStep(), opts...)
 	}
 }
 
-// ByUserID orders the results by user_id terms.
-func ByUserID(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByUser orders the results by user terms.
+func ByUser(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newUserIDStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newUserStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newSubtaskStep() *sqlgraph.Step {
@@ -163,10 +163,10 @@ func newSuccessPointStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2O, false, SuccessPointTable, SuccessPointColumn),
 	)
 }
-func newUserIDStep() *sqlgraph.Step {
+func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(UserIDInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, UserIDTable, UserIDPrimaryKey...),
+		sqlgraph.To(UserInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, UserTable, UserPrimaryKey...),
 	)
 }

@@ -1054,15 +1054,15 @@ func (c *TaskClient) QuerySuccessPoint(t *Task) *PointQuery {
 	return query
 }
 
-// QueryUserID queries the user_id edge of a Task.
-func (c *TaskClient) QueryUserID(t *Task) *MemberQuery {
+// QueryUser queries the user edge of a Task.
+func (c *TaskClient) QueryUser(t *Task) *MemberQuery {
 	query := (&MemberClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := t.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(task.Table, task.FieldID, id),
 			sqlgraph.To(member.Table, member.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, task.UserIDTable, task.UserIDPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, true, task.UserTable, task.UserPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil
