@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"todopoint/banking/data/request"
-	"todopoint/banking/data/response"
 	"todopoint/banking/service"
+	"todopoint/common/utils"
 )
 
 // 추상화
@@ -23,14 +23,14 @@ func (controller *BankAccountController) RegisterAccount(ctx *gin.Context) {
 	req := request.CreateReqData{}
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
-		response.Error(ctx, http.StatusBadRequest, err)
+		utils.Error(ctx, http.StatusBadRequest, err)
 		return
 	}
 
 	res, err := controller.service.CreateBankAccount(ctx, req)
 	if err != nil {
-		response.Error(ctx, http.StatusInternalServerError, err)
+		utils.Error(ctx, http.StatusInternalServerError, err)
 		return
 	}
-	response.Success(ctx, res)
+	utils.Success(ctx, res)
 }

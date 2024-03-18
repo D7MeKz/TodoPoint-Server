@@ -1,6 +1,6 @@
-package reqdata
+package request
 
 type CreateTask struct {
-	UserId string `json:"user_id"`
+	UserId int    `json:"user_id"`
 	Title  string `json:"title"`
 }
