@@ -708,15 +708,15 @@ func (c *PointInfoClient) QueryPoints(pi *PointInfo) *PointQuery {
 	return query
 }
 
-// QueryUserID queries the user_id edge of a PointInfo.
-func (c *PointInfoClient) QueryUserID(pi *PointInfo) *MemberQuery {
+// QueryUser queries the user edge of a PointInfo.
+func (c *PointInfoClient) QueryUser(pi *PointInfo) *MemberQuery {
 	query := (&MemberClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := pi.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(pointinfo.Table, pointinfo.FieldID, id),
 			sqlgraph.To(member.Table, member.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, pointinfo.UserIDTable, pointinfo.UserIDColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, pointinfo.UserTable, pointinfo.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(pi.driver.Dialect(), step)
 		return fromV, nil

@@ -168,21 +168,21 @@ func HasPointsWith(preds ...predicate.Point) predicate.PointInfo {
 	})
 }
 
-// HasUserID applies the HasEdge predicate on the "user_id" edge.
-func HasUserID() predicate.PointInfo {
+// HasUser applies the HasEdge predicate on the "user" edge.
+func HasUser() predicate.PointInfo {
 	return predicate.PointInfo(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, UserIDTable, UserIDColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasUserIDWith applies the HasEdge predicate on the "user_id" edge with a given conditions (other predicates).
-func HasUserIDWith(preds ...predicate.Member) predicate.PointInfo {
+// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
+func HasUserWith(preds ...predicate.Member) predicate.PointInfo {
 	return predicate.PointInfo(func(s *sql.Selector) {
-		step := newUserIDStep()
+		step := newUserStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

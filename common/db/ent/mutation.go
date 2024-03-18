@@ -1379,8 +1379,8 @@ type PointInfoMutation struct {
 	points          map[int]struct{}
 	removedpoints   map[int]struct{}
 	clearedpoints   bool
-	user_id         *int
-	cleareduser_id  bool
+	user            *int
+	cleareduser     bool
 	done            bool
 	oldValue        func(context.Context) (*PointInfo, error)
 	predicates      []predicate.PointInfo
@@ -1636,43 +1636,43 @@ func (m *PointInfoMutation) ResetPoints() {
 	m.removedpoints = nil
 }
 
-// SetUserIDID sets the "user_id" edge to the Member entity by id.
-func (m *PointInfoMutation) SetUserIDID(id int) {
-	m.user_id = &id
+// SetUserID sets the "user" edge to the Member entity by id.
+func (m *PointInfoMutation) SetUserID(id int) {
+	m.user = &id
 }
 
-// ClearUserID clears the "user_id" edge to the Member entity.
-func (m *PointInfoMutation) ClearUserID() {
-	m.cleareduser_id = true
+// ClearUser clears the "user" edge to the Member entity.
+func (m *PointInfoMutation) ClearUser() {
+	m.cleareduser = true
 }
 
-// UserIDCleared reports if the "user_id" edge to the Member entity was cleared.
-func (m *PointInfoMutation) UserIDCleared() bool {
-	return m.cleareduser_id
+// UserCleared reports if the "user" edge to the Member entity was cleared.
+func (m *PointInfoMutation) UserCleared() bool {
+	return m.cleareduser
 }
 
-// UserIDID returns the "user_id" edge ID in the mutation.
-func (m *PointInfoMutation) UserIDID() (id int, exists bool) {
-	if m.user_id != nil {
-		return *m.user_id, true
+// UserID returns the "user" edge ID in the mutation.
+func (m *PointInfoMutation) UserID() (id int, exists bool) {
+	if m.user != nil {
+		return *m.user, true
 	}
 	return
 }
 
-// UserIDIDs returns the "user_id" edge IDs in the mutation.
+// UserIDs returns the "user" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// UserIDID instead. It exists only for internal usage by the builders.
-func (m *PointInfoMutation) UserIDIDs() (ids []int) {
-	if id := m.user_id; id != nil {
+// UserID instead. It exists only for internal usage by the builders.
+func (m *PointInfoMutation) UserIDs() (ids []int) {
+	if id := m.user; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetUserID resets all changes to the "user_id" edge.
-func (m *PointInfoMutation) ResetUserID() {
-	m.user_id = nil
-	m.cleareduser_id = false
+// ResetUser resets all changes to the "user" edge.
+func (m *PointInfoMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
 }
 
 // Where appends a list predicates to the PointInfoMutation builder.
@@ -1844,8 +1844,8 @@ func (m *PointInfoMutation) AddedEdges() []string {
 	if m.points != nil {
 		edges = append(edges, pointinfo.EdgePoints)
 	}
-	if m.user_id != nil {
-		edges = append(edges, pointinfo.EdgeUserID)
+	if m.user != nil {
+		edges = append(edges, pointinfo.EdgeUser)
 	}
 	return edges
 }
@@ -1860,8 +1860,8 @@ func (m *PointInfoMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case pointinfo.EdgeUserID:
-		if id := m.user_id; id != nil {
+	case pointinfo.EdgeUser:
+		if id := m.user; id != nil {
 			return []ent.Value{*id}
 		}
 	}
@@ -1897,8 +1897,8 @@ func (m *PointInfoMutation) ClearedEdges() []string {
 	if m.clearedpoints {
 		edges = append(edges, pointinfo.EdgePoints)
 	}
-	if m.cleareduser_id {
-		edges = append(edges, pointinfo.EdgeUserID)
+	if m.cleareduser {
+		edges = append(edges, pointinfo.EdgeUser)
 	}
 	return edges
 }
@@ -1909,8 +1909,8 @@ func (m *PointInfoMutation) EdgeCleared(name string) bool {
 	switch name {
 	case pointinfo.EdgePoints:
 		return m.clearedpoints
-	case pointinfo.EdgeUserID:
-		return m.cleareduser_id
+	case pointinfo.EdgeUser:
+		return m.cleareduser
 	}
 	return false
 }
@@ -1919,8 +1919,8 @@ func (m *PointInfoMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *PointInfoMutation) ClearEdge(name string) error {
 	switch name {
-	case pointinfo.EdgeUserID:
-		m.ClearUserID()
+	case pointinfo.EdgeUser:
+		m.ClearUser()
 		return nil
 	}
 	return fmt.Errorf("unknown PointInfo unique edge %s", name)
@@ -1933,8 +1933,8 @@ func (m *PointInfoMutation) ResetEdge(name string) error {
 	case pointinfo.EdgePoints:
 		m.ResetPoints()
 		return nil
-	case pointinfo.EdgeUserID:
-		m.ResetUserID()
+	case pointinfo.EdgeUser:
+		m.ResetUser()
 		return nil
 	}
 	return fmt.Errorf("unknown PointInfo edge %s", name)

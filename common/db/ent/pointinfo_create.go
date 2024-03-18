@@ -63,23 +63,23 @@ func (pic *PointInfoCreate) AddPoints(p ...*Point) *PointInfoCreate {
 	return pic.AddPointIDs(ids...)
 }
 
-// SetUserIDID sets the "user_id" edge to the Member entity by ID.
-func (pic *PointInfoCreate) SetUserIDID(id int) *PointInfoCreate {
-	pic.mutation.SetUserIDID(id)
+// SetUserID sets the "user" edge to the Member entity by ID.
+func (pic *PointInfoCreate) SetUserID(id int) *PointInfoCreate {
+	pic.mutation.SetUserID(id)
 	return pic
 }
 
-// SetNillableUserIDID sets the "user_id" edge to the Member entity by ID if the given value is not nil.
-func (pic *PointInfoCreate) SetNillableUserIDID(id *int) *PointInfoCreate {
+// SetNillableUserID sets the "user" edge to the Member entity by ID if the given value is not nil.
+func (pic *PointInfoCreate) SetNillableUserID(id *int) *PointInfoCreate {
 	if id != nil {
-		pic = pic.SetUserIDID(*id)
+		pic = pic.SetUserID(*id)
 	}
 	return pic
 }
 
-// SetUserID sets the "user_id" edge to the Member entity.
-func (pic *PointInfoCreate) SetUserID(m *Member) *PointInfoCreate {
-	return pic.SetUserIDID(m.ID)
+// SetUser sets the "user" edge to the Member entity.
+func (pic *PointInfoCreate) SetUser(m *Member) *PointInfoCreate {
+	return pic.SetUserID(m.ID)
 }
 
 // Mutation returns the PointInfoMutation object of the builder.
@@ -187,12 +187,12 @@ func (pic *PointInfoCreate) createSpec() (*PointInfo, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := pic.mutation.UserIDIDs(); len(nodes) > 0 {
+	if nodes := pic.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   pointinfo.UserIDTable,
-			Columns: []string{pointinfo.UserIDColumn},
+			Table:   pointinfo.UserTable,
+			Columns: []string{pointinfo.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),

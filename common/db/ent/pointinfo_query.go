@@ -25,7 +25,7 @@ type PointInfoQuery struct {
 	inters     []Interceptor
 	predicates []predicate.PointInfo
 	withPoints *PointQuery
-	withUserID *MemberQuery
+	withUser   *MemberQuery
 	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -85,8 +85,8 @@ func (piq *PointInfoQuery) QueryPoints() *PointQuery {
 	return query
 }
 
-// QueryUserID chains the current query on the "user_id" edge.
-func (piq *PointInfoQuery) QueryUserID() *MemberQuery {
+// QueryUser chains the current query on the "user" edge.
+func (piq *PointInfoQuery) QueryUser() *MemberQuery {
 	query := (&MemberClient{config: piq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := piq.prepareQuery(ctx); err != nil {
@@ -99,7 +99,7 @@ func (piq *PointInfoQuery) QueryUserID() *MemberQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(pointinfo.Table, pointinfo.FieldID, selector),
 			sqlgraph.To(member.Table, member.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, pointinfo.UserIDTable, pointinfo.UserIDColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, pointinfo.UserTable, pointinfo.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(piq.driver.Dialect(), step)
 		return fromU, nil
@@ -300,7 +300,7 @@ func (piq *PointInfoQuery) Clone() *PointInfoQuery {
 		inters:     append([]Interceptor{}, piq.inters...),
 		predicates: append([]predicate.PointInfo{}, piq.predicates...),
 		withPoints: piq.withPoints.Clone(),
-		withUserID: piq.withUserID.Clone(),
+		withUser:   piq.withUser.Clone(),
 		// clone intermediate query.
 		sql:  piq.sql.Clone(),
 		path: piq.path,
@@ -318,14 +318,14 @@ func (piq *PointInfoQuery) WithPoints(opts ...func(*PointQuery)) *PointInfoQuery
 	return piq
 }
 
-// WithUserID tells the query-builder to eager-load the nodes that are connected to
-// the "user_id" edge. The optional arguments are used to configure the query builder of the edge.
-func (piq *PointInfoQuery) WithUserID(opts ...func(*MemberQuery)) *PointInfoQuery {
+// WithUser tells the query-builder to eager-load the nodes that are connected to
+// the "user" edge. The optional arguments are used to configure the query builder of the edge.
+func (piq *PointInfoQuery) WithUser(opts ...func(*MemberQuery)) *PointInfoQuery {
 	query := (&MemberClient{config: piq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	piq.withUserID = query
+	piq.withUser = query
 	return piq
 }
 
@@ -410,10 +410,10 @@ func (piq *PointInfoQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*P
 		_spec       = piq.querySpec()
 		loadedTypes = [2]bool{
 			piq.withPoints != nil,
-			piq.withUserID != nil,
+			piq.withUser != nil,
 		}
 	)
-	if piq.withUserID != nil {
+	if piq.withUser != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -444,9 +444,9 @@ func (piq *PointInfoQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*P
 			return nil, err
 		}
 	}
-	if query := piq.withUserID; query != nil {
-		if err := piq.loadUserID(ctx, query, nodes, nil,
-			func(n *PointInfo, e *Member) { n.Edges.UserID = e }); err != nil {
+	if query := piq.withUser; query != nil {
+		if err := piq.loadUser(ctx, query, nodes, nil,
+			func(n *PointInfo, e *Member) { n.Edges.User = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -484,7 +484,7 @@ func (piq *PointInfoQuery) loadPoints(ctx context.Context, query *PointQuery, no
 	}
 	return nil
 }
-func (piq *PointInfoQuery) loadUserID(ctx context.Context, query *MemberQuery, nodes []*PointInfo, init func(*PointInfo), assign func(*PointInfo, *Member)) error {
+func (piq *PointInfoQuery) loadUser(ctx context.Context, query *MemberQuery, nodes []*PointInfo, init func(*PointInfo), assign func(*PointInfo, *Member)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*PointInfo)
 	for i := range nodes {

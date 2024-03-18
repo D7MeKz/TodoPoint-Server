@@ -33,8 +33,8 @@ type PointInfo struct {
 type PointInfoEdges struct {
 	// Points holds the value of the points edge.
 	Points []*Point `json:"points,omitempty"`
-	// UserID holds the value of the user_id edge.
-	UserID *Member `json:"user_id,omitempty"`
+	// User holds the value of the user edge.
+	User *Member `json:"user,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
@@ -49,15 +49,15 @@ func (e PointInfoEdges) PointsOrErr() ([]*Point, error) {
 	return nil, &NotLoadedError{edge: "points"}
 }
 
-// UserIDOrErr returns the UserID value or an error if the edge
+// UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e PointInfoEdges) UserIDOrErr() (*Member, error) {
-	if e.UserID != nil {
-		return e.UserID, nil
+func (e PointInfoEdges) UserOrErr() (*Member, error) {
+	if e.User != nil {
+		return e.User, nil
 	} else if e.loadedTypes[1] {
 		return nil, &NotFoundError{label: member.Label}
 	}
-	return nil, &NotLoadedError{edge: "user_id"}
+	return nil, &NotLoadedError{edge: "user"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -129,9 +129,9 @@ func (pi *PointInfo) QueryPoints() *PointQuery {
 	return NewPointInfoClient(pi.config).QueryPoints(pi)
 }
 
-// QueryUserID queries the "user_id" edge of the PointInfo entity.
-func (pi *PointInfo) QueryUserID() *MemberQuery {
-	return NewPointInfoClient(pi.config).QueryUserID(pi)
+// QueryUser queries the "user" edge of the PointInfo entity.
+func (pi *PointInfo) QueryUser() *MemberQuery {
+	return NewPointInfoClient(pi.config).QueryUser(pi)
 }
 
 // Update returns a builder for updating this PointInfo.

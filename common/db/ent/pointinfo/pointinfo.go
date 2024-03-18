@@ -20,8 +20,8 @@ const (
 	FieldModifiedAt = "modified_at"
 	// EdgePoints holds the string denoting the points edge name in mutations.
 	EdgePoints = "points"
-	// EdgeUserID holds the string denoting the user_id edge name in mutations.
-	EdgeUserID = "user_id"
+	// EdgeUser holds the string denoting the user edge name in mutations.
+	EdgeUser = "user"
 	// Table holds the table name of the pointinfo in the database.
 	Table = "point_infos"
 	// PointsTable is the table that holds the points relation/edge.
@@ -31,13 +31,13 @@ const (
 	PointsInverseTable = "points"
 	// PointsColumn is the table column denoting the points relation/edge.
 	PointsColumn = "point_info_points"
-	// UserIDTable is the table that holds the user_id relation/edge.
-	UserIDTable = "point_infos"
-	// UserIDInverseTable is the table name for the Member entity.
+	// UserTable is the table that holds the user relation/edge.
+	UserTable = "point_infos"
+	// UserInverseTable is the table name for the Member entity.
 	// It exists in this package in order to avoid circular dependency with the "member" package.
-	UserIDInverseTable = "members"
-	// UserIDColumn is the table column denoting the user_id relation/edge.
-	UserIDColumn = "member_point_info"
+	UserInverseTable = "members"
+	// UserColumn is the table column denoting the user relation/edge.
+	UserColumn = "member_point_info"
 )
 
 // Columns holds all SQL columns for pointinfo fields.
@@ -105,10 +105,10 @@ func ByPoints(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByUserIDField orders the results by user_id field.
-func ByUserIDField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByUserField orders the results by user field.
+func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newUserIDStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newPointsStep() *sqlgraph.Step {
@@ -118,10 +118,10 @@ func newPointsStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, PointsTable, PointsColumn),
 	)
 }
-func newUserIDStep() *sqlgraph.Step {
+func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(UserIDInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, UserIDTable, UserIDColumn),
+		sqlgraph.To(UserInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 	)
 }

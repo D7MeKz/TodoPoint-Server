@@ -26,6 +26,6 @@ func (PointInfo) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("points", Point.Type),
 		// PointDetails Only one
-		edge.From("user_id", Member.Type).Ref("point_info").Unique(),
+		edge.From("user", Member.Type).Ref("point_info").Unique(),
 	}
 }

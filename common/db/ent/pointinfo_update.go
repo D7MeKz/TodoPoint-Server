@@ -80,23 +80,23 @@ func (piu *PointInfoUpdate) AddPoints(p ...*Point) *PointInfoUpdate {
 	return piu.AddPointIDs(ids...)
 }
 
-// SetUserIDID sets the "user_id" edge to the Member entity by ID.
-func (piu *PointInfoUpdate) SetUserIDID(id int) *PointInfoUpdate {
-	piu.mutation.SetUserIDID(id)
+// SetUserID sets the "user" edge to the Member entity by ID.
+func (piu *PointInfoUpdate) SetUserID(id int) *PointInfoUpdate {
+	piu.mutation.SetUserID(id)
 	return piu
 }
 
-// SetNillableUserIDID sets the "user_id" edge to the Member entity by ID if the given value is not nil.
-func (piu *PointInfoUpdate) SetNillableUserIDID(id *int) *PointInfoUpdate {
+// SetNillableUserID sets the "user" edge to the Member entity by ID if the given value is not nil.
+func (piu *PointInfoUpdate) SetNillableUserID(id *int) *PointInfoUpdate {
 	if id != nil {
-		piu = piu.SetUserIDID(*id)
+		piu = piu.SetUserID(*id)
 	}
 	return piu
 }
 
-// SetUserID sets the "user_id" edge to the Member entity.
-func (piu *PointInfoUpdate) SetUserID(m *Member) *PointInfoUpdate {
-	return piu.SetUserIDID(m.ID)
+// SetUser sets the "user" edge to the Member entity.
+func (piu *PointInfoUpdate) SetUser(m *Member) *PointInfoUpdate {
+	return piu.SetUserID(m.ID)
 }
 
 // Mutation returns the PointInfoMutation object of the builder.
@@ -125,9 +125,9 @@ func (piu *PointInfoUpdate) RemovePoints(p ...*Point) *PointInfoUpdate {
 	return piu.RemovePointIDs(ids...)
 }
 
-// ClearUserID clears the "user_id" edge to the Member entity.
-func (piu *PointInfoUpdate) ClearUserID() *PointInfoUpdate {
-	piu.mutation.ClearUserID()
+// ClearUser clears the "user" edge to the Member entity.
+func (piu *PointInfoUpdate) ClearUser() *PointInfoUpdate {
+	piu.mutation.ClearUser()
 	return piu
 }
 
@@ -221,12 +221,12 @@ func (piu *PointInfoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if piu.mutation.UserIDCleared() {
+	if piu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   pointinfo.UserIDTable,
-			Columns: []string{pointinfo.UserIDColumn},
+			Table:   pointinfo.UserTable,
+			Columns: []string{pointinfo.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
@@ -234,12 +234,12 @@ func (piu *PointInfoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := piu.mutation.UserIDIDs(); len(nodes) > 0 {
+	if nodes := piu.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   pointinfo.UserIDTable,
-			Columns: []string{pointinfo.UserIDColumn},
+			Table:   pointinfo.UserTable,
+			Columns: []string{pointinfo.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
@@ -320,23 +320,23 @@ func (piuo *PointInfoUpdateOne) AddPoints(p ...*Point) *PointInfoUpdateOne {
 	return piuo.AddPointIDs(ids...)
 }
 
-// SetUserIDID sets the "user_id" edge to the Member entity by ID.
-func (piuo *PointInfoUpdateOne) SetUserIDID(id int) *PointInfoUpdateOne {
-	piuo.mutation.SetUserIDID(id)
+// SetUserID sets the "user" edge to the Member entity by ID.
+func (piuo *PointInfoUpdateOne) SetUserID(id int) *PointInfoUpdateOne {
+	piuo.mutation.SetUserID(id)
 	return piuo
 }
 
-// SetNillableUserIDID sets the "user_id" edge to the Member entity by ID if the given value is not nil.
-func (piuo *PointInfoUpdateOne) SetNillableUserIDID(id *int) *PointInfoUpdateOne {
+// SetNillableUserID sets the "user" edge to the Member entity by ID if the given value is not nil.
+func (piuo *PointInfoUpdateOne) SetNillableUserID(id *int) *PointInfoUpdateOne {
 	if id != nil {
-		piuo = piuo.SetUserIDID(*id)
+		piuo = piuo.SetUserID(*id)
 	}
 	return piuo
 }
 
-// SetUserID sets the "user_id" edge to the Member entity.
-func (piuo *PointInfoUpdateOne) SetUserID(m *Member) *PointInfoUpdateOne {
-	return piuo.SetUserIDID(m.ID)
+// SetUser sets the "user" edge to the Member entity.
+func (piuo *PointInfoUpdateOne) SetUser(m *Member) *PointInfoUpdateOne {
+	return piuo.SetUserID(m.ID)
 }
 
 // Mutation returns the PointInfoMutation object of the builder.
@@ -365,9 +365,9 @@ func (piuo *PointInfoUpdateOne) RemovePoints(p ...*Point) *PointInfoUpdateOne {
 	return piuo.RemovePointIDs(ids...)
 }
 
-// ClearUserID clears the "user_id" edge to the Member entity.
-func (piuo *PointInfoUpdateOne) ClearUserID() *PointInfoUpdateOne {
-	piuo.mutation.ClearUserID()
+// ClearUser clears the "user" edge to the Member entity.
+func (piuo *PointInfoUpdateOne) ClearUser() *PointInfoUpdateOne {
+	piuo.mutation.ClearUser()
 	return piuo
 }
 
@@ -491,12 +491,12 @@ func (piuo *PointInfoUpdateOne) sqlSave(ctx context.Context) (_node *PointInfo, 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if piuo.mutation.UserIDCleared() {
+	if piuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   pointinfo.UserIDTable,
-			Columns: []string{pointinfo.UserIDColumn},
+			Table:   pointinfo.UserTable,
+			Columns: []string{pointinfo.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
@@ -504,12 +504,12 @@ func (piuo *PointInfoUpdateOne) sqlSave(ctx context.Context) (_node *PointInfo, 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := piuo.mutation.UserIDIDs(); len(nodes) > 0 {
+	if nodes := piuo.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   pointinfo.UserIDTable,
-			Columns: []string{pointinfo.UserIDColumn},
+			Table:   pointinfo.UserTable,
+			Columns: []string{pointinfo.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
