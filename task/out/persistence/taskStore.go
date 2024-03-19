@@ -18,11 +18,19 @@ func NewStore() *Store {
 }
 
 func (s *Store) Create(ctx *gin.Context, b request.CreateTask) error {
-
 	// create Task
-	_, err := s.client.Task.Create().SetTitle(b.Title).AddUserIDs(b.UserId).Save(ctx)
+	_, err := s.client.Task.Create().SetTitle(b.Title).SetTotalStatus(0).SetMemberID(b.UserId).Save(ctx)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (s *Store) GetAllTasks(ctx *gin.Context, memberId int) ([]*ent.Task, error) {
+	// Get All task
+	tasks, err := s.client.Task.Query().All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return tasks, err
 }
