@@ -26,6 +26,7 @@ func main() {
 	}
 	// set client
 	config.SetClient(client)
+
 	// Set Router
 	taskStore := persistence.NewStore()
 	taskService := service.NewTaskService(taskStore)
@@ -40,5 +41,4 @@ func main() {
 	}
 	log.Println("Server started on port 3001")
 	log.Fatal(server.ListenAndServe())
-
 }

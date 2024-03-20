@@ -2,7 +2,6 @@ package web
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"strconv"
 	"todopoint/common/utils"
 	"todopoint/common/webutils"
@@ -24,19 +23,17 @@ func (controller *TaskController) CreateTask(ctx *gin.Context) {
 	req := request.CreateTask{}
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
-		utils.Error(ctx, http.StatusBadRequest, err)
+		webutils.ErrorFunc(ctx, err, webutils.ErrorType{Code: webutils.ERROR_GO_CODE})
 		return
 	}
 
 	// Bussiness Logic
-	err = controller.service.CreateTask(ctx, "localhost:3000", req)
+	errType, err := controller.service.CreateTask(ctx, "localhost:3000", req)
 	if err != nil {
-		// TODO Error Handling
-		utils.Error(ctx, http.StatusInternalServerError, err)
+		webutils.ErrorFunc(ctx, err, errType)
 		return
 	}
-	utils.Success(ctx, nil)
-	return
+	webutils.Success(ctx)
 
 }
 
@@ -45,14 +42,13 @@ func (controller *TaskController) GetTask(ctx *gin.Context) {
 	// Convert to int
 	convertedId, err := strconv.Atoi(id)
 	if err != nil {
-		webutils.BadRequestError(ctx, err, "Convert Id error")
+		webutils.ErrorFunc(ctx, err, webutils.ErrorType{Code: webutils.ERROR_GO_CODE})
 		return
 	}
 
-	tasks, err := controller.service.GetTaskByMemId(ctx, convertedId)
+	tasks, errType, err := controller.service.GetTaskByMemId(ctx, convertedId)
 	if err != nil {
-		webutils.InternalDBError(ctx, err, "")
-		return
+		webutils.ErrorFunc(ctx, err, errType)
 	}
 	utils.Success(ctx, tasks)
 }

@@ -12,5 +12,6 @@ func NewTaskRouter(controller *web.TaskController) *gin.Engine {
 		router.POST("/create", controller.CreateTask)
 		router.GET("/:userId", controller.GetTask)
 	}
+
 	return engine
 }

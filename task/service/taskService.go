@@ -2,7 +2,6 @@ package service
 
 import (
 	"github.com/gin-gonic/gin"
-	"log"
 	"path/filepath"
 	"strconv"
 	"todopoint/common/db/ent"
@@ -27,7 +26,6 @@ func isValidMember(baseurl string, userId int) error {
 	memberUrl := filepath.Join(baseurl, "members", strconv.Itoa(userId), "valid")
 	memberUrl = "http://" + memberUrl
 	resp, err := networking.RequestGetToService(memberUrl)
-	log.Println(resp)
 	if err != nil {
 		return err
 	}
@@ -36,38 +34,35 @@ func isValidMember(baseurl string, userId int) error {
 	} else {
 		return err
 	}
-
 }
 
-func (bs *TaskService) CreateTask(ctx *gin.Context, baseUrl string, req request.CreateTask) error {
+func (bs *TaskService) CreateTask(ctx *gin.Context, baseUrl string, req request.CreateTask) (webutils.ErrorType, error) {
 	// Check user is valid
 	// Panic
 	err := isValidMember(baseUrl, req.UserId)
 	if err != nil {
-		return err
+		return webutils.ErrorType{Code: webutils.INVALID_MEMBER}, err
 	}
 
 	// Create Task
 	err = bs.store.Create(ctx, req)
 	if err != nil {
-		return err
+
+		return webutils.ErrorType{Code: webutils.ERROR_TASK_DB}, err
 	}
-	return nil
+	return webutils.ErrorType{Code: webutils.SUCCESS}, nil
 }
 
-func (bs *TaskService) GetTaskByMemId(ctx *gin.Context, memberId int) ([]*ent.Task, error) {
+func (bs *TaskService) GetTaskByMemId(ctx *gin.Context, memberId int) ([]*ent.Task, webutils.ErrorType, error) {
 	// Check user is valid
 	err := isValidMember("localhost:3000", memberId)
 	if err != nil {
-		webutils.InvalidDataError(ctx, err, "Invalid member")
-		return nil, err
+		return nil, webutils.ErrorType{Code: webutils.INVALID_MEMBER}, err
 	}
 
 	tasks, err := bs.store.GetAllTasks(ctx, memberId)
 	if err != nil {
-		webutils.InternalDBError(ctx, err, "")
-		return nil, err
+		return nil, webutils.ErrorType{Code: webutils.ERROR_TASK_DB}, err
 	}
-
-	return tasks, nil
+	return tasks, webutils.ErrorType{Code: 0}, err
 }
