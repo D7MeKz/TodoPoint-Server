@@ -35,11 +35,13 @@ const (
 	PointInfoInverseTable = "point_infos"
 	// PointInfoColumn is the table column denoting the point_info relation/edge.
 	PointInfoColumn = "member_point_info"
-	// TasksTable is the table that holds the tasks relation/edge. The primary key declared below.
-	TasksTable = "member_tasks"
+	// TasksTable is the table that holds the tasks relation/edge.
+	TasksTable = "tasks"
 	// TasksInverseTable is the table name for the Task entity.
 	// It exists in this package in order to avoid circular dependency with the "task" package.
 	TasksInverseTable = "tasks"
+	// TasksColumn is the table column denoting the tasks relation/edge.
+	TasksColumn = "member_tasks"
 )
 
 // Columns holds all SQL columns for member fields.
@@ -50,12 +52,6 @@ var Columns = []string{
 	FieldPassword,
 	FieldCreatedAt,
 }
-
-var (
-	// TasksPrimaryKey and TasksColumn2 are the table columns denoting the
-	// primary key for the tasks relation (M2M).
-	TasksPrimaryKey = []string{"member_id", "task_id"}
-)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -138,6 +134,6 @@ func newTasksStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TasksInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, TasksTable, TasksPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.O2M, false, TasksTable, TasksColumn),
 	)
 }

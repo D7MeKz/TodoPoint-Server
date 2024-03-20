@@ -265,7 +265,7 @@ func HasSubtask() predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, SubtaskTable, SubtaskColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, SubtaskTable, SubtaskColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -283,21 +283,21 @@ func HasSubtaskWith(preds ...predicate.SubTask) predicate.Task {
 	})
 }
 
-// HasSuccessPoint applies the HasEdge predicate on the "success_point" edge.
-func HasSuccessPoint() predicate.Task {
+// HasPoint applies the HasEdge predicate on the "point" edge.
+func HasPoint() predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, SuccessPointTable, SuccessPointColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, PointTable, PointColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasSuccessPointWith applies the HasEdge predicate on the "success_point" edge with a given conditions (other predicates).
-func HasSuccessPointWith(preds ...predicate.Point) predicate.Task {
+// HasPointWith applies the HasEdge predicate on the "point" edge with a given conditions (other predicates).
+func HasPointWith(preds ...predicate.Point) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		step := newSuccessPointStep()
+		step := newPointStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -306,21 +306,21 @@ func HasSuccessPointWith(preds ...predicate.Point) predicate.Task {
 	})
 }
 
-// HasUser applies the HasEdge predicate on the "user" edge.
-func HasUser() predicate.Task {
+// HasMember applies the HasEdge predicate on the "member" edge.
+func HasMember() predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, UserTable, UserPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, MemberTable, MemberColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
-func HasUserWith(preds ...predicate.Member) predicate.Task {
+// HasMemberWith applies the HasEdge predicate on the "member" edge with a given conditions (other predicates).
+func HasMemberWith(preds ...predicate.Member) predicate.Task {
 	return predicate.Task(func(s *sql.Selector) {
-		step := newUserStep()
+		step := newMemberStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -41,7 +41,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "task" package.
 	TaskInverseTable = "tasks"
 	// TaskColumn is the table column denoting the task relation/edge.
-	TaskColumn = "task_success_point"
+	TaskColumn = "task_point"
 	// PointInfoTable is the table that holds the point_info relation/edge.
 	PointInfoTable = "points"
 	// PointInfoInverseTable is the table name for the PointInfo entity.
@@ -64,7 +64,7 @@ var Columns = []string{
 var ForeignKeys = []string{
 	"point_info_points",
 	"sub_task_point",
-	"task_success_point",
+	"task_point",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

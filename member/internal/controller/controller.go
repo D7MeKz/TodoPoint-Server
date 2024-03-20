@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"strconv"
 	"todopoint/member/internal/model"
@@ -86,4 +87,21 @@ func UpdateMemberController(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	utils.Return(w, true, http.StatusOK, nil, modifiedMember)
+}
+
+func ValidationController(w http.ResponseWriter, r *http.Request) {
+	log.Println("Start Validate Member validation")
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		utils.Return(w, false, http.StatusBadRequest, err, nil)
+		return
+	}
+	_, err = service.NewMemberRepo(r.Context()).GetMemberByID(id)
+	if err != nil {
+		utils.Return(w, false, http.StatusInternalServerError, err, nil)
+		return
+	}
+	log.Println("Success")
+	utils.Return(w, true, http.StatusOK, nil, nil)
 }

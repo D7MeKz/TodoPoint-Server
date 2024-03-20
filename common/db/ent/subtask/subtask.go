@@ -26,7 +26,7 @@ const (
 	// PointColumn is the table column denoting the point relation/edge.
 	PointColumn = "sub_task_point"
 	// TaskTable is the table that holds the task relation/edge.
-	TaskTable = "tasks"
+	TaskTable = "sub_tasks"
 	// TaskInverseTable is the table name for the Task entity.
 	// It exists in this package in order to avoid circular dependency with the "task" package.
 	TaskInverseTable = "tasks"
@@ -39,10 +39,21 @@ var Columns = []string{
 	FieldID,
 }
 
+// ForeignKeys holds the SQL foreign-keys that are owned by the "sub_tasks"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"task_subtask",
+}
+
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -64,17 +75,10 @@ func ByPointField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByTaskCount orders the results by task count.
-func ByTaskCount(opts ...sql.OrderTermOption) OrderOption {
+// ByTaskField orders the results by task field.
+func ByTaskField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newTaskStep(), opts...)
-	}
-}
-
-// ByTask orders the results by task terms.
-func ByTask(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newTaskStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newTaskStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newPointStep() *sqlgraph.Step {
@@ -88,6 +92,6 @@ func newTaskStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TaskInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, true, TaskTable, TaskColumn),
+		sqlgraph.Edge(sqlgraph.M2O, true, TaskTable, TaskColumn),
 	)
 }

@@ -24,31 +24,33 @@ const (
 	FieldModifiedAt = "modified_at"
 	// EdgeSubtask holds the string denoting the subtask edge name in mutations.
 	EdgeSubtask = "subtask"
-	// EdgeSuccessPoint holds the string denoting the success_point edge name in mutations.
-	EdgeSuccessPoint = "success_point"
-	// EdgeUser holds the string denoting the user edge name in mutations.
-	EdgeUser = "user"
+	// EdgePoint holds the string denoting the point edge name in mutations.
+	EdgePoint = "point"
+	// EdgeMember holds the string denoting the member edge name in mutations.
+	EdgeMember = "member"
 	// Table holds the table name of the task in the database.
 	Table = "tasks"
 	// SubtaskTable is the table that holds the subtask relation/edge.
-	SubtaskTable = "tasks"
+	SubtaskTable = "sub_tasks"
 	// SubtaskInverseTable is the table name for the SubTask entity.
 	// It exists in this package in order to avoid circular dependency with the "subtask" package.
 	SubtaskInverseTable = "sub_tasks"
 	// SubtaskColumn is the table column denoting the subtask relation/edge.
 	SubtaskColumn = "task_subtask"
-	// SuccessPointTable is the table that holds the success_point relation/edge.
-	SuccessPointTable = "points"
-	// SuccessPointInverseTable is the table name for the Point entity.
+	// PointTable is the table that holds the point relation/edge.
+	PointTable = "points"
+	// PointInverseTable is the table name for the Point entity.
 	// It exists in this package in order to avoid circular dependency with the "point" package.
-	SuccessPointInverseTable = "points"
-	// SuccessPointColumn is the table column denoting the success_point relation/edge.
-	SuccessPointColumn = "task_success_point"
-	// UserTable is the table that holds the user relation/edge. The primary key declared below.
-	UserTable = "member_tasks"
-	// UserInverseTable is the table name for the Member entity.
+	PointInverseTable = "points"
+	// PointColumn is the table column denoting the point relation/edge.
+	PointColumn = "task_point"
+	// MemberTable is the table that holds the member relation/edge.
+	MemberTable = "tasks"
+	// MemberInverseTable is the table name for the Member entity.
 	// It exists in this package in order to avoid circular dependency with the "member" package.
-	UserInverseTable = "members"
+	MemberInverseTable = "members"
+	// MemberColumn is the table column denoting the member relation/edge.
+	MemberColumn = "member_tasks"
 )
 
 // Columns holds all SQL columns for task fields.
@@ -63,14 +65,8 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "tasks"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"task_subtask",
+	"member_tasks",
 }
-
-var (
-	// UserPrimaryKey and UserColumn2 are the table columns denoting the
-	// primary key for the user relation (M2M).
-	UserPrimaryKey = []string{"member_id", "task_id"}
-)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -122,51 +118,51 @@ func ByModifiedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldModifiedAt, opts...).ToFunc()
 }
 
-// BySubtaskField orders the results by subtask field.
-func BySubtaskField(field string, opts ...sql.OrderTermOption) OrderOption {
+// BySubtaskCount orders the results by subtask count.
+func BySubtaskCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newSubtaskStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborsCount(s, newSubtaskStep(), opts...)
 	}
 }
 
-// BySuccessPointField orders the results by success_point field.
-func BySuccessPointField(field string, opts ...sql.OrderTermOption) OrderOption {
+// BySubtask orders the results by subtask terms.
+func BySubtask(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newSuccessPointStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newSubtaskStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
-// ByUserCount orders the results by user count.
-func ByUserCount(opts ...sql.OrderTermOption) OrderOption {
+// ByPointField orders the results by point field.
+func ByPointField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newUserStep(), opts...)
+		sqlgraph.OrderByNeighborTerms(s, newPointStep(), sql.OrderByField(field, opts...))
 	}
 }
 
-// ByUser orders the results by user terms.
-func ByUser(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByMemberField orders the results by member field.
+func ByMemberField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newUserStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newMemberStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newSubtaskStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(SubtaskInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, false, SubtaskTable, SubtaskColumn),
+		sqlgraph.Edge(sqlgraph.O2M, false, SubtaskTable, SubtaskColumn),
 	)
 }
-func newSuccessPointStep() *sqlgraph.Step {
+func newPointStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(SuccessPointInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, false, SuccessPointTable, SuccessPointColumn),
+		sqlgraph.To(PointInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, PointTable, PointColumn),
 	)
 }
-func newUserStep() *sqlgraph.Step {
+func newMemberStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(UserInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, UserTable, UserPrimaryKey...),
+		sqlgraph.To(MemberInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, MemberTable, MemberColumn),
 	)
 }

@@ -28,11 +28,11 @@ type Point struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PointQuery when eager-loading is set.
-	Edges              PointEdges `json:"edges"`
-	point_info_points  *int
-	sub_task_point     *int
-	task_success_point *int
-	selectValues       sql.SelectValues
+	Edges             PointEdges `json:"edges"`
+	point_info_points *int
+	sub_task_point    *int
+	task_point        *int
+	selectValues      sql.SelectValues
 }
 
 // PointEdges holds the relations/edges for other nodes in the graph.
@@ -96,7 +96,7 @@ func (*Point) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case point.ForeignKeys[1]: // sub_task_point
 			values[i] = new(sql.NullInt64)
-		case point.ForeignKeys[2]: // task_success_point
+		case point.ForeignKeys[2]: // task_point
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -153,10 +153,10 @@ func (po *Point) assignValues(columns []string, values []any) error {
 			}
 		case point.ForeignKeys[2]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field task_success_point", value)
+				return fmt.Errorf("unexpected type %T for edge-field task_point", value)
 			} else if value.Valid {
-				po.task_success_point = new(int)
-				*po.task_success_point = int(value.Int64)
+				po.task_point = new(int)
+				*po.task_point = int(value.Int64)
 			}
 		default:
 			po.selectValues.Set(columns[i], values[i])

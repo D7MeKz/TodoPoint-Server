@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"todopoint/common/db/ent/member"
 	"todopoint/common/db/ent/point"
-	"todopoint/common/db/ent/subtask"
 	"todopoint/common/db/ent/task"
 
 	"entgo.io/ent"
@@ -30,52 +30,52 @@ type Task struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TaskQuery when eager-loading is set.
 	Edges        TaskEdges `json:"edges"`
-	task_subtask *int
+	member_tasks *int
 	selectValues sql.SelectValues
 }
 
 // TaskEdges holds the relations/edges for other nodes in the graph.
 type TaskEdges struct {
 	// Subtask holds the value of the subtask edge.
-	Subtask *SubTask `json:"subtask,omitempty"`
-	// SuccessPoint holds the value of the success_point edge.
-	SuccessPoint *Point `json:"success_point,omitempty"`
-	// User holds the value of the user edge.
-	User []*Member `json:"user,omitempty"`
+	Subtask []*SubTask `json:"subtask,omitempty"`
+	// Point holds the value of the point edge.
+	Point *Point `json:"point,omitempty"`
+	// Member holds the value of the member edge.
+	Member *Member `json:"member,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
 }
 
 // SubtaskOrErr returns the Subtask value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e TaskEdges) SubtaskOrErr() (*SubTask, error) {
-	if e.Subtask != nil {
+// was not loaded in eager-loading.
+func (e TaskEdges) SubtaskOrErr() ([]*SubTask, error) {
+	if e.loadedTypes[0] {
 		return e.Subtask, nil
-	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: subtask.Label}
 	}
 	return nil, &NotLoadedError{edge: "subtask"}
 }
 
-// SuccessPointOrErr returns the SuccessPoint value or an error if the edge
+// PointOrErr returns the Point value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e TaskEdges) SuccessPointOrErr() (*Point, error) {
-	if e.SuccessPoint != nil {
-		return e.SuccessPoint, nil
+func (e TaskEdges) PointOrErr() (*Point, error) {
+	if e.Point != nil {
+		return e.Point, nil
 	} else if e.loadedTypes[1] {
 		return nil, &NotFoundError{label: point.Label}
 	}
-	return nil, &NotLoadedError{edge: "success_point"}
+	return nil, &NotLoadedError{edge: "point"}
 }
 
-// UserOrErr returns the User value or an error if the edge
-// was not loaded in eager-loading.
-func (e TaskEdges) UserOrErr() ([]*Member, error) {
-	if e.loadedTypes[2] {
-		return e.User, nil
+// MemberOrErr returns the Member value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TaskEdges) MemberOrErr() (*Member, error) {
+	if e.Member != nil {
+		return e.Member, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: member.Label}
 	}
-	return nil, &NotLoadedError{edge: "user"}
+	return nil, &NotLoadedError{edge: "member"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -89,7 +89,7 @@ func (*Task) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case task.FieldCreatedAt, task.FieldModifiedAt:
 			values[i] = new(sql.NullTime)
-		case task.ForeignKeys[0]: // task_subtask
+		case task.ForeignKeys[0]: // member_tasks
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -138,10 +138,10 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			}
 		case task.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field task_subtask", value)
+				return fmt.Errorf("unexpected type %T for edge-field member_tasks", value)
 			} else if value.Valid {
-				t.task_subtask = new(int)
-				*t.task_subtask = int(value.Int64)
+				t.member_tasks = new(int)
+				*t.member_tasks = int(value.Int64)
 			}
 		default:
 			t.selectValues.Set(columns[i], values[i])
@@ -161,14 +161,14 @@ func (t *Task) QuerySubtask() *SubTaskQuery {
 	return NewTaskClient(t.config).QuerySubtask(t)
 }
 
-// QuerySuccessPoint queries the "success_point" edge of the Task entity.
-func (t *Task) QuerySuccessPoint() *PointQuery {
-	return NewTaskClient(t.config).QuerySuccessPoint(t)
+// QueryPoint queries the "point" edge of the Task entity.
+func (t *Task) QueryPoint() *PointQuery {
+	return NewTaskClient(t.config).QueryPoint(t)
 }
 
-// QueryUser queries the "user" edge of the Task entity.
-func (t *Task) QueryUser() *MemberQuery {
-	return NewTaskClient(t.config).QueryUser(t)
+// QueryMember queries the "member" edge of the Task entity.
+func (t *Task) QueryMember() *MemberQuery {
+	return NewTaskClient(t.config).QueryMember(t)
 }
 
 // Update returns a builder for updating this Task.

@@ -69,57 +69,57 @@ func (tc *TaskCreate) SetID(i int) *TaskCreate {
 	return tc
 }
 
-// SetSubtaskID sets the "subtask" edge to the SubTask entity by ID.
-func (tc *TaskCreate) SetSubtaskID(id int) *TaskCreate {
-	tc.mutation.SetSubtaskID(id)
+// AddSubtaskIDs adds the "subtask" edge to the SubTask entity by IDs.
+func (tc *TaskCreate) AddSubtaskIDs(ids ...int) *TaskCreate {
+	tc.mutation.AddSubtaskIDs(ids...)
 	return tc
 }
 
-// SetNillableSubtaskID sets the "subtask" edge to the SubTask entity by ID if the given value is not nil.
-func (tc *TaskCreate) SetNillableSubtaskID(id *int) *TaskCreate {
+// AddSubtask adds the "subtask" edges to the SubTask entity.
+func (tc *TaskCreate) AddSubtask(s ...*SubTask) *TaskCreate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tc.AddSubtaskIDs(ids...)
+}
+
+// SetPointID sets the "point" edge to the Point entity by ID.
+func (tc *TaskCreate) SetPointID(id int) *TaskCreate {
+	tc.mutation.SetPointID(id)
+	return tc
+}
+
+// SetNillablePointID sets the "point" edge to the Point entity by ID if the given value is not nil.
+func (tc *TaskCreate) SetNillablePointID(id *int) *TaskCreate {
 	if id != nil {
-		tc = tc.SetSubtaskID(*id)
+		tc = tc.SetPointID(*id)
 	}
 	return tc
 }
 
-// SetSubtask sets the "subtask" edge to the SubTask entity.
-func (tc *TaskCreate) SetSubtask(s *SubTask) *TaskCreate {
-	return tc.SetSubtaskID(s.ID)
+// SetPoint sets the "point" edge to the Point entity.
+func (tc *TaskCreate) SetPoint(p *Point) *TaskCreate {
+	return tc.SetPointID(p.ID)
 }
 
-// SetSuccessPointID sets the "success_point" edge to the Point entity by ID.
-func (tc *TaskCreate) SetSuccessPointID(id int) *TaskCreate {
-	tc.mutation.SetSuccessPointID(id)
+// SetMemberID sets the "member" edge to the Member entity by ID.
+func (tc *TaskCreate) SetMemberID(id int) *TaskCreate {
+	tc.mutation.SetMemberID(id)
 	return tc
 }
 
-// SetNillableSuccessPointID sets the "success_point" edge to the Point entity by ID if the given value is not nil.
-func (tc *TaskCreate) SetNillableSuccessPointID(id *int) *TaskCreate {
+// SetNillableMemberID sets the "member" edge to the Member entity by ID if the given value is not nil.
+func (tc *TaskCreate) SetNillableMemberID(id *int) *TaskCreate {
 	if id != nil {
-		tc = tc.SetSuccessPointID(*id)
+		tc = tc.SetMemberID(*id)
 	}
 	return tc
 }
 
-// SetSuccessPoint sets the "success_point" edge to the Point entity.
-func (tc *TaskCreate) SetSuccessPoint(p *Point) *TaskCreate {
-	return tc.SetSuccessPointID(p.ID)
-}
-
-// AddUserIDs adds the "user" edge to the Member entity by IDs.
-func (tc *TaskCreate) AddUserIDs(ids ...int) *TaskCreate {
-	tc.mutation.AddUserIDs(ids...)
-	return tc
-}
-
-// AddUser adds the "user" edges to the Member entity.
-func (tc *TaskCreate) AddUser(m ...*Member) *TaskCreate {
-	ids := make([]int, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return tc.AddUserIDs(ids...)
+// SetMember sets the "member" edge to the Member entity.
+func (tc *TaskCreate) SetMember(m *Member) *TaskCreate {
+	return tc.SetMemberID(m.ID)
 }
 
 // Mutation returns the TaskMutation object of the builder.
@@ -231,7 +231,7 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	}
 	if nodes := tc.mutation.SubtaskIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   task.SubtaskTable,
 			Columns: []string{task.SubtaskColumn},
@@ -243,15 +243,14 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.task_subtask = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := tc.mutation.SuccessPointIDs(); len(nodes) > 0 {
+	if nodes := tc.mutation.PointIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   task.SuccessPointTable,
-			Columns: []string{task.SuccessPointColumn},
+			Table:   task.PointTable,
+			Columns: []string{task.PointColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(point.FieldID, field.TypeInt),
@@ -262,12 +261,12 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := tc.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := tc.mutation.MemberIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   task.UserTable,
-			Columns: task.UserPrimaryKey,
+			Table:   task.MemberTable,
+			Columns: []string{task.MemberColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
@@ -276,6 +275,7 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.member_tasks = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

@@ -21,14 +21,14 @@ import (
 // TaskQuery is the builder for querying Task entities.
 type TaskQuery struct {
 	config
-	ctx              *QueryContext
-	order            []task.OrderOption
-	inters           []Interceptor
-	predicates       []predicate.Task
-	withSubtask      *SubTaskQuery
-	withSuccessPoint *PointQuery
-	withUser         *MemberQuery
-	withFKs          bool
+	ctx         *QueryContext
+	order       []task.OrderOption
+	inters      []Interceptor
+	predicates  []predicate.Task
+	withSubtask *SubTaskQuery
+	withPoint   *PointQuery
+	withMember  *MemberQuery
+	withFKs     bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -79,7 +79,7 @@ func (tq *TaskQuery) QuerySubtask() *SubTaskQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(task.Table, task.FieldID, selector),
 			sqlgraph.To(subtask.Table, subtask.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, task.SubtaskTable, task.SubtaskColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, task.SubtaskTable, task.SubtaskColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
@@ -87,8 +87,8 @@ func (tq *TaskQuery) QuerySubtask() *SubTaskQuery {
 	return query
 }
 
-// QuerySuccessPoint chains the current query on the "success_point" edge.
-func (tq *TaskQuery) QuerySuccessPoint() *PointQuery {
+// QueryPoint chains the current query on the "point" edge.
+func (tq *TaskQuery) QueryPoint() *PointQuery {
 	query := (&PointClient{config: tq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := tq.prepareQuery(ctx); err != nil {
@@ -101,7 +101,7 @@ func (tq *TaskQuery) QuerySuccessPoint() *PointQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(task.Table, task.FieldID, selector),
 			sqlgraph.To(point.Table, point.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, task.SuccessPointTable, task.SuccessPointColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, task.PointTable, task.PointColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
@@ -109,8 +109,8 @@ func (tq *TaskQuery) QuerySuccessPoint() *PointQuery {
 	return query
 }
 
-// QueryUser chains the current query on the "user" edge.
-func (tq *TaskQuery) QueryUser() *MemberQuery {
+// QueryMember chains the current query on the "member" edge.
+func (tq *TaskQuery) QueryMember() *MemberQuery {
 	query := (&MemberClient{config: tq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := tq.prepareQuery(ctx); err != nil {
@@ -123,7 +123,7 @@ func (tq *TaskQuery) QueryUser() *MemberQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(task.Table, task.FieldID, selector),
 			sqlgraph.To(member.Table, member.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, task.UserTable, task.UserPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, task.MemberTable, task.MemberColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
@@ -318,14 +318,14 @@ func (tq *TaskQuery) Clone() *TaskQuery {
 		return nil
 	}
 	return &TaskQuery{
-		config:           tq.config,
-		ctx:              tq.ctx.Clone(),
-		order:            append([]task.OrderOption{}, tq.order...),
-		inters:           append([]Interceptor{}, tq.inters...),
-		predicates:       append([]predicate.Task{}, tq.predicates...),
-		withSubtask:      tq.withSubtask.Clone(),
-		withSuccessPoint: tq.withSuccessPoint.Clone(),
-		withUser:         tq.withUser.Clone(),
+		config:      tq.config,
+		ctx:         tq.ctx.Clone(),
+		order:       append([]task.OrderOption{}, tq.order...),
+		inters:      append([]Interceptor{}, tq.inters...),
+		predicates:  append([]predicate.Task{}, tq.predicates...),
+		withSubtask: tq.withSubtask.Clone(),
+		withPoint:   tq.withPoint.Clone(),
+		withMember:  tq.withMember.Clone(),
 		// clone intermediate query.
 		sql:  tq.sql.Clone(),
 		path: tq.path,
@@ -343,25 +343,25 @@ func (tq *TaskQuery) WithSubtask(opts ...func(*SubTaskQuery)) *TaskQuery {
 	return tq
 }
 
-// WithSuccessPoint tells the query-builder to eager-load the nodes that are connected to
-// the "success_point" edge. The optional arguments are used to configure the query builder of the edge.
-func (tq *TaskQuery) WithSuccessPoint(opts ...func(*PointQuery)) *TaskQuery {
+// WithPoint tells the query-builder to eager-load the nodes that are connected to
+// the "point" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TaskQuery) WithPoint(opts ...func(*PointQuery)) *TaskQuery {
 	query := (&PointClient{config: tq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	tq.withSuccessPoint = query
+	tq.withPoint = query
 	return tq
 }
 
-// WithUser tells the query-builder to eager-load the nodes that are connected to
-// the "user" edge. The optional arguments are used to configure the query builder of the edge.
-func (tq *TaskQuery) WithUser(opts ...func(*MemberQuery)) *TaskQuery {
+// WithMember tells the query-builder to eager-load the nodes that are connected to
+// the "member" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TaskQuery) WithMember(opts ...func(*MemberQuery)) *TaskQuery {
 	query := (&MemberClient{config: tq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	tq.withUser = query
+	tq.withMember = query
 	return tq
 }
 
@@ -446,11 +446,11 @@ func (tq *TaskQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Task, e
 		_spec       = tq.querySpec()
 		loadedTypes = [3]bool{
 			tq.withSubtask != nil,
-			tq.withSuccessPoint != nil,
-			tq.withUser != nil,
+			tq.withPoint != nil,
+			tq.withMember != nil,
 		}
 	)
-	if tq.withSubtask != nil {
+	if tq.withMember != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -475,21 +475,21 @@ func (tq *TaskQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Task, e
 		return nodes, nil
 	}
 	if query := tq.withSubtask; query != nil {
-		if err := tq.loadSubtask(ctx, query, nodes, nil,
-			func(n *Task, e *SubTask) { n.Edges.Subtask = e }); err != nil {
+		if err := tq.loadSubtask(ctx, query, nodes,
+			func(n *Task) { n.Edges.Subtask = []*SubTask{} },
+			func(n *Task, e *SubTask) { n.Edges.Subtask = append(n.Edges.Subtask, e) }); err != nil {
 			return nil, err
 		}
 	}
-	if query := tq.withSuccessPoint; query != nil {
-		if err := tq.loadSuccessPoint(ctx, query, nodes, nil,
-			func(n *Task, e *Point) { n.Edges.SuccessPoint = e }); err != nil {
+	if query := tq.withPoint; query != nil {
+		if err := tq.loadPoint(ctx, query, nodes, nil,
+			func(n *Task, e *Point) { n.Edges.Point = e }); err != nil {
 			return nil, err
 		}
 	}
-	if query := tq.withUser; query != nil {
-		if err := tq.loadUser(ctx, query, nodes,
-			func(n *Task) { n.Edges.User = []*Member{} },
-			func(n *Task, e *Member) { n.Edges.User = append(n.Edges.User, e) }); err != nil {
+	if query := tq.withMember; query != nil {
+		if err := tq.loadMember(ctx, query, nodes, nil,
+			func(n *Task, e *Member) { n.Edges.Member = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -497,38 +497,37 @@ func (tq *TaskQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Task, e
 }
 
 func (tq *TaskQuery) loadSubtask(ctx context.Context, query *SubTaskQuery, nodes []*Task, init func(*Task), assign func(*Task, *SubTask)) error {
-	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*Task)
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Task)
 	for i := range nodes {
-		if nodes[i].task_subtask == nil {
-			continue
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
 		}
-		fk := *nodes[i].task_subtask
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(subtask.IDIn(ids...))
+	query.withFKs = true
+	query.Where(predicate.SubTask(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(task.SubtaskColumn), fks...))
+	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
+		fk := n.task_subtask
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "task_subtask" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "task_subtask" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "task_subtask" returned %v for node %v`, *fk, n.ID)
 		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
+		assign(node, n)
 	}
 	return nil
 }
-func (tq *TaskQuery) loadSuccessPoint(ctx context.Context, query *PointQuery, nodes []*Task, init func(*Task), assign func(*Task, *Point)) error {
+func (tq *TaskQuery) loadPoint(ctx context.Context, query *PointQuery, nodes []*Task, init func(*Task), assign func(*Task, *Point)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int]*Task)
 	for i := range nodes {
@@ -537,82 +536,53 @@ func (tq *TaskQuery) loadSuccessPoint(ctx context.Context, query *PointQuery, no
 	}
 	query.withFKs = true
 	query.Where(predicate.Point(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(task.SuccessPointColumn), fks...))
+		s.Where(sql.InValues(s.C(task.PointColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.task_success_point
+		fk := n.task_point
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "task_success_point" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "task_point" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "task_success_point" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "task_point" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
 	return nil
 }
-func (tq *TaskQuery) loadUser(ctx context.Context, query *MemberQuery, nodes []*Task, init func(*Task), assign func(*Task, *Member)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int]*Task)
-	nids := make(map[int]map[*Task]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
-		if init != nil {
-			init(node)
+func (tq *TaskQuery) loadMember(ctx context.Context, query *MemberQuery, nodes []*Task, init func(*Task), assign func(*Task, *Member)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Task)
+	for i := range nodes {
+		if nodes[i].member_tasks == nil {
+			continue
 		}
+		fk := *nodes[i].member_tasks
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(task.UserTable)
-		s.Join(joinT).On(s.C(member.FieldID), joinT.C(task.UserPrimaryKey[0]))
-		s.Where(sql.InValues(joinT.C(task.UserPrimaryKey[1]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(task.UserPrimaryKey[1]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
+	if len(ids) == 0 {
+		return nil
 	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullInt64)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := int(values[0].(*sql.NullInt64).Int64)
-				inValue := int(values[1].(*sql.NullInt64).Int64)
-				if nids[inValue] == nil {
-					nids[inValue] = map[*Task]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*Member](ctx, query, qr, query.inters)
+	query.Where(member.IDIn(ids...))
+	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
+		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected "user" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "member_tasks" returned %v`, n.ID)
 		}
-		for kn := range nodes {
-			assign(kn, n)
+		for i := range nodes {
+			assign(nodes[i], n)
 		}
 	}
 	return nil

@@ -28,5 +28,6 @@ func (Member) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("point_info", PointInfo.Type),
 		edge.To("tasks", Task.Type),
+		edge.From("user", Member.Type).Ref("tasks"),
 	}
 }

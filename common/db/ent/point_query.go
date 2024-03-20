@@ -530,10 +530,10 @@ func (pq *PointQuery) loadTask(ctx context.Context, query *TaskQuery, nodes []*P
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Point)
 	for i := range nodes {
-		if nodes[i].task_success_point == nil {
+		if nodes[i].task_point == nil {
 			continue
 		}
-		fk := *nodes[i].task_success_point
+		fk := *nodes[i].task_point
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -550,7 +550,7 @@ func (pq *PointQuery) loadTask(ctx context.Context, query *TaskQuery, nodes []*P
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "task_success_point" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "task_point" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

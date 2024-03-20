@@ -26,6 +26,7 @@ type SubTaskQuery struct {
 	predicates []predicate.SubTask
 	withPoint  *PointQuery
 	withTask   *TaskQuery
+	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -98,7 +99,7 @@ func (stq *SubTaskQuery) QueryTask() *TaskQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(subtask.Table, subtask.FieldID, selector),
 			sqlgraph.To(task.Table, task.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, subtask.TaskTable, subtask.TaskColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, subtask.TaskTable, subtask.TaskColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(stq.driver.Dialect(), step)
 		return fromU, nil
@@ -383,12 +384,19 @@ func (stq *SubTaskQuery) prepareQuery(ctx context.Context) error {
 func (stq *SubTaskQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*SubTask, error) {
 	var (
 		nodes       = []*SubTask{}
+		withFKs     = stq.withFKs
 		_spec       = stq.querySpec()
 		loadedTypes = [2]bool{
 			stq.withPoint != nil,
 			stq.withTask != nil,
 		}
 	)
+	if stq.withTask != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, subtask.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*SubTask).scanValues(nil, columns)
 	}
@@ -414,9 +422,8 @@ func (stq *SubTaskQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Sub
 		}
 	}
 	if query := stq.withTask; query != nil {
-		if err := stq.loadTask(ctx, query, nodes,
-			func(n *SubTask) { n.Edges.Task = []*Task{} },
-			func(n *SubTask, e *Task) { n.Edges.Task = append(n.Edges.Task, e) }); err != nil {
+		if err := stq.loadTask(ctx, query, nodes, nil,
+			func(n *SubTask, e *Task) { n.Edges.Task = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -452,33 +459,34 @@ func (stq *SubTaskQuery) loadPoint(ctx context.Context, query *PointQuery, nodes
 	return nil
 }
 func (stq *SubTaskQuery) loadTask(ctx context.Context, query *TaskQuery, nodes []*SubTask, init func(*SubTask), assign func(*SubTask, *Task)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*SubTask)
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*SubTask)
 	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
+		if nodes[i].task_subtask == nil {
+			continue
 		}
+		fk := *nodes[i].task_subtask
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	query.withFKs = true
-	query.Where(predicate.Task(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(subtask.TaskColumn), fks...))
-	}))
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(task.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.task_subtask
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "task_subtask" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "task_subtask" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "task_subtask" returned %v`, n.ID)
 		}
-		assign(node, n)
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
 	}
 	return nil
 }

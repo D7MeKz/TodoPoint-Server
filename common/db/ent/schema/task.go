@@ -26,8 +26,8 @@ func (Task) Fields() []ent.Field {
 // Edges of the Task.
 func (Task) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("subtask", SubTask.Type).Unique(),
-		edge.To("success_point", Point.Type).Unique(),
-		edge.From("user", Member.Type).Ref("tasks"),
+		edge.To("subtask", SubTask.Type),
+		edge.To("point", Point.Type).Unique(),
+		edge.From("member", Member.Type).Ref("tasks").Unique(),
 	}
 }

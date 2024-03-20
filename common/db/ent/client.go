@@ -370,7 +370,7 @@ func (c *MemberClient) QueryTasks(m *Member) *TaskQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(member.Table, member.FieldID, id),
 			sqlgraph.To(task.Table, task.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, member.TasksTable, member.TasksPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, member.TasksTable, member.TasksColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
 		return fromV, nil
@@ -881,7 +881,7 @@ func (c *SubTaskClient) QueryTask(st *SubTask) *TaskQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(subtask.Table, subtask.FieldID, id),
 			sqlgraph.To(task.Table, task.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, subtask.TaskTable, subtask.TaskColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, subtask.TaskTable, subtask.TaskColumn),
 		)
 		fromV = sqlgraph.Neighbors(st.driver.Dialect(), step)
 		return fromV, nil
@@ -1030,7 +1030,7 @@ func (c *TaskClient) QuerySubtask(t *Task) *SubTaskQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(task.Table, task.FieldID, id),
 			sqlgraph.To(subtask.Table, subtask.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, task.SubtaskTable, task.SubtaskColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, task.SubtaskTable, task.SubtaskColumn),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil
@@ -1038,15 +1038,15 @@ func (c *TaskClient) QuerySubtask(t *Task) *SubTaskQuery {
 	return query
 }
 
-// QuerySuccessPoint queries the success_point edge of a Task.
-func (c *TaskClient) QuerySuccessPoint(t *Task) *PointQuery {
+// QueryPoint queries the point edge of a Task.
+func (c *TaskClient) QueryPoint(t *Task) *PointQuery {
 	query := (&PointClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := t.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(task.Table, task.FieldID, id),
 			sqlgraph.To(point.Table, point.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, task.SuccessPointTable, task.SuccessPointColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, task.PointTable, task.PointColumn),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil
@@ -1054,15 +1054,15 @@ func (c *TaskClient) QuerySuccessPoint(t *Task) *PointQuery {
 	return query
 }
 
-// QueryUser queries the user edge of a Task.
-func (c *TaskClient) QueryUser(t *Task) *MemberQuery {
+// QueryMember queries the member edge of a Task.
+func (c *TaskClient) QueryMember(t *Task) *MemberQuery {
 	query := (&MemberClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := t.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(task.Table, task.FieldID, id),
 			sqlgraph.To(member.Table, member.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, task.UserTable, task.UserPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, task.MemberTable, task.MemberColumn),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil

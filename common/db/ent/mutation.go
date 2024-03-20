@@ -1949,8 +1949,7 @@ type SubTaskMutation struct {
 	clearedFields map[string]struct{}
 	point         *int
 	clearedpoint  bool
-	task          map[int]struct{}
-	removedtask   map[int]struct{}
+	task          *int
 	clearedtask   bool
 	done          bool
 	oldValue      func(context.Context) (*SubTask, error)
@@ -2094,14 +2093,9 @@ func (m *SubTaskMutation) ResetPoint() {
 	m.clearedpoint = false
 }
 
-// AddTaskIDs adds the "task" edge to the Task entity by ids.
-func (m *SubTaskMutation) AddTaskIDs(ids ...int) {
-	if m.task == nil {
-		m.task = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.task[ids[i]] = struct{}{}
-	}
+// SetTaskID sets the "task" edge to the Task entity by id.
+func (m *SubTaskMutation) SetTaskID(id int) {
+	m.task = &id
 }
 
 // ClearTask clears the "task" edge to the Task entity.
@@ -2114,29 +2108,20 @@ func (m *SubTaskMutation) TaskCleared() bool {
 	return m.clearedtask
 }
 
-// RemoveTaskIDs removes the "task" edge to the Task entity by IDs.
-func (m *SubTaskMutation) RemoveTaskIDs(ids ...int) {
-	if m.removedtask == nil {
-		m.removedtask = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.task, ids[i])
-		m.removedtask[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedTask returns the removed IDs of the "task" edge to the Task entity.
-func (m *SubTaskMutation) RemovedTaskIDs() (ids []int) {
-	for id := range m.removedtask {
-		ids = append(ids, id)
+// TaskID returns the "task" edge ID in the mutation.
+func (m *SubTaskMutation) TaskID() (id int, exists bool) {
+	if m.task != nil {
+		return *m.task, true
 	}
 	return
 }
 
 // TaskIDs returns the "task" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// TaskID instead. It exists only for internal usage by the builders.
 func (m *SubTaskMutation) TaskIDs() (ids []int) {
-	for id := range m.task {
-		ids = append(ids, id)
+	if id := m.task; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -2145,7 +2130,6 @@ func (m *SubTaskMutation) TaskIDs() (ids []int) {
 func (m *SubTaskMutation) ResetTask() {
 	m.task = nil
 	m.clearedtask = false
-	m.removedtask = nil
 }
 
 // Where appends a list predicates to the SubTaskMutation builder.
@@ -2275,11 +2259,9 @@ func (m *SubTaskMutation) AddedIDs(name string) []ent.Value {
 			return []ent.Value{*id}
 		}
 	case subtask.EdgeTask:
-		ids := make([]ent.Value, 0, len(m.task))
-		for id := range m.task {
-			ids = append(ids, id)
+		if id := m.task; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -2287,23 +2269,12 @@ func (m *SubTaskMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *SubTaskMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m.removedtask != nil {
-		edges = append(edges, subtask.EdgeTask)
-	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *SubTaskMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case subtask.EdgeTask:
-		ids := make([]ent.Value, 0, len(m.removedtask))
-		for id := range m.removedtask {
-			ids = append(ids, id)
-		}
-		return ids
-	}
 	return nil
 }
 
@@ -2338,6 +2309,9 @@ func (m *SubTaskMutation) ClearEdge(name string) error {
 	case subtask.EdgePoint:
 		m.ClearPoint()
 		return nil
+	case subtask.EdgeTask:
+		m.ClearTask()
+		return nil
 	}
 	return fmt.Errorf("unknown SubTask unique edge %s", name)
 }
@@ -2359,25 +2333,25 @@ func (m *SubTaskMutation) ResetEdge(name string) error {
 // TaskMutation represents an operation that mutates the Task nodes in the graph.
 type TaskMutation struct {
 	config
-	op                   Op
-	typ                  string
-	id                   *int
-	title                *string
-	total_status         *int
-	addtotal_status      *int
-	created_at           *time.Time
-	modified_at          *time.Time
-	clearedFields        map[string]struct{}
-	subtask              *int
-	clearedsubtask       bool
-	success_point        *int
-	clearedsuccess_point bool
-	user                 map[int]struct{}
-	removeduser          map[int]struct{}
-	cleareduser          bool
-	done                 bool
-	oldValue             func(context.Context) (*Task, error)
-	predicates           []predicate.Task
+	op              Op
+	typ             string
+	id              *int
+	title           *string
+	total_status    *int
+	addtotal_status *int
+	created_at      *time.Time
+	modified_at     *time.Time
+	clearedFields   map[string]struct{}
+	subtask         map[int]struct{}
+	removedsubtask  map[int]struct{}
+	clearedsubtask  bool
+	point           *int
+	clearedpoint    bool
+	member          *int
+	clearedmember   bool
+	done            bool
+	oldValue        func(context.Context) (*Task, error)
+	predicates      []predicate.Task
 }
 
 var _ ent.Mutation = (*TaskMutation)(nil)
@@ -2648,9 +2622,14 @@ func (m *TaskMutation) ResetModifiedAt() {
 	m.modified_at = nil
 }
 
-// SetSubtaskID sets the "subtask" edge to the SubTask entity by id.
-func (m *TaskMutation) SetSubtaskID(id int) {
-	m.subtask = &id
+// AddSubtaskIDs adds the "subtask" edge to the SubTask entity by ids.
+func (m *TaskMutation) AddSubtaskIDs(ids ...int) {
+	if m.subtask == nil {
+		m.subtask = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.subtask[ids[i]] = struct{}{}
+	}
 }
 
 // ClearSubtask clears the "subtask" edge to the SubTask entity.
@@ -2663,20 +2642,29 @@ func (m *TaskMutation) SubtaskCleared() bool {
 	return m.clearedsubtask
 }
 
-// SubtaskID returns the "subtask" edge ID in the mutation.
-func (m *TaskMutation) SubtaskID() (id int, exists bool) {
-	if m.subtask != nil {
-		return *m.subtask, true
+// RemoveSubtaskIDs removes the "subtask" edge to the SubTask entity by IDs.
+func (m *TaskMutation) RemoveSubtaskIDs(ids ...int) {
+	if m.removedsubtask == nil {
+		m.removedsubtask = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.subtask, ids[i])
+		m.removedsubtask[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedSubtask returns the removed IDs of the "subtask" edge to the SubTask entity.
+func (m *TaskMutation) RemovedSubtaskIDs() (ids []int) {
+	for id := range m.removedsubtask {
+		ids = append(ids, id)
 	}
 	return
 }
 
 // SubtaskIDs returns the "subtask" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// SubtaskID instead. It exists only for internal usage by the builders.
 func (m *TaskMutation) SubtaskIDs() (ids []int) {
-	if id := m.subtask; id != nil {
-		ids = append(ids, *id)
+	for id := range m.subtask {
+		ids = append(ids, id)
 	}
 	return
 }
@@ -2685,99 +2673,85 @@ func (m *TaskMutation) SubtaskIDs() (ids []int) {
 func (m *TaskMutation) ResetSubtask() {
 	m.subtask = nil
 	m.clearedsubtask = false
+	m.removedsubtask = nil
 }
 
-// SetSuccessPointID sets the "success_point" edge to the Point entity by id.
-func (m *TaskMutation) SetSuccessPointID(id int) {
-	m.success_point = &id
+// SetPointID sets the "point" edge to the Point entity by id.
+func (m *TaskMutation) SetPointID(id int) {
+	m.point = &id
 }
 
-// ClearSuccessPoint clears the "success_point" edge to the Point entity.
-func (m *TaskMutation) ClearSuccessPoint() {
-	m.clearedsuccess_point = true
+// ClearPoint clears the "point" edge to the Point entity.
+func (m *TaskMutation) ClearPoint() {
+	m.clearedpoint = true
 }
 
-// SuccessPointCleared reports if the "success_point" edge to the Point entity was cleared.
-func (m *TaskMutation) SuccessPointCleared() bool {
-	return m.clearedsuccess_point
+// PointCleared reports if the "point" edge to the Point entity was cleared.
+func (m *TaskMutation) PointCleared() bool {
+	return m.clearedpoint
 }
 
-// SuccessPointID returns the "success_point" edge ID in the mutation.
-func (m *TaskMutation) SuccessPointID() (id int, exists bool) {
-	if m.success_point != nil {
-		return *m.success_point, true
+// PointID returns the "point" edge ID in the mutation.
+func (m *TaskMutation) PointID() (id int, exists bool) {
+	if m.point != nil {
+		return *m.point, true
 	}
 	return
 }
 
-// SuccessPointIDs returns the "success_point" edge IDs in the mutation.
+// PointIDs returns the "point" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// SuccessPointID instead. It exists only for internal usage by the builders.
-func (m *TaskMutation) SuccessPointIDs() (ids []int) {
-	if id := m.success_point; id != nil {
+// PointID instead. It exists only for internal usage by the builders.
+func (m *TaskMutation) PointIDs() (ids []int) {
+	if id := m.point; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetSuccessPoint resets all changes to the "success_point" edge.
-func (m *TaskMutation) ResetSuccessPoint() {
-	m.success_point = nil
-	m.clearedsuccess_point = false
+// ResetPoint resets all changes to the "point" edge.
+func (m *TaskMutation) ResetPoint() {
+	m.point = nil
+	m.clearedpoint = false
 }
 
-// AddUserIDs adds the "user" edge to the Member entity by ids.
-func (m *TaskMutation) AddUserIDs(ids ...int) {
-	if m.user == nil {
-		m.user = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.user[ids[i]] = struct{}{}
-	}
+// SetMemberID sets the "member" edge to the Member entity by id.
+func (m *TaskMutation) SetMemberID(id int) {
+	m.member = &id
 }
 
-// ClearUser clears the "user" edge to the Member entity.
-func (m *TaskMutation) ClearUser() {
-	m.cleareduser = true
+// ClearMember clears the "member" edge to the Member entity.
+func (m *TaskMutation) ClearMember() {
+	m.clearedmember = true
 }
 
-// UserCleared reports if the "user" edge to the Member entity was cleared.
-func (m *TaskMutation) UserCleared() bool {
-	return m.cleareduser
+// MemberCleared reports if the "member" edge to the Member entity was cleared.
+func (m *TaskMutation) MemberCleared() bool {
+	return m.clearedmember
 }
 
-// RemoveUserIDs removes the "user" edge to the Member entity by IDs.
-func (m *TaskMutation) RemoveUserIDs(ids ...int) {
-	if m.removeduser == nil {
-		m.removeduser = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.user, ids[i])
-		m.removeduser[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedUser returns the removed IDs of the "user" edge to the Member entity.
-func (m *TaskMutation) RemovedUserIDs() (ids []int) {
-	for id := range m.removeduser {
-		ids = append(ids, id)
+// MemberID returns the "member" edge ID in the mutation.
+func (m *TaskMutation) MemberID() (id int, exists bool) {
+	if m.member != nil {
+		return *m.member, true
 	}
 	return
 }
 
-// UserIDs returns the "user" edge IDs in the mutation.
-func (m *TaskMutation) UserIDs() (ids []int) {
-	for id := range m.user {
-		ids = append(ids, id)
+// MemberIDs returns the "member" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MemberID instead. It exists only for internal usage by the builders.
+func (m *TaskMutation) MemberIDs() (ids []int) {
+	if id := m.member; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetUser resets all changes to the "user" edge.
-func (m *TaskMutation) ResetUser() {
-	m.user = nil
-	m.cleareduser = false
-	m.removeduser = nil
+// ResetMember resets all changes to the "member" edge.
+func (m *TaskMutation) ResetMember() {
+	m.member = nil
+	m.clearedmember = false
 }
 
 // Where appends a list predicates to the TaskMutation builder.
@@ -2983,11 +2957,11 @@ func (m *TaskMutation) AddedEdges() []string {
 	if m.subtask != nil {
 		edges = append(edges, task.EdgeSubtask)
 	}
-	if m.success_point != nil {
-		edges = append(edges, task.EdgeSuccessPoint)
+	if m.point != nil {
+		edges = append(edges, task.EdgePoint)
 	}
-	if m.user != nil {
-		edges = append(edges, task.EdgeUser)
+	if m.member != nil {
+		edges = append(edges, task.EdgeMember)
 	}
 	return edges
 }
@@ -2997,19 +2971,19 @@ func (m *TaskMutation) AddedEdges() []string {
 func (m *TaskMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case task.EdgeSubtask:
-		if id := m.subtask; id != nil {
-			return []ent.Value{*id}
-		}
-	case task.EdgeSuccessPoint:
-		if id := m.success_point; id != nil {
-			return []ent.Value{*id}
-		}
-	case task.EdgeUser:
-		ids := make([]ent.Value, 0, len(m.user))
-		for id := range m.user {
+		ids := make([]ent.Value, 0, len(m.subtask))
+		for id := range m.subtask {
 			ids = append(ids, id)
 		}
 		return ids
+	case task.EdgePoint:
+		if id := m.point; id != nil {
+			return []ent.Value{*id}
+		}
+	case task.EdgeMember:
+		if id := m.member; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
@@ -3017,8 +2991,8 @@ func (m *TaskMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TaskMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 3)
-	if m.removeduser != nil {
-		edges = append(edges, task.EdgeUser)
+	if m.removedsubtask != nil {
+		edges = append(edges, task.EdgeSubtask)
 	}
 	return edges
 }
@@ -3027,9 +3001,9 @@ func (m *TaskMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *TaskMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case task.EdgeUser:
-		ids := make([]ent.Value, 0, len(m.removeduser))
-		for id := range m.removeduser {
+	case task.EdgeSubtask:
+		ids := make([]ent.Value, 0, len(m.removedsubtask))
+		for id := range m.removedsubtask {
 			ids = append(ids, id)
 		}
 		return ids
@@ -3043,11 +3017,11 @@ func (m *TaskMutation) ClearedEdges() []string {
 	if m.clearedsubtask {
 		edges = append(edges, task.EdgeSubtask)
 	}
-	if m.clearedsuccess_point {
-		edges = append(edges, task.EdgeSuccessPoint)
+	if m.clearedpoint {
+		edges = append(edges, task.EdgePoint)
 	}
-	if m.cleareduser {
-		edges = append(edges, task.EdgeUser)
+	if m.clearedmember {
+		edges = append(edges, task.EdgeMember)
 	}
 	return edges
 }
@@ -3058,10 +3032,10 @@ func (m *TaskMutation) EdgeCleared(name string) bool {
 	switch name {
 	case task.EdgeSubtask:
 		return m.clearedsubtask
-	case task.EdgeSuccessPoint:
-		return m.clearedsuccess_point
-	case task.EdgeUser:
-		return m.cleareduser
+	case task.EdgePoint:
+		return m.clearedpoint
+	case task.EdgeMember:
+		return m.clearedmember
 	}
 	return false
 }
@@ -3070,11 +3044,11 @@ func (m *TaskMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *TaskMutation) ClearEdge(name string) error {
 	switch name {
-	case task.EdgeSubtask:
-		m.ClearSubtask()
+	case task.EdgePoint:
+		m.ClearPoint()
 		return nil
-	case task.EdgeSuccessPoint:
-		m.ClearSuccessPoint()
+	case task.EdgeMember:
+		m.ClearMember()
 		return nil
 	}
 	return fmt.Errorf("unknown Task unique edge %s", name)
@@ -3087,11 +3061,11 @@ func (m *TaskMutation) ResetEdge(name string) error {
 	case task.EdgeSubtask:
 		m.ResetSubtask()
 		return nil
-	case task.EdgeSuccessPoint:
-		m.ResetSuccessPoint()
+	case task.EdgePoint:
+		m.ResetPoint()
 		return nil
-	case task.EdgeUser:
-		m.ResetUser()
+	case task.EdgeMember:
+		m.ResetMember()
 		return nil
 	}
 	return fmt.Errorf("unknown Task edge %s", name)

@@ -48,19 +48,23 @@ func (stu *SubTaskUpdate) SetPoint(p *Point) *SubTaskUpdate {
 	return stu.SetPointID(p.ID)
 }
 
-// AddTaskIDs adds the "task" edge to the Task entity by IDs.
-func (stu *SubTaskUpdate) AddTaskIDs(ids ...int) *SubTaskUpdate {
-	stu.mutation.AddTaskIDs(ids...)
+// SetTaskID sets the "task" edge to the Task entity by ID.
+func (stu *SubTaskUpdate) SetTaskID(id int) *SubTaskUpdate {
+	stu.mutation.SetTaskID(id)
 	return stu
 }
 
-// AddTask adds the "task" edges to the Task entity.
-func (stu *SubTaskUpdate) AddTask(t ...*Task) *SubTaskUpdate {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+// SetNillableTaskID sets the "task" edge to the Task entity by ID if the given value is not nil.
+func (stu *SubTaskUpdate) SetNillableTaskID(id *int) *SubTaskUpdate {
+	if id != nil {
+		stu = stu.SetTaskID(*id)
 	}
-	return stu.AddTaskIDs(ids...)
+	return stu
+}
+
+// SetTask sets the "task" edge to the Task entity.
+func (stu *SubTaskUpdate) SetTask(t *Task) *SubTaskUpdate {
+	return stu.SetTaskID(t.ID)
 }
 
 // Mutation returns the SubTaskMutation object of the builder.
@@ -74,25 +78,10 @@ func (stu *SubTaskUpdate) ClearPoint() *SubTaskUpdate {
 	return stu
 }
 
-// ClearTask clears all "task" edges to the Task entity.
+// ClearTask clears the "task" edge to the Task entity.
 func (stu *SubTaskUpdate) ClearTask() *SubTaskUpdate {
 	stu.mutation.ClearTask()
 	return stu
-}
-
-// RemoveTaskIDs removes the "task" edge to Task entities by IDs.
-func (stu *SubTaskUpdate) RemoveTaskIDs(ids ...int) *SubTaskUpdate {
-	stu.mutation.RemoveTaskIDs(ids...)
-	return stu
-}
-
-// RemoveTask removes "task" edges to Task entities.
-func (stu *SubTaskUpdate) RemoveTask(t ...*Task) *SubTaskUpdate {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return stu.RemoveTaskIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -162,7 +151,7 @@ func (stu *SubTaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if stu.mutation.TaskCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   subtask.TaskTable,
 			Columns: []string{subtask.TaskColumn},
@@ -170,28 +159,12 @@ func (stu *SubTaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := stu.mutation.RemovedTaskIDs(); len(nodes) > 0 && !stu.mutation.TaskCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   subtask.TaskTable,
-			Columns: []string{subtask.TaskColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := stu.mutation.TaskIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   subtask.TaskTable,
 			Columns: []string{subtask.TaskColumn},
@@ -244,19 +217,23 @@ func (stuo *SubTaskUpdateOne) SetPoint(p *Point) *SubTaskUpdateOne {
 	return stuo.SetPointID(p.ID)
 }
 
-// AddTaskIDs adds the "task" edge to the Task entity by IDs.
-func (stuo *SubTaskUpdateOne) AddTaskIDs(ids ...int) *SubTaskUpdateOne {
-	stuo.mutation.AddTaskIDs(ids...)
+// SetTaskID sets the "task" edge to the Task entity by ID.
+func (stuo *SubTaskUpdateOne) SetTaskID(id int) *SubTaskUpdateOne {
+	stuo.mutation.SetTaskID(id)
 	return stuo
 }
 
-// AddTask adds the "task" edges to the Task entity.
-func (stuo *SubTaskUpdateOne) AddTask(t ...*Task) *SubTaskUpdateOne {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+// SetNillableTaskID sets the "task" edge to the Task entity by ID if the given value is not nil.
+func (stuo *SubTaskUpdateOne) SetNillableTaskID(id *int) *SubTaskUpdateOne {
+	if id != nil {
+		stuo = stuo.SetTaskID(*id)
 	}
-	return stuo.AddTaskIDs(ids...)
+	return stuo
+}
+
+// SetTask sets the "task" edge to the Task entity.
+func (stuo *SubTaskUpdateOne) SetTask(t *Task) *SubTaskUpdateOne {
+	return stuo.SetTaskID(t.ID)
 }
 
 // Mutation returns the SubTaskMutation object of the builder.
@@ -270,25 +247,10 @@ func (stuo *SubTaskUpdateOne) ClearPoint() *SubTaskUpdateOne {
 	return stuo
 }
 
-// ClearTask clears all "task" edges to the Task entity.
+// ClearTask clears the "task" edge to the Task entity.
 func (stuo *SubTaskUpdateOne) ClearTask() *SubTaskUpdateOne {
 	stuo.mutation.ClearTask()
 	return stuo
-}
-
-// RemoveTaskIDs removes the "task" edge to Task entities by IDs.
-func (stuo *SubTaskUpdateOne) RemoveTaskIDs(ids ...int) *SubTaskUpdateOne {
-	stuo.mutation.RemoveTaskIDs(ids...)
-	return stuo
-}
-
-// RemoveTask removes "task" edges to Task entities.
-func (stuo *SubTaskUpdateOne) RemoveTask(t ...*Task) *SubTaskUpdateOne {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
-	}
-	return stuo.RemoveTaskIDs(ids...)
 }
 
 // Where appends a list predicates to the SubTaskUpdate builder.
@@ -388,7 +350,7 @@ func (stuo *SubTaskUpdateOne) sqlSave(ctx context.Context) (_node *SubTask, err 
 	}
 	if stuo.mutation.TaskCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   subtask.TaskTable,
 			Columns: []string{subtask.TaskColumn},
@@ -396,28 +358,12 @@ func (stuo *SubTaskUpdateOne) sqlSave(ctx context.Context) (_node *SubTask, err 
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := stuo.mutation.RemovedTaskIDs(); len(nodes) > 0 && !stuo.mutation.TaskCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: true,
-			Table:   subtask.TaskTable,
-			Columns: []string{subtask.TaskColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := stuo.mutation.TaskIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   subtask.TaskTable,
 			Columns: []string{subtask.TaskColumn},

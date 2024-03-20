@@ -30,7 +30,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "point_info_points", Type: field.TypeInt, Nullable: true},
 		{Name: "sub_task_point", Type: field.TypeInt, Unique: true, Nullable: true},
-		{Name: "task_success_point", Type: field.TypeInt, Unique: true, Nullable: true},
+		{Name: "task_point", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// PointsTable holds the schema information for the "points" table.
 	PointsTable = &schema.Table{
@@ -51,7 +51,7 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:     "points_tasks_success_point",
+				Symbol:     "points_tasks_point",
 				Columns:    []*schema.Column{PointsColumns[6]},
 				RefColumns: []*schema.Column{TasksColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -82,12 +82,21 @@ var (
 	// SubTasksColumns holds the columns for the "sub_tasks" table.
 	SubTasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "task_subtask", Type: field.TypeInt, Nullable: true},
 	}
 	// SubTasksTable holds the schema information for the "sub_tasks" table.
 	SubTasksTable = &schema.Table{
 		Name:       "sub_tasks",
 		Columns:    SubTasksColumns,
 		PrimaryKey: []*schema.Column{SubTasksColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "sub_tasks_tasks_subtask",
+				Columns:    []*schema.Column{SubTasksColumns[1]},
+				RefColumns: []*schema.Column{TasksColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// TasksColumns holds the columns for the "tasks" table.
 	TasksColumns = []*schema.Column{
@@ -96,7 +105,7 @@ var (
 		{Name: "total_status", Type: field.TypeInt},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "modified_at", Type: field.TypeTime},
-		{Name: "task_subtask", Type: field.TypeInt, Nullable: true},
+		{Name: "member_tasks", Type: field.TypeInt, Nullable: true},
 	}
 	// TasksTable holds the schema information for the "tasks" table.
 	TasksTable = &schema.Table{
@@ -105,35 +114,10 @@ var (
 		PrimaryKey: []*schema.Column{TasksColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "tasks_sub_tasks_subtask",
+				Symbol:     "tasks_members_tasks",
 				Columns:    []*schema.Column{TasksColumns[5]},
-				RefColumns: []*schema.Column{SubTasksColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
-	}
-	// MemberTasksColumns holds the columns for the "member_tasks" table.
-	MemberTasksColumns = []*schema.Column{
-		{Name: "member_id", Type: field.TypeInt},
-		{Name: "task_id", Type: field.TypeInt},
-	}
-	// MemberTasksTable holds the schema information for the "member_tasks" table.
-	MemberTasksTable = &schema.Table{
-		Name:       "member_tasks",
-		Columns:    MemberTasksColumns,
-		PrimaryKey: []*schema.Column{MemberTasksColumns[0], MemberTasksColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "member_tasks_member_id",
-				Columns:    []*schema.Column{MemberTasksColumns[0]},
 				RefColumns: []*schema.Column{MembersColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "member_tasks_task_id",
-				Columns:    []*schema.Column{MemberTasksColumns[1]},
-				RefColumns: []*schema.Column{TasksColumns[0]},
-				OnDelete:   schema.Cascade,
+				OnDelete:   schema.SetNull,
 			},
 		},
 	}
@@ -144,7 +128,6 @@ var (
 		PointInfosTable,
 		SubTasksTable,
 		TasksTable,
-		MemberTasksTable,
 	}
 )
 
@@ -153,7 +136,6 @@ func init() {
 	PointsTable.ForeignKeys[1].RefTable = SubTasksTable
 	PointsTable.ForeignKeys[2].RefTable = TasksTable
 	PointInfosTable.ForeignKeys[0].RefTable = MembersTable
-	TasksTable.ForeignKeys[0].RefTable = SubTasksTable
-	MemberTasksTable.ForeignKeys[0].RefTable = MembersTable
-	MemberTasksTable.ForeignKeys[1].RefTable = TasksTable
+	SubTasksTable.ForeignKeys[0].RefTable = TasksTable
+	TasksTable.ForeignKeys[0].RefTable = MembersTable
 }

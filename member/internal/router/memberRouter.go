@@ -13,4 +13,5 @@ func registerMemberRouter(r *mux.Router) {
 	memberRouter.HandleFunc("/all", controller.GetAllMembersController).Methods(http.MethodGet)
 	memberRouter.HandleFunc("/delete/{id}", controller.DeleteMemberController).Methods(http.MethodGet)
 	memberRouter.HandleFunc("/update/{id}", controller.UpdateMemberController).Methods(http.MethodPost)
+	memberRouter.HandleFunc("/{id}/valid", controller.ValidationController).Methods(http.MethodGet)
 }

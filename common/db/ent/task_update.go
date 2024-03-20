@@ -94,57 +94,57 @@ func (tu *TaskUpdate) SetNillableModifiedAt(t *time.Time) *TaskUpdate {
 	return tu
 }
 
-// SetSubtaskID sets the "subtask" edge to the SubTask entity by ID.
-func (tu *TaskUpdate) SetSubtaskID(id int) *TaskUpdate {
-	tu.mutation.SetSubtaskID(id)
+// AddSubtaskIDs adds the "subtask" edge to the SubTask entity by IDs.
+func (tu *TaskUpdate) AddSubtaskIDs(ids ...int) *TaskUpdate {
+	tu.mutation.AddSubtaskIDs(ids...)
 	return tu
 }
 
-// SetNillableSubtaskID sets the "subtask" edge to the SubTask entity by ID if the given value is not nil.
-func (tu *TaskUpdate) SetNillableSubtaskID(id *int) *TaskUpdate {
+// AddSubtask adds the "subtask" edges to the SubTask entity.
+func (tu *TaskUpdate) AddSubtask(s ...*SubTask) *TaskUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tu.AddSubtaskIDs(ids...)
+}
+
+// SetPointID sets the "point" edge to the Point entity by ID.
+func (tu *TaskUpdate) SetPointID(id int) *TaskUpdate {
+	tu.mutation.SetPointID(id)
+	return tu
+}
+
+// SetNillablePointID sets the "point" edge to the Point entity by ID if the given value is not nil.
+func (tu *TaskUpdate) SetNillablePointID(id *int) *TaskUpdate {
 	if id != nil {
-		tu = tu.SetSubtaskID(*id)
+		tu = tu.SetPointID(*id)
 	}
 	return tu
 }
 
-// SetSubtask sets the "subtask" edge to the SubTask entity.
-func (tu *TaskUpdate) SetSubtask(s *SubTask) *TaskUpdate {
-	return tu.SetSubtaskID(s.ID)
+// SetPoint sets the "point" edge to the Point entity.
+func (tu *TaskUpdate) SetPoint(p *Point) *TaskUpdate {
+	return tu.SetPointID(p.ID)
 }
 
-// SetSuccessPointID sets the "success_point" edge to the Point entity by ID.
-func (tu *TaskUpdate) SetSuccessPointID(id int) *TaskUpdate {
-	tu.mutation.SetSuccessPointID(id)
+// SetMemberID sets the "member" edge to the Member entity by ID.
+func (tu *TaskUpdate) SetMemberID(id int) *TaskUpdate {
+	tu.mutation.SetMemberID(id)
 	return tu
 }
 
-// SetNillableSuccessPointID sets the "success_point" edge to the Point entity by ID if the given value is not nil.
-func (tu *TaskUpdate) SetNillableSuccessPointID(id *int) *TaskUpdate {
+// SetNillableMemberID sets the "member" edge to the Member entity by ID if the given value is not nil.
+func (tu *TaskUpdate) SetNillableMemberID(id *int) *TaskUpdate {
 	if id != nil {
-		tu = tu.SetSuccessPointID(*id)
+		tu = tu.SetMemberID(*id)
 	}
 	return tu
 }
 
-// SetSuccessPoint sets the "success_point" edge to the Point entity.
-func (tu *TaskUpdate) SetSuccessPoint(p *Point) *TaskUpdate {
-	return tu.SetSuccessPointID(p.ID)
-}
-
-// AddUserIDs adds the "user" edge to the Member entity by IDs.
-func (tu *TaskUpdate) AddUserIDs(ids ...int) *TaskUpdate {
-	tu.mutation.AddUserIDs(ids...)
-	return tu
-}
-
-// AddUser adds the "user" edges to the Member entity.
-func (tu *TaskUpdate) AddUser(m ...*Member) *TaskUpdate {
-	ids := make([]int, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return tu.AddUserIDs(ids...)
+// SetMember sets the "member" edge to the Member entity.
+func (tu *TaskUpdate) SetMember(m *Member) *TaskUpdate {
+	return tu.SetMemberID(m.ID)
 }
 
 // Mutation returns the TaskMutation object of the builder.
@@ -152,37 +152,37 @@ func (tu *TaskUpdate) Mutation() *TaskMutation {
 	return tu.mutation
 }
 
-// ClearSubtask clears the "subtask" edge to the SubTask entity.
+// ClearSubtask clears all "subtask" edges to the SubTask entity.
 func (tu *TaskUpdate) ClearSubtask() *TaskUpdate {
 	tu.mutation.ClearSubtask()
 	return tu
 }
 
-// ClearSuccessPoint clears the "success_point" edge to the Point entity.
-func (tu *TaskUpdate) ClearSuccessPoint() *TaskUpdate {
-	tu.mutation.ClearSuccessPoint()
+// RemoveSubtaskIDs removes the "subtask" edge to SubTask entities by IDs.
+func (tu *TaskUpdate) RemoveSubtaskIDs(ids ...int) *TaskUpdate {
+	tu.mutation.RemoveSubtaskIDs(ids...)
 	return tu
 }
 
-// ClearUser clears all "user" edges to the Member entity.
-func (tu *TaskUpdate) ClearUser() *TaskUpdate {
-	tu.mutation.ClearUser()
-	return tu
-}
-
-// RemoveUserIDs removes the "user" edge to Member entities by IDs.
-func (tu *TaskUpdate) RemoveUserIDs(ids ...int) *TaskUpdate {
-	tu.mutation.RemoveUserIDs(ids...)
-	return tu
-}
-
-// RemoveUser removes "user" edges to Member entities.
-func (tu *TaskUpdate) RemoveUser(m ...*Member) *TaskUpdate {
-	ids := make([]int, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+// RemoveSubtask removes "subtask" edges to SubTask entities.
+func (tu *TaskUpdate) RemoveSubtask(s ...*SubTask) *TaskUpdate {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
 	}
-	return tu.RemoveUserIDs(ids...)
+	return tu.RemoveSubtaskIDs(ids...)
+}
+
+// ClearPoint clears the "point" edge to the Point entity.
+func (tu *TaskUpdate) ClearPoint() *TaskUpdate {
+	tu.mutation.ClearPoint()
+	return tu
+}
+
+// ClearMember clears the "member" edge to the Member entity.
+func (tu *TaskUpdate) ClearMember() *TaskUpdate {
+	tu.mutation.ClearMember()
+	return tu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -238,7 +238,7 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tu.mutation.SubtaskCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   task.SubtaskTable,
 			Columns: []string{task.SubtaskColumn},
@@ -246,12 +246,28 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(subtask.FieldID, field.TypeInt),
 			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RemovedSubtaskIDs(); len(nodes) > 0 && !tu.mutation.SubtaskCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   task.SubtaskTable,
+			Columns: []string{task.SubtaskColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(subtask.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := tu.mutation.SubtaskIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   task.SubtaskTable,
 			Columns: []string{task.SubtaskColumn},
@@ -265,12 +281,12 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if tu.mutation.SuccessPointCleared() {
+	if tu.mutation.PointCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   task.SuccessPointTable,
-			Columns: []string{task.SuccessPointColumn},
+			Table:   task.PointTable,
+			Columns: []string{task.PointColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(point.FieldID, field.TypeInt),
@@ -278,12 +294,12 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tu.mutation.SuccessPointIDs(); len(nodes) > 0 {
+	if nodes := tu.mutation.PointIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   task.SuccessPointTable,
-			Columns: []string{task.SuccessPointColumn},
+			Table:   task.PointTable,
+			Columns: []string{task.PointColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(point.FieldID, field.TypeInt),
@@ -294,12 +310,12 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if tu.mutation.UserCleared() {
+	if tu.mutation.MemberCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   task.UserTable,
-			Columns: task.UserPrimaryKey,
+			Table:   task.MemberTable,
+			Columns: []string{task.MemberColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
@@ -307,28 +323,12 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tu.mutation.RemovedUserIDs(); len(nodes) > 0 && !tu.mutation.UserCleared() {
+	if nodes := tu.mutation.MemberIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   task.UserTable,
-			Columns: task.UserPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tu.mutation.UserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   task.UserTable,
-			Columns: task.UserPrimaryKey,
+			Table:   task.MemberTable,
+			Columns: []string{task.MemberColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
@@ -422,57 +422,57 @@ func (tuo *TaskUpdateOne) SetNillableModifiedAt(t *time.Time) *TaskUpdateOne {
 	return tuo
 }
 
-// SetSubtaskID sets the "subtask" edge to the SubTask entity by ID.
-func (tuo *TaskUpdateOne) SetSubtaskID(id int) *TaskUpdateOne {
-	tuo.mutation.SetSubtaskID(id)
+// AddSubtaskIDs adds the "subtask" edge to the SubTask entity by IDs.
+func (tuo *TaskUpdateOne) AddSubtaskIDs(ids ...int) *TaskUpdateOne {
+	tuo.mutation.AddSubtaskIDs(ids...)
 	return tuo
 }
 
-// SetNillableSubtaskID sets the "subtask" edge to the SubTask entity by ID if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableSubtaskID(id *int) *TaskUpdateOne {
+// AddSubtask adds the "subtask" edges to the SubTask entity.
+func (tuo *TaskUpdateOne) AddSubtask(s ...*SubTask) *TaskUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return tuo.AddSubtaskIDs(ids...)
+}
+
+// SetPointID sets the "point" edge to the Point entity by ID.
+func (tuo *TaskUpdateOne) SetPointID(id int) *TaskUpdateOne {
+	tuo.mutation.SetPointID(id)
+	return tuo
+}
+
+// SetNillablePointID sets the "point" edge to the Point entity by ID if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillablePointID(id *int) *TaskUpdateOne {
 	if id != nil {
-		tuo = tuo.SetSubtaskID(*id)
+		tuo = tuo.SetPointID(*id)
 	}
 	return tuo
 }
 
-// SetSubtask sets the "subtask" edge to the SubTask entity.
-func (tuo *TaskUpdateOne) SetSubtask(s *SubTask) *TaskUpdateOne {
-	return tuo.SetSubtaskID(s.ID)
+// SetPoint sets the "point" edge to the Point entity.
+func (tuo *TaskUpdateOne) SetPoint(p *Point) *TaskUpdateOne {
+	return tuo.SetPointID(p.ID)
 }
 
-// SetSuccessPointID sets the "success_point" edge to the Point entity by ID.
-func (tuo *TaskUpdateOne) SetSuccessPointID(id int) *TaskUpdateOne {
-	tuo.mutation.SetSuccessPointID(id)
+// SetMemberID sets the "member" edge to the Member entity by ID.
+func (tuo *TaskUpdateOne) SetMemberID(id int) *TaskUpdateOne {
+	tuo.mutation.SetMemberID(id)
 	return tuo
 }
 
-// SetNillableSuccessPointID sets the "success_point" edge to the Point entity by ID if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableSuccessPointID(id *int) *TaskUpdateOne {
+// SetNillableMemberID sets the "member" edge to the Member entity by ID if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableMemberID(id *int) *TaskUpdateOne {
 	if id != nil {
-		tuo = tuo.SetSuccessPointID(*id)
+		tuo = tuo.SetMemberID(*id)
 	}
 	return tuo
 }
 
-// SetSuccessPoint sets the "success_point" edge to the Point entity.
-func (tuo *TaskUpdateOne) SetSuccessPoint(p *Point) *TaskUpdateOne {
-	return tuo.SetSuccessPointID(p.ID)
-}
-
-// AddUserIDs adds the "user" edge to the Member entity by IDs.
-func (tuo *TaskUpdateOne) AddUserIDs(ids ...int) *TaskUpdateOne {
-	tuo.mutation.AddUserIDs(ids...)
-	return tuo
-}
-
-// AddUser adds the "user" edges to the Member entity.
-func (tuo *TaskUpdateOne) AddUser(m ...*Member) *TaskUpdateOne {
-	ids := make([]int, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return tuo.AddUserIDs(ids...)
+// SetMember sets the "member" edge to the Member entity.
+func (tuo *TaskUpdateOne) SetMember(m *Member) *TaskUpdateOne {
+	return tuo.SetMemberID(m.ID)
 }
 
 // Mutation returns the TaskMutation object of the builder.
@@ -480,37 +480,37 @@ func (tuo *TaskUpdateOne) Mutation() *TaskMutation {
 	return tuo.mutation
 }
 
-// ClearSubtask clears the "subtask" edge to the SubTask entity.
+// ClearSubtask clears all "subtask" edges to the SubTask entity.
 func (tuo *TaskUpdateOne) ClearSubtask() *TaskUpdateOne {
 	tuo.mutation.ClearSubtask()
 	return tuo
 }
 
-// ClearSuccessPoint clears the "success_point" edge to the Point entity.
-func (tuo *TaskUpdateOne) ClearSuccessPoint() *TaskUpdateOne {
-	tuo.mutation.ClearSuccessPoint()
+// RemoveSubtaskIDs removes the "subtask" edge to SubTask entities by IDs.
+func (tuo *TaskUpdateOne) RemoveSubtaskIDs(ids ...int) *TaskUpdateOne {
+	tuo.mutation.RemoveSubtaskIDs(ids...)
 	return tuo
 }
 
-// ClearUser clears all "user" edges to the Member entity.
-func (tuo *TaskUpdateOne) ClearUser() *TaskUpdateOne {
-	tuo.mutation.ClearUser()
-	return tuo
-}
-
-// RemoveUserIDs removes the "user" edge to Member entities by IDs.
-func (tuo *TaskUpdateOne) RemoveUserIDs(ids ...int) *TaskUpdateOne {
-	tuo.mutation.RemoveUserIDs(ids...)
-	return tuo
-}
-
-// RemoveUser removes "user" edges to Member entities.
-func (tuo *TaskUpdateOne) RemoveUser(m ...*Member) *TaskUpdateOne {
-	ids := make([]int, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+// RemoveSubtask removes "subtask" edges to SubTask entities.
+func (tuo *TaskUpdateOne) RemoveSubtask(s ...*SubTask) *TaskUpdateOne {
+	ids := make([]int, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
 	}
-	return tuo.RemoveUserIDs(ids...)
+	return tuo.RemoveSubtaskIDs(ids...)
+}
+
+// ClearPoint clears the "point" edge to the Point entity.
+func (tuo *TaskUpdateOne) ClearPoint() *TaskUpdateOne {
+	tuo.mutation.ClearPoint()
+	return tuo
+}
+
+// ClearMember clears the "member" edge to the Member entity.
+func (tuo *TaskUpdateOne) ClearMember() *TaskUpdateOne {
+	tuo.mutation.ClearMember()
+	return tuo
 }
 
 // Where appends a list predicates to the TaskUpdate builder.
@@ -596,7 +596,7 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	}
 	if tuo.mutation.SubtaskCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   task.SubtaskTable,
 			Columns: []string{task.SubtaskColumn},
@@ -604,12 +604,28 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(subtask.FieldID, field.TypeInt),
 			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RemovedSubtaskIDs(); len(nodes) > 0 && !tuo.mutation.SubtaskCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   task.SubtaskTable,
+			Columns: []string{task.SubtaskColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(subtask.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := tuo.mutation.SubtaskIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   task.SubtaskTable,
 			Columns: []string{task.SubtaskColumn},
@@ -623,12 +639,12 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if tuo.mutation.SuccessPointCleared() {
+	if tuo.mutation.PointCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   task.SuccessPointTable,
-			Columns: []string{task.SuccessPointColumn},
+			Table:   task.PointTable,
+			Columns: []string{task.PointColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(point.FieldID, field.TypeInt),
@@ -636,12 +652,12 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tuo.mutation.SuccessPointIDs(); len(nodes) > 0 {
+	if nodes := tuo.mutation.PointIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   task.SuccessPointTable,
-			Columns: []string{task.SuccessPointColumn},
+			Table:   task.PointTable,
+			Columns: []string{task.PointColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(point.FieldID, field.TypeInt),
@@ -652,12 +668,12 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if tuo.mutation.UserCleared() {
+	if tuo.mutation.MemberCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   task.UserTable,
-			Columns: task.UserPrimaryKey,
+			Table:   task.MemberTable,
+			Columns: []string{task.MemberColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
@@ -665,28 +681,12 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tuo.mutation.RemovedUserIDs(); len(nodes) > 0 && !tuo.mutation.UserCleared() {
+	if nodes := tuo.mutation.MemberIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   task.UserTable,
-			Columns: task.UserPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tuo.mutation.UserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   task.UserTable,
-			Columns: task.UserPrimaryKey,
+			Table:   task.MemberTable,
+			Columns: []string{task.MemberColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt),

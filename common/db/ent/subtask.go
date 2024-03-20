@@ -7,6 +7,7 @@ import (
 	"strings"
 	"todopoint/common/db/ent/point"
 	"todopoint/common/db/ent/subtask"
+	"todopoint/common/db/ent/task"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -20,6 +21,7 @@ type SubTask struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SubTaskQuery when eager-loading is set.
 	Edges        SubTaskEdges `json:"edges"`
+	task_subtask *int
 	selectValues sql.SelectValues
 }
 
@@ -28,7 +30,7 @@ type SubTaskEdges struct {
 	// Point holds the value of the point edge.
 	Point *Point `json:"point,omitempty"`
 	// Task holds the value of the task edge.
-	Task []*Task `json:"task,omitempty"`
+	Task *Task `json:"task,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
@@ -46,10 +48,12 @@ func (e SubTaskEdges) PointOrErr() (*Point, error) {
 }
 
 // TaskOrErr returns the Task value or an error if the edge
-// was not loaded in eager-loading.
-func (e SubTaskEdges) TaskOrErr() ([]*Task, error) {
-	if e.loadedTypes[1] {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e SubTaskEdges) TaskOrErr() (*Task, error) {
+	if e.Task != nil {
 		return e.Task, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: task.Label}
 	}
 	return nil, &NotLoadedError{edge: "task"}
 }
@@ -60,6 +64,8 @@ func (*SubTask) scanValues(columns []string) ([]any, error) {
 	for i := range columns {
 		switch columns[i] {
 		case subtask.FieldID:
+			values[i] = new(sql.NullInt64)
+		case subtask.ForeignKeys[0]: // task_subtask
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -82,6 +88,13 @@ func (st *SubTask) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			st.ID = int(value.Int64)
+		case subtask.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field task_subtask", value)
+			} else if value.Valid {
+				st.task_subtask = new(int)
+				*st.task_subtask = int(value.Int64)
+			}
 		default:
 			st.selectValues.Set(columns[i], values[i])
 		}

@@ -39,19 +39,23 @@ func (stc *SubTaskCreate) SetPoint(p *Point) *SubTaskCreate {
 	return stc.SetPointID(p.ID)
 }
 
-// AddTaskIDs adds the "task" edge to the Task entity by IDs.
-func (stc *SubTaskCreate) AddTaskIDs(ids ...int) *SubTaskCreate {
-	stc.mutation.AddTaskIDs(ids...)
+// SetTaskID sets the "task" edge to the Task entity by ID.
+func (stc *SubTaskCreate) SetTaskID(id int) *SubTaskCreate {
+	stc.mutation.SetTaskID(id)
 	return stc
 }
 
-// AddTask adds the "task" edges to the Task entity.
-func (stc *SubTaskCreate) AddTask(t ...*Task) *SubTaskCreate {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+// SetNillableTaskID sets the "task" edge to the Task entity by ID if the given value is not nil.
+func (stc *SubTaskCreate) SetNillableTaskID(id *int) *SubTaskCreate {
+	if id != nil {
+		stc = stc.SetTaskID(*id)
 	}
-	return stc.AddTaskIDs(ids...)
+	return stc
+}
+
+// SetTask sets the "task" edge to the Task entity.
+func (stc *SubTaskCreate) SetTask(t *Task) *SubTaskCreate {
+	return stc.SetTaskID(t.ID)
 }
 
 // Mutation returns the SubTaskMutation object of the builder.
@@ -132,7 +136,7 @@ func (stc *SubTaskCreate) createSpec() (*SubTask, *sqlgraph.CreateSpec) {
 	}
 	if nodes := stc.mutation.TaskIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   subtask.TaskTable,
 			Columns: []string{subtask.TaskColumn},
@@ -144,6 +148,7 @@ func (stc *SubTaskCreate) createSpec() (*SubTask, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.task_subtask = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
