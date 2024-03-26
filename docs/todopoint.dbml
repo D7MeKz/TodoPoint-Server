@@ -1,0 +1,51 @@
+Project TodoPoint {
+  database_type: 'MySQL'
+  Note: '''
+    # Member Database
+  '''
+}
+
+Table Member as Mem {
+    id int [pk, increment]
+    email varchar
+    username varchar
+    password varchar
+    created_at datetime [default: `now()`]
+}
+
+Table Point as p {
+    id int [pk, increment]
+    point int
+    type string
+    created_at datetime [default: `now()`]
+    pointinfo_id int [ref: > pd.id]
+}
+
+Table PointInfo as pd {
+    id int [pk, increment]
+    total_point int
+    created_at datetime [default: `now()`]
+    user_id int [ref: - Mem.id]
+}
+
+Table Task as t{
+    id int [pk, increment]
+    title varchar
+    total_status varchar
+    user_id int [ref: > Mem.id]
+    success_point int [ref: - p.id]
+    created_at datetime [default: `now()`]
+    modified_at datetime [default: `now()`]
+}
+
+Table Subtask as st{
+    id int [pk, increment]
+    title varchar
+    status varchar
+    task_id int [ref: > t.id]
+    point int [ref: - p.id]
+    created_at datetime [default: `now()`]
+    modified_at datetime
+}
+
+
