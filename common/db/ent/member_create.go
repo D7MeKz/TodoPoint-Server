@@ -34,6 +34,14 @@ func (mc *MemberCreate) SetUsername(s string) *MemberCreate {
 	return mc
 }
 
+// SetNillableUsername sets the "username" field if the given value is not nil.
+func (mc *MemberCreate) SetNillableUsername(s *string) *MemberCreate {
+	if s != nil {
+		mc.SetUsername(*s)
+	}
+	return mc
+}
+
 // SetPassword sets the "password" field.
 func (mc *MemberCreate) SetPassword(s string) *MemberCreate {
 	mc.mutation.SetPassword(s)
@@ -136,11 +144,13 @@ func (mc *MemberCreate) check() error {
 	if _, ok := mc.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New(`ent: missing required field "Member.email"`)}
 	}
-	if _, ok := mc.mutation.Username(); !ok {
-		return &ValidationError{Name: "username", err: errors.New(`ent: missing required field "Member.username"`)}
-	}
 	if _, ok := mc.mutation.Password(); !ok {
 		return &ValidationError{Name: "password", err: errors.New(`ent: missing required field "Member.password"`)}
+	}
+	if v, ok := mc.mutation.Password(); ok {
+		if err := member.PasswordValidator(v); err != nil {
+			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "Member.password": %w`, err)}
+		}
 	}
 	if _, ok := mc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Member.created_at"`)}

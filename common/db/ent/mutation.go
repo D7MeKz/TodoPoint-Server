@@ -228,9 +228,22 @@ func (m *MemberMutation) OldUsername(ctx context.Context) (v string, err error) 
 	return oldValue.Username, nil
 }
 
+// ClearUsername clears the value of the "username" field.
+func (m *MemberMutation) ClearUsername() {
+	m.username = nil
+	m.clearedFields[member.FieldUsername] = struct{}{}
+}
+
+// UsernameCleared returns if the "username" field was cleared in this mutation.
+func (m *MemberMutation) UsernameCleared() bool {
+	_, ok := m.clearedFields[member.FieldUsername]
+	return ok
+}
+
 // ResetUsername resets all changes to the "username" field.
 func (m *MemberMutation) ResetUsername() {
 	m.username = nil
+	delete(m.clearedFields, member.FieldUsername)
 }
 
 // SetPassword sets the "password" field.
@@ -559,7 +572,11 @@ func (m *MemberMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *MemberMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(member.FieldUsername) {
+		fields = append(fields, member.FieldUsername)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -572,6 +589,11 @@ func (m *MemberMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *MemberMutation) ClearField(name string) error {
+	switch name {
+	case member.FieldUsername:
+		m.ClearUsername()
+		return nil
+	}
 	return fmt.Errorf("unknown Member nullable field %s", name)
 }
 

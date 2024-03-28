@@ -58,6 +58,12 @@ func (mu *MemberUpdate) SetNillableUsername(s *string) *MemberUpdate {
 	return mu
 }
 
+// ClearUsername clears the value of the "username" field.
+func (mu *MemberUpdate) ClearUsername() *MemberUpdate {
+	mu.mutation.ClearUsername()
+	return mu
+}
+
 // SetPassword sets the "password" field.
 func (mu *MemberUpdate) SetPassword(s string) *MemberUpdate {
 	mu.mutation.SetPassword(s)
@@ -190,7 +196,20 @@ func (mu *MemberUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (mu *MemberUpdate) check() error {
+	if v, ok := mu.mutation.Password(); ok {
+		if err := member.PasswordValidator(v); err != nil {
+			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "Member.password": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (mu *MemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := mu.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(member.Table, member.Columns, sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt))
 	if ps := mu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -204,6 +223,9 @@ func (mu *MemberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := mu.mutation.Username(); ok {
 		_spec.SetField(member.FieldUsername, field.TypeString, value)
+	}
+	if mu.mutation.UsernameCleared() {
+		_spec.ClearField(member.FieldUsername, field.TypeString)
 	}
 	if value, ok := mu.mutation.Password(); ok {
 		_spec.SetField(member.FieldPassword, field.TypeString, value)
@@ -346,6 +368,12 @@ func (muo *MemberUpdateOne) SetNillableUsername(s *string) *MemberUpdateOne {
 	if s != nil {
 		muo.SetUsername(*s)
 	}
+	return muo
+}
+
+// ClearUsername clears the value of the "username" field.
+func (muo *MemberUpdateOne) ClearUsername() *MemberUpdateOne {
+	muo.mutation.ClearUsername()
 	return muo
 }
 
@@ -494,7 +522,20 @@ func (muo *MemberUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (muo *MemberUpdateOne) check() error {
+	if v, ok := muo.mutation.Password(); ok {
+		if err := member.PasswordValidator(v); err != nil {
+			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "Member.password": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (muo *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err error) {
+	if err := muo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(member.Table, member.Columns, sqlgraph.NewFieldSpec(member.FieldID, field.TypeInt))
 	id, ok := muo.mutation.ID()
 	if !ok {
@@ -525,6 +566,9 @@ func (muo *MemberUpdateOne) sqlSave(ctx context.Context) (_node *Member, err err
 	}
 	if value, ok := muo.mutation.Username(); ok {
 		_spec.SetField(member.FieldUsername, field.TypeString, value)
+	}
+	if muo.mutation.UsernameCleared() {
+		_spec.ClearField(member.FieldUsername, field.TypeString)
 	}
 	if value, ok := muo.mutation.Password(); ok {
 		_spec.SetField(member.FieldPassword, field.TypeString, value)

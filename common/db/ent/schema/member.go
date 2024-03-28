@@ -16,9 +16,9 @@ type Member struct {
 func (Member) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("id"),
-		field.String("email"),
-		field.String("username"),
-		field.String("password"),
+		field.String("email").Unique(),
+		field.String("username").Optional(),
+		field.String("password").NotEmpty(),
 		field.Time("created_at").Default(time.Now()),
 	}
 }
@@ -28,6 +28,6 @@ func (Member) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("point_info", PointInfo.Type),
 		edge.To("tasks", Task.Type),
-		edge.From("user", Member.Type).Ref("tasks"),
+		//edge.From("user", Member.Type).Ref("tasks"),
 	}
 }

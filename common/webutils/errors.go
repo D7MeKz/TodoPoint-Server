@@ -1,7 +1,8 @@
-package errorutils
+package webutils
 
 import (
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 )
 
@@ -73,10 +74,14 @@ func (msg *Error) Error() string {
 	return msg.Err.Error()
 }
 
-func NewError() {
+func NewError(errorType ErrorType, err error) *Error {
+	return &Error{ErrorType: errorType, Err: err, Description: ""}
 }
 
-func ErrorFunc(ctx *gin.Context, err Error) {
+func ErrorFunc(ctx *gin.Context, err *Error) {
 	res := getCode(err.ErrorType)
+	log.Println(err)
+
 	ctx.AbortWithStatusJSON(res.Code, res)
+	return
 }

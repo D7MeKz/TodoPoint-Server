@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-	"todopoint/common/db/config"
 
 	"todopoint/banking/controller"
 	"todopoint/banking/repo"

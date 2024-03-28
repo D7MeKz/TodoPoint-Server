@@ -64,6 +64,8 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// PasswordValidator is a validator for the "password" field. It is called by the builders before save.
+	PasswordValidator func(string) error
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt time.Time
 )

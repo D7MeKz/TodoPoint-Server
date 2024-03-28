@@ -17,6 +17,10 @@ import (
 func init() {
 	memberFields := schema.Member{}.Fields()
 	_ = memberFields
+	// memberDescPassword is the schema descriptor for password field.
+	memberDescPassword := memberFields[3].Descriptor()
+	// member.PasswordValidator is a validator for the "password" field. It is called by the builders before save.
+	member.PasswordValidator = memberDescPassword.Validators[0].(func(string) error)
 	// memberDescCreatedAt is the schema descriptor for created_at field.
 	memberDescCreatedAt := memberFields[4].Descriptor()
 	// member.DefaultCreatedAt holds the default value on creation for the created_at field.
