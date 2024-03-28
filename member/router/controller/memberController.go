@@ -2,9 +2,9 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"todopoint/common/errorutils"
-	"todopoint/common/webutils"
+	wu "todopoint/common/webutils"
 	"todopoint/member/data/request"
+	"todopoint/member/data/response"
 	"todopoint/member/service"
 )
 
@@ -18,24 +18,20 @@ func NewMemberController(s service.MemberService) *MemberController {
 	}
 }
 
-func (controller *MemberController) RegisterMember(ctx *gin.Context, req request.RegisterReq) {
-	req = request.RegisterReq{}
-	err := ctx.ShouldBindJSON(req)
+func (controller *MemberController) RegisterMember(ctx *gin.Context) {
+	req := request.RegisterReq{}
+	err := ctx.ShouldBindJSON(&req)
 
 	if err != nil {
-		box := errorutils.NewErrorBox(errorutils.INVALID_JSON_FORMAT, err, "")
-		errorutils.ErrorResponse(ctx, box)
+		wu.ErrorFunc(ctx, wu.NewError(wu.INVALID_JSON_FORMAT, err))
 		return
 	}
 
 	// Create member
-	errBox := controller.service.CreateMember(ctx, req)
-	if errBox != nil {
-		errorutils.ErrorResponse(ctx, errBox)
-		return
-	}
-
-	webutils.Success(ctx)
+	mem := controller.service.CreateMember(ctx, req)
+	mid := response.MemberId{MemberId: mem.ID}
+	wu.SuccessWith(ctx, &mid)
+	return
 }
 
 //func CreateMemberController(w http.ResponseWriter, r *http.Request) {

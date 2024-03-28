@@ -10,7 +10,7 @@ func NewMemberRouter(controller *controller.MemberController) *gin.Engine {
 	router := engine.Group("/members")
 	{
 		router.POST("/register", controller.RegisterMember)
-		router.GET("/:userId/valid", controller.ValidateMember)
+		//router.GET("/:userId/valid", controller.ValidateMember)
 	}
 	return engine
 }
