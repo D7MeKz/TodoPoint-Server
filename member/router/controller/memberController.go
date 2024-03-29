@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"strconv"
 	wu "todopoint/common/webutils"
 	"todopoint/member/data/request"
 	"todopoint/member/data/response"
@@ -50,21 +51,43 @@ func (controller *MemberController) LoginMember(ctx *gin.Context) {
 	}
 }
 
-//func CreateMemberController(w http.ResponseWriter, r *http.Request) {
-//	var newMember model.Member
-//	err := json.NewDecoder(r.Body).Decode(&newMember)
+func (controller *MemberController) IsValidMember(ctx *gin.Context) {
+	strId, isExist := ctx.Params.Get("memId")
+	if isExist == false {
+		wu.ErrorFunc(ctx, wu.NewError(wu.INVALID_URI_FORMAT, nil))
+		return
+	}
+
+	memId, err := strconv.Atoi(strId)
+	if err != nil {
+		wu.ErrorFunc(ctx, wu.NewError(wu.INVALID_URI_FORMAT, err))
+		return
+	}
+	isValid := controller.service.CheckIsValid(ctx, memId)
+	if isValid == true {
+		wu.Success(ctx)
+	}
+
+}
+
+//func ValidationController(w http.ResponseWriter, r *http.Request) {
+//	log.Println("Start Validate Member validation")
+//	vars := mux.Vars(r)
+//	id, err := strconv.Atoi(vars["id"])
 //	if err != nil {
 //		utils.Return(w, false, http.StatusBadRequest, err, nil)
 //		return
 //	}
-//
-//	createdMember, err := service.NewMemberRepo(r.Context()).CreateMember(newMember)
+//	_, err = service.NewMemberRepo(r.Context()).GetMemberByID(id)
 //	if err != nil {
-//		utils.Return(w, false, http.StatusInternalServerError, err, nil)
-//	}
-//	utils.Return(w, true, http.StatusOK, nil, createdMember)
-//}
 //
+//		utils.Return(w, false, http.StatusUnauthorized, err, nil)
+//		return
+//	}
+//
+//	utils.Return(w, true, http.StatusOK, nil, nil)
+//}
+
 //func GetAllMembersController(w http.ResponseWriter, r *http.Request) {
 //	members, err := service.NewMemberRepo(r.Context()).GetAllMembers()
 //	if err != nil {
@@ -128,20 +151,3 @@ func (controller *MemberController) LoginMember(ctx *gin.Context) {
 //	utils.Return(w, true, http.StatusOK, nil, modifiedMember)
 //}
 //
-//func ValidationController(w http.ResponseWriter, r *http.Request) {
-//	log.Println("Start Validate Member validation")
-//	vars := mux.Vars(r)
-//	id, err := strconv.Atoi(vars["id"])
-//	if err != nil {
-//		utils.Return(w, false, http.StatusBadRequest, err, nil)
-//		return
-//	}
-//	_, err = service.NewMemberRepo(r.Context()).GetMemberByID(id)
-//	if err != nil {
-//
-//		utils.Return(w, false, http.StatusUnauthorized, err, nil)
-//		return
-//	}
-//
-//	utils.Return(w, true, http.StatusOK, nil, nil)
-//}

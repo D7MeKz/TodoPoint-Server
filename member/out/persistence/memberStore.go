@@ -38,7 +38,7 @@ func (s *Store) GetById(ctx *gin.Context, memberId int) (*ent.Member, *wu.Error)
 	return mem, nil
 }
 
-func (s *Store) IsExistByEmail(ctx *gin.Context, email string) (*ent.Member, *wu.Error) {
+func (s *Store) GetMemberByEmail(ctx *gin.Context, email string) (*ent.Member, *wu.Error) {
 	mem, err := s.client.Member.Query().Where(member.EmailEQ(email)).First(ctx)
 	if err != nil {
 		return nil, wu.NewError(wu.ERROR_MEMBER_DB, err)
@@ -50,11 +50,19 @@ func (s *Store) IsExistByEmail(ctx *gin.Context, email string) (*ent.Member, *wu
 
 }
 
-func (s *Store) IsExistByLogin(ctx *gin.Context, req request.LoginReq) (int, error) {
+func (s *Store) GetIDByLogin(ctx *gin.Context, req request.LoginReq) (int, error) {
 	mem, err := s.client.Member.Query().Where(member.EmailEQ(req.Email), member.PasswordEQ(req.Password)).First(ctx)
 
 	if err != nil {
 		return -1, err
 	}
 	return mem.ID, nil
+}
+
+func (s *Store) IsExistByID(ctx *gin.Context, memId int) (bool, error) {
+	_, err := s.client.Member.Get(ctx, memId)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
