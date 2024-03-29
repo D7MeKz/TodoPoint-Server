@@ -43,10 +43,11 @@ func (s *MemberService) CreateMember(ctx *gin.Context, req request.RegisterReq) 
 	return mem
 }
 
-func (s *MemberService) LoginMember(ctx *gin.Context, req request.LoginReq) (int, *wu.Error) {
+func (s *MemberService) LoginMember(ctx *gin.Context, req request.LoginReq) int {
 	memId, err := s.Store.IsExistByLogin(ctx, req)
 	if err != nil {
-		return -1, wu.NewError(wu.LOGIN_FAILED, err)
+		wu.ErrorFunc(ctx, wu.NewError(wu.LOGIN_FAILED, err))
+		return -1
 	}
-	return memId, nil
+	return memId
 }
