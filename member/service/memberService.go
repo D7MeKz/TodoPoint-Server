@@ -12,8 +12,9 @@ import (
 type MemberStore interface {
 	Create(ctx *gin.Context, req request.RegisterReq) (*ent.Member, *wu.Error)
 	GetById(ctx *gin.Context, memberId int) (*ent.Member, *wu.Error)
-	IsExistByEmail(ctx *gin.Context, email string) (*ent.Member, *wu.Error)
-	IsExistByLogin(ctx *gin.Context, req request.LoginReq) (int, error)
+	GetMemberByEmail(ctx *gin.Context, email string) (*ent.Member, *wu.Error)
+	GetIDByLogin(ctx *gin.Context, req request.LoginReq) (int, error)
+	IsExistByID(ctx *gin.Context, memId int) (bool, error)
 }
 
 type MemberService struct {
@@ -26,7 +27,7 @@ func NewMemberService(s MemberStore) *MemberService {
 
 func (s *MemberService) CreateMember(ctx *gin.Context, req request.RegisterReq) *ent.Member {
 	// Check member Exist
-	existedMem, err := s.Store.IsExistByEmail(ctx, req.Email)
+	existedMem, err := s.Store.GetMemberByEmail(ctx, req.Email)
 	//if err != nil {
 	//	wu.ErrorFunc(ctx, err)
 	//}
@@ -44,10 +45,19 @@ func (s *MemberService) CreateMember(ctx *gin.Context, req request.RegisterReq) 
 }
 
 func (s *MemberService) LoginMember(ctx *gin.Context, req request.LoginReq) int {
-	memId, err := s.Store.IsExistByLogin(ctx, req)
+	memId, err := s.Store.GetIDByLogin(ctx, req)
 	if err != nil {
 		wu.ErrorFunc(ctx, wu.NewError(wu.LOGIN_FAILED, err))
 		return -1
 	}
 	return memId
+}
+
+func (s *MemberService) CheckIsValid(ctx *gin.Context, memId int) bool {
+	isExist, err := s.Store.IsExistByID(ctx, memId)
+	if err != nil {
+		wu.ErrorFunc(ctx, wu.NewError(wu.INVALID_MEMBER, err))
+		return false
+	}
+	return isExist
 }
