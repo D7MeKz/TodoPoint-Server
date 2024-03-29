@@ -9,7 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-	"todopoint/common/db/ent"
+	"todopoint/member/out/ent"
 )
 
 var (

@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-	"todopoint/common/db/config"
+	"todopoint/member/config"
 	"todopoint/member/out/persistence"
 	"todopoint/member/router"
 	"todopoint/member/router/controller"

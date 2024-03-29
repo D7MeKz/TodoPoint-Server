@@ -2,7 +2,8 @@ package service
 
 import (
 	"github.com/gin-gonic/gin"
-	"todopoint/common/db/ent"
+	"todopoint/member/out/ent"
+
 	wu "todopoint/common/webutils"
 	"todopoint/member/data/request"
 )
