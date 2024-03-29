@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	wu "todopoint/common/webutils"
 	"todopoint/member/data/request"
@@ -32,6 +33,25 @@ func (controller *MemberController) RegisterMember(ctx *gin.Context) {
 	mid := response.MemberId{MemberId: mem.ID}
 	wu.SuccessWith(ctx, &mid)
 	return
+}
+
+func (controller *MemberController) LoginMember(ctx *gin.Context) {
+	req := request.LoginReq{}
+	err := ctx.ShouldBindJSON(&req)
+	if err != nil {
+		wu.ErrorFunc(ctx, wu.NewError(wu.INVALID_JSON_FORMAT, err))
+		return
+	}
+	// login Member
+	memId, err2 := controller.service.LoginMember(ctx, req)
+	fmt.Print(memId)
+	if err != nil || memId == -1 {
+		wu.ErrorFunc(ctx, err2)
+		return
+	}
+	res := response.MemberId{MemberId: memId}
+	wu.SuccessWith(ctx, res)
+
 }
 
 //func CreateMemberController(w http.ResponseWriter, r *http.Request) {
