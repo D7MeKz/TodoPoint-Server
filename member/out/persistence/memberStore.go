@@ -2,13 +2,15 @@ package persistence
 
 import (
 	"github.com/gin-gonic/gin"
-	"todopoint/common/db/config"
-	"todopoint/common/db/ent"
-	"todopoint/common/db/ent/member"
+	"todopoint/member/config"
+	"todopoint/member/out/ent"
+	"todopoint/member/out/ent/member"
+
 	wu "todopoint/common/webutils"
 	"todopoint/member/data/request"
 )
 
+//go:generate mockery --name Store --case underscore --inpackage
 type Store struct {
 	client *ent.Client
 }
@@ -21,7 +23,7 @@ func NewStore() *Store {
 
 func (s *Store) Create(ctx *gin.Context, req request.RegisterReq) (*ent.Member, *wu.Error) {
 	// create Task
-	mem, err := s.client.Member.Create().SetEmail(req.Email).SetUsername("").SetPassword(req.Password).Save(ctx)
+	mem, err := s.client.Member.Create().SetEmail(req.Email).SetUsername(req.Username).SetPassword(req.Password).Save(ctx)
 	if err != nil {
 		return nil, wu.NewError(wu.ERROR_MEMBER_DB, err)
 	}
