@@ -6,13 +6,13 @@ import (
 )
 
 type errorResponse struct {
-	Code   int    `json:"code"`
+	Code   int    `json:"codes"`
 	Status bool   `json:"status"`
 	Error  string `json:"error"`
 }
 
 type validResponse struct {
-	Code   int         `json:"code"`
+	Code   int         `json:"codes"`
 	Status bool        `json:"status"`
 	Data   interface{} `json:"data"`
 }

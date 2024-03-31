@@ -6,12 +6,12 @@ import (
 )
 
 type successWithData struct {
-	Code int         `json:"code"`
+	Code int         `json:"codes"`
 	Data interface{} `json:"data"`
 }
 
 type success struct {
-	Code int `json:"code"`
+	Code int `json:"codes"`
 }
 
 func SuccessWith(ctx *gin.Context, data any) {

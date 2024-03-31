@@ -11,7 +11,7 @@ import (
 	"todopoint/common/db/ent/task"
 )
 
-// The init function reads all schema descriptors with runtime code
+// The init function reads all schema descriptors with runtime codes
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {

@@ -9,7 +9,7 @@ import (
 type ErrorType int
 
 type Error struct {
-	// Code is a custom error code
+	// Code is a custom error codes
 	ErrorType ErrorType
 	// Err is a error string
 	Err error
@@ -19,8 +19,8 @@ type Error struct {
 
 // ErrorRes is a response object when error happens.
 type ErrorRes struct {
-	// Code is http status code
-	Code int `json:"code"`
+	// Code is http status codes
+	Code int `json:"codes"`
 }
 
 // ErrorType
@@ -68,7 +68,7 @@ var codeMap = map[ErrorType]int{
 	ERROR_TASK_DB: http.StatusInternalServerError,
 }
 
-// getCode is get Status code from codeMap.
+// getCode is get Status codes from codeMap.
 func getCode(flag ErrorType) *ErrorRes {
 	return &ErrorRes{Code: codeMap[flag]}
 }

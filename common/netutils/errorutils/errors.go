@@ -3,16 +3,15 @@ package errorutils
 import (
 	"errors"
 	"net/http"
+	"todopoint/common/netutils/codes"
 )
 
-type ErrorCode uint
-
 type NetError struct {
-	Code ErrorCode
+	Code codes.WebCode
 	Err  error
 }
 
-func NewNetError(code ErrorCode, err error) *NetError {
+func NewNetError(code codes.WebCode, err error) error {
 	return &NetError{Code: code, Err: err}
 }
 
@@ -24,38 +23,33 @@ func IsNetError(err error) bool {
 	return errors.As(err, &e)
 }
 
-func (e *NetError) GetStatus() ErrorCode {
-	// 140400 (1 : label, 404: status code, 00 : Meta)
-	deletedMeta := e.GetCode() / 100
-	code := deletedMeta % 1000
-	return code
+func Convert(err error) (*NetError, bool) {
+	for err != nil {
+		var netError *NetError
+		switch {
+		case errors.As(err, &netError):
+			return netError, true
+		}
+		//err = errors.Unwrap(err)
+	}
+	return nil, false
 }
 
-func (e *NetError) GetCode() ErrorCode {
+func (e *NetError) GetCode() codes.WebCode {
 	return e.Code
 }
-
 func (e *NetError) Error() string {
 	return e.Err.Error()
 }
 
-func (e *NetError) Unwrap() error {
-	return e.Err
-}
-
+//	func (e *NetError) Unwrap() error {
+//		return e.Err
+//	}
+//
 // error to NetError
-func ConvertNetError(err error) (*NetError, bool) {
-	for err != nil {
-		switch {
-		case IsNetError(err):
-			return err.(*NetError), true
-		}
-		err = errors.Unwrap(err)
-	}
-	return nil, false
-}
+
 func IsBadRequest(err NetError) bool {
-	status := err.GetStatus()
+	status := codes.GetStatus(err.Code)
 	if status != http.StatusBadRequest {
 		return false
 	}
@@ -63,7 +57,7 @@ func IsBadRequest(err NetError) bool {
 }
 
 func IsNotFound(err NetError) bool {
-	status := err.GetStatus()
+	status := codes.GetStatus(err.Code)
 	if status != http.StatusNotFound {
 		return false
 	}
@@ -71,7 +65,7 @@ func IsNotFound(err NetError) bool {
 }
 
 func IsInternalServerError(err NetError) bool {
-	status := err.GetStatus()
+	status := codes.GetStatus(err.Code)
 	if status != http.StatusInternalServerError {
 		return false
 	}
