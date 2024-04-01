@@ -4,12 +4,11 @@ package mocks
 
 import (
 	ent "todopoint/common/db/ent"
+	request "todopoint/member/data"
 
 	gin "github.com/gin-gonic/gin"
 
 	mock "github.com/stretchr/testify/mock"
-
-	request "todopoint/member/data/request"
 
 	webutils "todopoint/common/webutils"
 )

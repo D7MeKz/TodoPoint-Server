@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"net/http/httptest"
 	"testing"
-	"todopoint/member/data/request"
+	"todopoint/member/data"
 	"todopoint/member/service"
 	"todopoint/member/service/mocks"
 )
@@ -21,12 +21,12 @@ func fixtures() (s *service.MemberService, m *mocks.MemberStore) {
 
 func TestSuccess(t *testing.T) {
 	s, m := fixtures()
-	member1 := request.RegisterReq{
+	member1 := data.RegisterReq{
 		Email:    "sample@naver.com",
 		Password: "sample!",
 	}
 
-	userMatcher := func(u *request.RegisterReq) bool {
+	userMatcher := func(u *data.RegisterReq) bool {
 		return u.Email == member1.Email && u.Password == member1.Password
 	}
 	m.On("Create", mock.Anything, mock.MatchedBy(userMatcher)).Return(nil)
