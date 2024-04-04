@@ -16,5 +16,6 @@ func NewMemberRouter(controller *controller.MemberController) *gin.Engine {
 		router.POST("/login", controller.LoginMember)
 		router.GET("/:memId/valid", controller.IsValidMember)
 	}
+
 	return engine
 }
