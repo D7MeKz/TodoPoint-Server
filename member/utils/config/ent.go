@@ -26,7 +26,6 @@ func SetClient(newClient *ent.Client) {
 
 func NewEntClient(path string) (*ent.Client, error) {
 	dir, err := filepath.Abs(path)
-	fmt.Sprintln(dir)
 	if err != nil {
 		log.Fatal(err)
 	}

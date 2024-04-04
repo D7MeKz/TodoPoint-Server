@@ -1,6 +1,8 @@
 package response
 
-import "todopoint/common/netutils/codes"
+import (
+	"todopoint/common/errorutils/codes"
+)
 
 // Response
 type ErrorResponse struct {

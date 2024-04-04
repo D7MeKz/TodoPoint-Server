@@ -88,14 +88,14 @@ func Log(fn func(...any)) Option {
 	}
 }
 
-// Driver configures the client driver.
+// Driver configures the client config.
 func Driver(driver dialect.Driver) Option {
 	return func(c *config) {
 		c.driver = driver
 	}
 }
 
-// Open opens a database/sql.DB specified by the driver name and
+// Open opens a database/sql.DB specified by the config name and
 // the data source name, and returns a new client attached to it.
 // Optional parameters can be added for configuring the client.
 func Open(driverName, dataSourceName string, options ...Option) (*Client, error) {
@@ -107,7 +107,7 @@ func Open(driverName, dataSourceName string, options ...Option) (*Client, error)
 		}
 		return NewClient(append(options, Driver(drv))...), nil
 	default:
-		return nil, fmt.Errorf("unsupported driver: %q", driverName)
+		return nil, fmt.Errorf("unsupported config: %q", driverName)
 	}
 }
 

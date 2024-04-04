@@ -6,11 +6,12 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-	"todopoint/member/config"
+	"todopoint/member/out/ent"
 	"todopoint/member/out/persistence"
 	"todopoint/member/router"
 	"todopoint/member/router/controller"
 	"todopoint/member/service"
+	"todopoint/member/utils/config"
 )
 
 func main() {
@@ -19,7 +20,9 @@ func main() {
 	if err != nil {
 		log.Printf("err : %s", err)
 	}
-	defer client.Close()
+	defer func(client *ent.Client) {
+		_ = client.Close()
+	}(client)
 
 	if err != nil {
 		log.Println("Fail to initialize client")

@@ -126,7 +126,7 @@ func (st *SubTask) Update() *SubTaskUpdateOne {
 }
 
 // Unwrap unwraps the SubTask entity that was returned from a transaction after it was closed,
-// so that all future queries will be executed through the driver which created the transaction.
+// so that all future queries will be executed through the config which created the transaction.
 func (st *SubTask) Unwrap() *SubTask {
 	_tx, ok := st.config.driver.(*txDriver)
 	if !ok {

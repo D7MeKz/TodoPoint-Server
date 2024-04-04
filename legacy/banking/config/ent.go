@@ -3,7 +3,7 @@ package config
 import (
 	"context"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-config/mysql"
 	"github.com/joho/godotenv"
 	"log"
 	"os"

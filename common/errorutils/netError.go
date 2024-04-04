@@ -2,8 +2,7 @@ package errorutils
 
 import (
 	"errors"
-	"net/http"
-	"todopoint/common/netutils/codes"
+	"todopoint/common/errorutils/codes"
 )
 
 type NetError struct {
@@ -30,7 +29,7 @@ func Convert(err error) (*NetError, bool) {
 		case errors.As(err, &netError):
 			return netError, true
 		}
-		//err = errors.Unwrap(err)
+		err = errors.Unwrap(err)
 	}
 	return nil, false
 }
@@ -47,27 +46,3 @@ func (e *NetError) Error() string {
 //	}
 //
 // error to NetError
-
-func IsBadRequest(err NetError) bool {
-	status := codes.GetStatus(err.Code)
-	if status != http.StatusBadRequest {
-		return false
-	}
-	return true
-}
-
-func IsNotFound(err NetError) bool {
-	status := codes.GetStatus(err.Code)
-	if status != http.StatusNotFound {
-		return false
-	}
-	return true
-}
-
-func IsInternalServerError(err NetError) bool {
-	status := codes.GetStatus(err.Code)
-	if status != http.StatusInternalServerError {
-		return false
-	}
-	return true
-}

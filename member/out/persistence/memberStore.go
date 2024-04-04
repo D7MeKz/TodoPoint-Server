@@ -2,10 +2,10 @@ package persistence
 
 import (
 	"github.com/gin-gonic/gin"
-	"todopoint/member/config"
-	"todopoint/member/data"
 	"todopoint/member/out/ent"
 	"todopoint/member/out/ent/member"
+	ent2 "todopoint/member/utils/config"
+	"todopoint/member/utils/data"
 )
 
 //go:generate mockery --name Store --case underscore --inpackage
@@ -15,7 +15,7 @@ type Store struct {
 
 func NewStore() *Store {
 	return &Store{
-		client: config.GetClient(),
+		client: ent2.GetClient(),
 	}
 }
 

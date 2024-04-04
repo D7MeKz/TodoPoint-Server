@@ -108,7 +108,7 @@ func (ba *BankAccount) Update() *BankAccountUpdateOne {
 }
 
 // Unwrap unwraps the BankAccount entity that was returned from a transaction after it was closed,
-// so that all future queries will be executed through the driver which created the transaction.
+// so that all future queries will be executed through the config which created the transaction.
 func (ba *BankAccount) Unwrap() *BankAccount {
 	_tx, ok := ba.config.driver.(*txDriver)
 	if !ok {

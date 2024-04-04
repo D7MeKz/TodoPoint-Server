@@ -194,7 +194,7 @@ func (po *Point) Update() *PointUpdateOne {
 }
 
 // Unwrap unwraps the Point entity that was returned from a transaction after it was closed,
-// so that all future queries will be executed through the driver which created the transaction.
+// so that all future queries will be executed through the config which created the transaction.
 func (po *Point) Unwrap() *Point {
 	_tx, ok := po.config.driver.(*txDriver)
 	if !ok {

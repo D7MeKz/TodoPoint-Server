@@ -4,8 +4,8 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"todopoint/common/netutils/codes"
-	"todopoint/common/netutils/errorutils"
+	"todopoint/common/errorutils"
+	"todopoint/common/errorutils/codes"
 	"todopoint/common/netutils/response"
 )
 

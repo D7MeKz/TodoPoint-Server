@@ -179,7 +179,7 @@ func (t *Task) Update() *TaskUpdateOne {
 }
 
 // Unwrap unwraps the Task entity that was returned from a transaction after it was closed,
-// so that all future queries will be executed through the driver which created the transaction.
+// so that all future queries will be executed through the config which created the transaction.
 func (t *Task) Unwrap() *Task {
 	_tx, ok := t.config.driver.(*txDriver)
 	if !ok {

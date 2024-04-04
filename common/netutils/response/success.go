@@ -2,7 +2,7 @@ package response
 
 import (
 	"github.com/gin-gonic/gin"
-	"todopoint/common/netutils/codes"
+	"todopoint/common/errorutils/codes"
 )
 
 type SuccessResponse struct {

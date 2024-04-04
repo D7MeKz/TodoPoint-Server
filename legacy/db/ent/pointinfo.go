@@ -142,7 +142,7 @@ func (pi *PointInfo) Update() *PointInfoUpdateOne {
 }
 
 // Unwrap unwraps the PointInfo entity that was returned from a transaction after it was closed,
-// so that all future queries will be executed through the driver which created the transaction.
+// so that all future queries will be executed through the config which created the transaction.
 func (pi *PointInfo) Unwrap() *PointInfo {
 	_tx, ok := pi.config.driver.(*txDriver)
 	if !ok {

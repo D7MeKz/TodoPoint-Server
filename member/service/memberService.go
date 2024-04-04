@@ -4,10 +4,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
-	"todopoint/common/netutils/codes"
-	"todopoint/common/netutils/errorutils"
-	"todopoint/member/data"
+	"todopoint/common/errorutils"
+	"todopoint/common/errorutils/codes"
 	"todopoint/member/out/ent"
+	"todopoint/member/utils/data"
 )
 
 //go:generate mockery --name MemberStore --case underscore
