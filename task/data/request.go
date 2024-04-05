@@ -1,4 +1,4 @@
-package req
+package data
 
 type CreateReq struct {
 	UserId int    `json:"user_id"`
