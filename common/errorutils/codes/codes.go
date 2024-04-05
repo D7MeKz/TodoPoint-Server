@@ -20,6 +20,10 @@ const (
 
 	MemberInternalServerError         = 150000
 	MemberCreationError       WebCode = 150001
+
+	TaskInvaliJson WebCode = 240001
+
+	TaskCreationError WebCode = 250001
 )
 
 func GetStatus(c WebCode) int {

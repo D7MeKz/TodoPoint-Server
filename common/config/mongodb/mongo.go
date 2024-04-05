@@ -20,6 +20,10 @@ func SetClient(newClient *mongo.Client) {
 	client = newClient
 }
 
+func GetCollection(client *mongo.Client, colName string) *mongo.Collection {
+	return client.Database("todopoint").Collection(colName)
+}
+
 func NewMongoClient(path string) *mongo.Client {
 	dir, err := filepath.Abs(path)
 	if err != nil {
