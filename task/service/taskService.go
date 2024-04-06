@@ -8,6 +8,7 @@ import (
 	"todopoint/common/errorutils/codes"
 	"todopoint/task/data"
 	"todopoint/task/out/external"
+	"todopoint/task/out/persistence"
 )
 
 type TaskStore interface {
@@ -17,6 +18,12 @@ type TaskStore interface {
 
 type TaskService struct {
 	Store TaskStore
+}
+
+func NewTaskService(s *persistence.Store) *TaskService {
+	return &TaskService{
+		Store: s,
+	}
 }
 
 func (s *TaskService) CreateTask(ctx *gin.Context, req data.CreateReq) (*data.TypeId, *errorutils.NetError) {
