@@ -1,5 +1,5 @@
 package data
 
 type TypeId struct {
-	Id string
+	Id string `json:"task_id"`
 }

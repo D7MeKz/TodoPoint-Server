@@ -31,6 +31,11 @@ func (s *TaskService) CreateTask(ctx *gin.Context, req data.CreateReq) (*data.Ty
 	if err != nil {
 		return nil, &errorutils.NetError{Code: codes.TaskCreationError, Err: err}
 	}
-	return &data.TypeId{Id: result.InsertedID["_id"].(primitive.ObjectID).Hex()}, nil
 
+	// Get oid
+	if oid, ok := result.InsertedID.(primitive.ObjectID); ok {
+		// Return string
+		return &data.TypeId{Id: oid.Hex()}, nil
+	}
+	return nil, &errorutils.NetError{Code: codes.TaskCreationError, Err: err}
 }

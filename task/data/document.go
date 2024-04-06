@@ -8,10 +8,10 @@ import (
 type Task struct {
 	ObjectID   primitive.ObjectID `bson:"_id" json:"_id"`
 	UserId     int                `bson:"user_id" json:"user_id,omitempty"`
-	Title      string
-	Status     bool
-	CreatedAt  string
-	ModifiedAt string
+	Title      string             `bson:"title" json:"title,omitempty"`
+	Status     bool               `bson:"status" json:"status,omitempty"`
+	CreatedAt  string             `bson:"created_at" json:"created_at"`
+	ModifiedAt string             `bson:"modified_at" json:"modified_at"`
 }
 
 func NewTaskInfo(req CreateReq) *Task {
