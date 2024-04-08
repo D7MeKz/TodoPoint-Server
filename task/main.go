@@ -1,4 +1,4 @@
-package task
+package main
 
 import (
 	"log"
@@ -20,7 +20,7 @@ func main() {
 
 	store := persistence.NewStore("task")
 	taskService := service.NewTaskService(store)
-	taskController := controller.NewTaskController(taskService)
+	taskController := controller.NewTaskController(*taskService)
 	routes := router.NewTaskRouter(taskController)
 	server := &http.Server{
 		Addr:           ":3001",

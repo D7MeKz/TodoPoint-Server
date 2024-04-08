@@ -3,6 +3,8 @@ package codes
 type WebCode uint
 
 const (
+	ZeroCode WebCode = 0
+
 	// Common
 	GlobalInternalServerError WebCode = 50000
 
@@ -18,7 +20,7 @@ const (
 	// 404 : Not Found
 	MemberNotFound WebCode = 140400
 
-	MemberInternalServerError         = 150000
+	MemberInternalServerError WebCode = 150000
 	MemberCreationError       WebCode = 150001
 
 	// ---------- Task ---------------
@@ -30,6 +32,9 @@ const (
 
 	// NOTE : 500
 	TaskCreationError WebCode = 250001
+
+	// NOTE : 503
+	TaskMemberUnavailable WebCode = 250301
 )
 
 /*
@@ -41,4 +46,16 @@ func GetStatus(c WebCode) int {
 	deletedMeta := c / 100
 	code := deletedMeta % 1000
 	return int(code)
+}
+
+// ConvertFrom
+func ConvertFrom(a any) WebCode {
+	switch v := a.(type) {
+	case float64:
+		code := WebCode(v)
+		return code
+	default:
+		panic("Unexpected error to convert WebCode")
+		return ZeroCode
+	}
 }

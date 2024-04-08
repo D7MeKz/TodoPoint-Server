@@ -146,3 +146,11 @@ member/go.work
 # End of https://www.toptal.com/developers/gitignore/api/go
 
 member/.env
+
+# Mysql
+mysql_data/
+db/mysql/init/
+
+# MongoDB
+mongodb_data/
+mongod.conf

@@ -12,6 +12,11 @@ type Store struct {
 	collection *mongo.Collection
 }
 
+func (s *Store) IsExist(ctx *gin.Context, taskId int) (bool, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func NewStore(colName string) *Store {
 	client := mongodb.GetClient()
 	return &Store{
@@ -27,5 +32,4 @@ func (s *Store) Create(ctx *gin.Context, req data.CreateReq) (*mongo.InsertOneRe
 		return nil, err
 	}
 	return id, nil
-
 }

@@ -29,24 +29,31 @@ func NewMongoClient(path string) *mongo.Client {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	environmentPath := filepath.Join(dir, ".env")
 	err = godotenv.Load(environmentPath)
 	if err != nil {
 		log.Fatal("No .env file found")
 	}
+
 	uri := os.Getenv("MONGODB_URI")
-	if uri == "" {
-		log.Fatal("You must set uri")
+	username := os.Getenv("MONGODB_USERNAME")
+	pw := os.Getenv("MONGODB_PASSWORD")
+	if uri == "" || username == "" || pw == "" {
+		log.Fatal("Empty .env")
 	}
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
+
+	client, err := mongo.Connect(context.TODO(),
+		options.Client().ApplyURI(uri).SetAuth(options.Credential{Username: username, Password: pw}))
 	if err != nil {
 		panic(err)
 	}
 
-	defer func() {
-		if err := client.Disconnect(context.TODO()); err != nil {
-			panic(err)
-		}
-	}()
+	//defer func() {
+	//	if err := client.Disconnect(context.TODO()); err != nil {
+	//		panic(err)
+	//	}
+	//}()
+
 	return client
 }

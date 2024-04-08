@@ -13,12 +13,21 @@ type TaskController struct {
 	service service.TaskService
 }
 
-func NewTaskController(s *service.TaskService) *TaskController {
+func NewTaskController(s service.TaskService) *TaskController {
 	return &TaskController{
 		service: s,
 	}
 }
 
+// CreateTask
+// @Summary Create task
+// @Description If user is valid, create task.
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Param request body data.CreateReq true "query params"
+// @Success 200 {object} data.TaskId
+// @Router /tasks/create [post]
 func (c *TaskController) CreateTask(ctx *gin.Context) {
 	r := data.CreateReq{}
 	err := ctx.ShouldBindJSON(&r)

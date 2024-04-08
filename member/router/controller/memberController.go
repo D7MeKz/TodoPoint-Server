@@ -2,7 +2,6 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"log"
 	"strconv"
 	"todopoint/common/errorutils"
 	"todopoint/common/errorutils/codes"
@@ -28,6 +27,15 @@ func NewMemberController(s service.MemberService) *MemberController {
 	}
 }
 
+// RegisterMember
+// @Summary Register Member
+// @Description Register Member
+// @Tags members
+// @Accept json
+// @Produce json
+// @Param request body data.RegisterReq true "query params"
+// @Success 200 {object} data.MemberId
+// @Router /members/register [post]
 func (controller *MemberController) RegisterMember(ctx *gin.Context) {
 	req := data.RegisterReq{}
 	err := ctx.ShouldBindJSON(&req)
@@ -37,9 +45,9 @@ func (controller *MemberController) RegisterMember(ctx *gin.Context) {
 	}
 
 	// Create member
-	mem, err := controller.service.CreateMember(ctx, req)
-	if err != nil {
-		_ = ctx.Error(err)
+	mem, err2 := controller.service.CreateMember(ctx, req)
+	if err2 != nil {
+		_ = ctx.Error(err2)
 		return
 	}
 
@@ -71,16 +79,15 @@ func (controller *MemberController) IsValidMember(ctx *gin.Context) {
 		_ = ctx.Error(errorutils.NewNetError(codes.MemberInvalidUri, nil))
 		return
 	}
-	log.Println(strId)
 
 	memId, err := strconv.Atoi(strId)
 	if err != nil {
 		_ = ctx.Error(errorutils.NewNetError(codes.MemberInvalidUri, err))
 		return
 	}
-	ok, err = controller.service.CheckIsValid(ctx, memId)
-	if err != nil {
-		_ = ctx.Error(err)
+	ok, err2 := controller.service.CheckIsValid(ctx, memId)
+	if err2 != nil {
+		_ = ctx.Error(err2)
 		return
 	}
 	response.Success(ctx, codes.MemberOK)

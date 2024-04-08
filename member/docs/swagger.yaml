@@ -1,0 +1,41 @@
+definitions:
+  data.MemberId:
+    properties:
+      id:
+        type: integer
+    type: object
+  data.RegisterReq:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /members/register:
+    post:
+      consumes:
+      - application/json
+      description: Register Member
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/data.RegisterReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/data.MemberId'
+      summary: Register Member
+      tags:
+      - members
+swagger: "2.0"

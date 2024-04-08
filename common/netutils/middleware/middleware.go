@@ -35,24 +35,7 @@ func ErrorHandler() gin.HandlerFunc {
 					ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
 				}
 			}
-			//convertedError := err.Unwrap()
-			//ok := errorutils.IsNetError(convertedError)
-			//
-			//logrus.Warn("Warning!")
-			//if !ok {
-			//	res := response.NewErrorResponse(codes.GlobalInternalServerError)
-			//	if !isBodyWritten {
-			//		ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
-			//	}
-			//}
-			//// if NetError
-			//code := convertedError.GetCode()
-			//statusCode := codes.GetStatus(code)
-			//res := response.NewErrorResponse(code)
-			//
-			//if !isBodyWritten {
-			//	ctx.AbortWithStatusJSON(int(statusCode), res)
-			//}
+
 		}
 	}
 

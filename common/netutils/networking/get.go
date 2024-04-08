@@ -1,5 +1,7 @@
 package networking
 
+import "fmt"
+
 func RequestGet(url string) (*ExternalInfo, error) {
 	c := NewReqClient()
 	resp, err := c.Client.Get(url)
@@ -7,6 +9,7 @@ func RequestGet(url string) (*ExternalInfo, error) {
 		return nil, err
 	}
 	info, err := parseBody(resp)
+	fmt.Println(info)
 	if err != nil {
 		return nil, err
 	}

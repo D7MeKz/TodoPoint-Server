@@ -2,7 +2,6 @@ package service
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 	"todopoint/common/errorutils"
 	"todopoint/common/errorutils/codes"
@@ -29,16 +28,20 @@ func NewMemberService(s MemberStore) *MemberService {
 
 func (s *MemberService) CreateMember(ctx *gin.Context, req data.RegisterReq) (*ent.Member, *errorutils.NetError) {
 	// Check member Exist
-	_, err := s.Store.GetMemberByEmail(ctx, req.Email)
-	if err != nil && !ent.IsNotFound(err) {
+	existedMem, err := s.Store.GetMemberByEmail(ctx, req.Email)
+	if err != nil {
+		logrus.Print("Get By Email Error")
 		return nil, &errorutils.NetError{Code: codes.MemberInternalServerError, Err: err}
 	}
-
-	mem, err := s.Store.Create(ctx, req)
-	if err != nil {
-		return nil, &errorutils.NetError{Code: codes.MemberCreationError, Err: err}
+	if ent.IsNotFound(err) {
+		logrus.Print("Member does not exist")
+		mem, err2 := s.Store.Create(ctx, req)
+		if err2 != nil {
+			return nil, &errorutils.NetError{Code: codes.MemberCreationError, Err: err2}
+		}
+		return mem, nil
 	}
-	return mem, nil
+	return existedMem, nil
 }
 
 func (s *MemberService) LoginMember(ctx *gin.Context, req data.LoginReq) (int, *errorutils.NetError) {
@@ -58,13 +61,11 @@ func (s *MemberService) CheckIsValid(ctx *gin.Context, memId int) (bool, *erroru
 
 	if ok == false || err != nil {
 		if ent.IsNotFound(err) {
+			logrus.Warn("Member Does not Exist")
 			return false, &errorutils.NetError{Code: codes.MemberNotFound, Err: err}
 		}
 		return false, &errorutils.NetError{Code: codes.MemberInternalServerError, Err: err}
 	}
-	logrus.Warn(ok)
-
-	uuid.New()
 
 	return true, nil
 }

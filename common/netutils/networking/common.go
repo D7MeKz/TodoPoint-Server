@@ -2,6 +2,7 @@ package networking
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 	"todopoint/common/errorutils/codes"
@@ -26,6 +27,7 @@ func parseBody(response *http.Response) (*ExternalInfo, error) {
 	// Convert to empty interface
 	res := make(map[string]interface{})
 	err := json.NewDecoder(response.Body).Decode(&res)
+	fmt.Println(res)
 	if err != nil {
 		return nil, err
 	}
@@ -33,6 +35,7 @@ func parseBody(response *http.Response) (*ExternalInfo, error) {
 
 	// Extract ExternalInfo from response
 	exInfo := extractFrom(res, statusCode)
+
 	return exInfo, nil
 }
 
@@ -41,14 +44,22 @@ type ExternalInfo struct {
 	Status int
 }
 
+func (e *ExternalInfo) IsSuccess() bool {
+	if e.Status == 200 || e.Status == 201 {
+		return true
+	}
+	return false
+}
+
 func extractFrom(res map[string]interface{}, status int) *ExternalInfo {
 	// Convert to WebCode
-	code, ok := res["code"].(codes.WebCode)
+	code, ok := res["code"]
 	if !ok {
 		return nil
 	}
+	convertedCode := codes.ConvertFrom(code)
 	return &ExternalInfo{
-		Code:   code,
+		Code:   convertedCode,
 		Status: status,
 	}
 }
