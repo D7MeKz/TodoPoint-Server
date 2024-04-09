@@ -17,6 +17,9 @@ const (
 	// 400 : Bad Request
 	MemberInvalidJson WebCode = 140001
 	MemberInvalidUri  WebCode = 140002
+
+	// 401
+	TokenExpired WebCode = 140100
 	// 404 : Not Found
 	MemberNotFound WebCode = 140400
 

@@ -55,6 +55,15 @@ func (controller *MemberController) RegisterMember(ctx *gin.Context) {
 	response.SuccessWith(ctx, codes.MemberCreationSuccess, mid)
 }
 
+// LoginMember
+// @Summary Login Member
+// @Description If you login, Create tokens(Refresh, Access Token)
+// @Tags members
+// @Accept json
+// @Produce json
+// @Param request body data.LoginReq true "query params"
+// @Success 200 {object} data.MemberId
+// @Router /members/login [post]
 func (controller *MemberController) LoginMember(ctx *gin.Context) {
 	req := data.LoginReq{}
 	err := ctx.ShouldBindJSON(&req)
