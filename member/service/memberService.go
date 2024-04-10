@@ -2,10 +2,14 @@ package service
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
+	"time"
+	"todopoint/common/auth"
 	"todopoint/common/errorutils"
 	"todopoint/common/errorutils/codes"
 	"todopoint/member/out/ent"
+	"todopoint/member/out/persistence"
 	"todopoint/member/utils/data"
 )
 
@@ -44,16 +48,34 @@ func (s *MemberService) CreateMember(ctx *gin.Context, req data.RegisterReq) (*e
 	return existedMem, nil
 }
 
-func (s *MemberService) LoginMember(ctx *gin.Context, req data.LoginReq) (int, *errorutils.NetError) {
+func (s *MemberService) LoginMember(ctx *gin.Context, req data.LoginReq) (*data.TokenPair, *errorutils.NetError) {
+	// Verify User Exist
 	memId, err := s.Store.GetIDByLogin(ctx, req)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return -1, &errorutils.NetError{Code: codes.MemberNotFound, Err: err}
+			return nil, &errorutils.NetError{Code: codes.MemberNotFound, Err: err}
 		} else {
-			return -1, &errorutils.NetError{Code: codes.MemberInternalServerError, Err: err}
+			return nil, &errorutils.NetError{Code: codes.MemberInternalServerError, Err: err}
 		}
 	}
-	return memId, nil
+
+	// Create Token
+	claim := auth.NewTokenClaims(memId)
+	access, err := claim.Generate()
+	if err != nil {
+		return nil, &errorutils.NetError{Code: codes.TokenCreationErr, Err: err}
+	}
+
+	// Create Access, Refresh Token
+	refresh := uuid.NewString()
+	redisStore := persistence.NewRedisStore()
+	expires := time.Now().Add(time.Hour * 24 * 7).Unix()
+	redisErr := redisStore.Create(refresh, memId, expires)
+	if redisErr != nil {
+		return nil, &errorutils.NetError{Code: codes.TokenCreationError, Err: err}
+	}
+
+	return &data.TokenPair{AccessToken: access, RefreshToken: refresh}, nil
 }
 
 func (s *MemberService) CheckIsValid(ctx *gin.Context, memId int) (bool, *errorutils.NetError) {

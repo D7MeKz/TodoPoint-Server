@@ -20,9 +20,7 @@ func ErrorHandler() gin.HandlerFunc {
 		if err != nil {
 			var netErr *errorutils.NetError
 			if errors.As(err, &netErr) {
-				convertedError, _ := errorutils.Convert(err)
-
-				code := convertedError.GetCode()
+				code := netErr.GetCode()
 				statusCode := codes.GetStatus(code)
 				res := response.NewErrorResponse(code)
 

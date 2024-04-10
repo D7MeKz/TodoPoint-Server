@@ -19,13 +19,15 @@ const (
 	MemberInvalidUri  WebCode = 140002
 
 	// 401
-	TokenExpired WebCode = 140100
+	TokenExpired     WebCode = 140100
+	TokenCreationErr WebCode = 140101
+
 	// 404 : Not Found
 	MemberNotFound WebCode = 140400
 
 	MemberInternalServerError WebCode = 150000
 	MemberCreationError       WebCode = 150001
-
+	TokenCreationError        WebCode = 150002
 	// ---------- Task ---------------
 	// NOTE : 200
 	TaskCreationSuccess WebCode = 220101

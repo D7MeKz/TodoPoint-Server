@@ -20,12 +20,11 @@ type TokenClaims struct {
 	jwt.MapClaims
 }
 
-func NewTokenClaims(uid int, email string, role string) *TokenClaims {
+func NewTokenClaims(uid int) *TokenClaims {
 	claim := TokenClaims{
 		TokenUUID: uuid.NewString(),
 		UserID:    uid,
-		Email:     email,
-		Role:      []string{"user"},
+
 		MapClaims: jwt.MapClaims{
 			"iss": "d7mekz",
 			"exp": time.Now().Add(time.Hour * 24).Unix(),

@@ -35,7 +35,7 @@ func NewMemberController(s service.MemberService) *MemberController {
 // @Produce json
 // @Param request body data.RegisterReq true "query params"
 // @Success 200 {object} data.MemberId
-// @Router /members/register [post]
+// @Router /auth/register [post]
 func (controller *MemberController) RegisterMember(ctx *gin.Context) {
 	req := data.RegisterReq{}
 	err := ctx.ShouldBindJSON(&req)
@@ -63,7 +63,7 @@ func (controller *MemberController) RegisterMember(ctx *gin.Context) {
 // @Produce json
 // @Param request body data.LoginReq true "query params"
 // @Success 200 {object} data.MemberId
-// @Router /members/login [post]
+// @Router /auth/login [post]
 func (controller *MemberController) LoginMember(ctx *gin.Context) {
 	req := data.LoginReq{}
 	err := ctx.ShouldBindJSON(&req)
@@ -72,13 +72,12 @@ func (controller *MemberController) LoginMember(ctx *gin.Context) {
 		return
 	}
 	// login Member
-	memId, err := controller.service.LoginMember(ctx, req)
+	pair, err := controller.service.LoginMember(ctx, req)
 	if err != nil {
 		_ = ctx.Error(err)
 	}
 
-	res := data.MemberId{MemberId: memId}
-	response.SuccessWith(ctx, codes.MemberLoginSuccess, res)
+	response.SuccessWith(ctx, codes.MemberLoginSuccess, pair)
 
 }
 
@@ -100,4 +99,8 @@ func (controller *MemberController) IsValidMember(ctx *gin.Context) {
 		return
 	}
 	response.Success(ctx, codes.MemberOK)
+}
+
+func (controller *MemberController) RefreshToken(ctx *gin.Context) {
+
 }

@@ -14,36 +14,37 @@ const (
 	BearerSchema string = "BEARER "
 )
 
-func TokenAuthMiddleware(ctx *gin.Context) {
-	header := ctx.GetHeader("Authorization")
-	if header == "" {
-		logrus.Error("Authorization value is Empty")
-		ctx.AbortWithStatus(http.StatusUnauthorized)
-		return
-	}
+func TokenAuthMiddleware() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		header := ctx.GetHeader("Authorization")
+		if header == "" {
+			logrus.Error("Authorization value is Empty")
+			ctx.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
 
-	token, err := fromHeader(header)
-	if err != nil {
-		logrus.Errorf("Invalid Authorization value: %v", err)
-		ctx.AbortWithStatus(http.StatusUnauthorized)
-		return
-	}
+		token, err := fromHeader(header)
+		if err != nil {
+			logrus.Errorf("Invalid Authorization value: %v", err)
+			ctx.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
 
-	// Validate Token
-	ok, err := IsNotExpired(token)
-	if err != nil {
-		logrus.Errorf("Invalid Token : %v", err)
-		ctx.AbortWithStatus(http.StatusUnauthorized)
-		return
+		// Validate Token
+		ok, err := IsNotExpired(token)
+		if err != nil {
+			logrus.Errorf("Invalid Token : %v", err)
+			ctx.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+		// if token expired
+		if !ok {
+			logrus.Error("Token expired")
+			res := response.NewErrorResponse(codes.TokenExpired)
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
+			return
+		}
 	}
-	// if token expired
-	if !ok {
-		logrus.Error("Token expired")
-		res := response.NewErrorResponse(codes.TokenExpired)
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
-		return
-	}
-
 }
 
 func fromHeader(header string) (string, error) {
