@@ -3,6 +3,7 @@ package middleware
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"time"
 	"todopoint/common/errorutils"
@@ -21,6 +22,7 @@ func ErrorHandler() gin.HandlerFunc {
 			var netErr *errorutils.NetError
 			if errors.As(err, &netErr) {
 				code := netErr.GetCode()
+				logrus.Errorf("ErrorCode: %d", code)
 				statusCode := codes.GetStatus(code)
 				res := response.NewErrorResponse(code)
 

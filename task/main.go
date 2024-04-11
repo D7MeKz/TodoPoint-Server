@@ -17,7 +17,7 @@ func main() {
 	// init MongoDB
 	client := mongodb.NewMongoClient(filepath.Dir(os.Args[0]))
 	mongodb.SetClient(client)
-
+	
 	store := persistence.NewStore("task")
 	taskService := service.NewTaskService(store)
 	taskController := controller.NewTaskController(*taskService)

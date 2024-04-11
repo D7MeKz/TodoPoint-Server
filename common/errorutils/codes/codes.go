@@ -28,6 +28,7 @@ const (
 	MemberInternalServerError WebCode = 150000
 	MemberCreationError       WebCode = 150001
 	TokenCreationError        WebCode = 150002
+	TokenExpiredErr           WebCode = 150003
 	// ---------- Task ---------------
 	// NOTE : 200
 	TaskCreationSuccess WebCode = 220101

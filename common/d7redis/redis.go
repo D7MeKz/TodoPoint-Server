@@ -1,7 +1,6 @@
 package d7redis
 
 import (
-	"context"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -21,9 +20,16 @@ func NewRedisClient() *redis.Client {
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
-	_, err := client.Ping(context.TODO()).Result()
-	if err != nil {
-		panic(err)
-	}
+	//_, err := client.Ping(context.TODO()).Result()
+	//if err != nil {
+	//	panic(err)
+	//}
 	return client
+}
+
+func IsExist(c *redis.Client) bool {
+	if c != nil {
+		return true
+	}
+	return false
 }
