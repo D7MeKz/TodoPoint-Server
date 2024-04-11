@@ -1,30 +1,51 @@
 package persistence
 
 import (
-	"context"
+	"errors"
+	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
+	"github.com/sirupsen/logrus"
+	"strconv"
 	"time"
 	"todopoint/common/d7redis"
 )
 
 type RedisStore struct {
 	client *redis.Client
-	ctx    context.Context
 }
 
 func NewRedisStore() *RedisStore {
-	client := d7redis.NewRedisClient()
 	return &RedisStore{
-		client: client,
-		ctx:    context.Background(),
+		client: d7redis.GetClient(),
 	}
 }
 
-func (s *RedisStore) Create(key string, value any, expires int64) error {
+func (s *RedisStore) Create(ctx *gin.Context, key string, value string, expires int64) error {
+	if s.client == nil {
+		logrus.Error("Redis client is not exist")
+	}
 	rt := time.Unix(expires, 0) // Convert TO UTC
-	err := s.client.Set(s.ctx, key, value, rt.Sub(time.Now())).Err()
+	err := s.client.Set(ctx.Request.Context(), key, value, rt.Sub(time.Now())).Err()
 	if err != nil {
-		return err
+		logrus.Warn(err)
+		panic(err)
 	}
 	return nil
+}
+
+func (s *RedisStore) FindOne(ctx *gin.Context, key string) (int, error) {
+	memId, err := s.client.Get(ctx, key).Result()
+	if errors.Is(err, redis.Nil) {
+		return -1, err
+	} else if err != nil {
+		panic(err)
+	} else {
+		converted, err2 := strconv.Atoi(memId)
+		if err2 != nil {
+			logrus.Error(err2)
+			return -1, err2
+		}
+		return converted, nil
+	}
+
 }

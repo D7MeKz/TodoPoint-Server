@@ -1,8 +1,25 @@
 definitions:
+  data.AccessToken:
+    properties:
+      access_token:
+        type: string
+    type: object
+  data.LoginReq:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
   data.MemberId:
     properties:
       id:
         type: integer
+    type: object
+  data.RefreshToken:
+    properties:
+      refresh_token:
+        type: string
     type: object
   data.RegisterReq:
     properties:
@@ -13,10 +30,39 @@ definitions:
       username:
         type: string
     type: object
+  data.TokenPair:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
-  /members/register:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: If you login, Create tokens(Refresh, Access Token)
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/data.LoginReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/data.TokenPair'
+      summary: Login Member
+      tags:
+      - members
+  /auth/register:
     post:
       consumes:
       - application/json
@@ -36,6 +82,27 @@ paths:
           schema:
             $ref: '#/definitions/data.MemberId'
       summary: Register Member
+      tags:
+      - members
+  /auth/token:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/data.RefreshToken'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/data.AccessToken'
+      summary: Generate Refresh Token
       tags:
       - members
 swagger: "2.0"

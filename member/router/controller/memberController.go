@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"strconv"
 	"todopoint/common/errorutils"
 	"todopoint/common/errorutils/codes"
@@ -62,7 +63,7 @@ func (controller *MemberController) RegisterMember(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body data.LoginReq true "query params"
-// @Success 200 {object} data.MemberId
+// @Success 200 {object} data.TokenPair
 // @Router /auth/login [post]
 func (controller *MemberController) LoginMember(ctx *gin.Context) {
 	req := data.LoginReq{}
@@ -76,7 +77,7 @@ func (controller *MemberController) LoginMember(ctx *gin.Context) {
 	if err != nil {
 		_ = ctx.Error(err)
 	}
-
+	logrus.Debug(pair)
 	response.SuccessWith(ctx, codes.MemberLoginSuccess, pair)
 
 }
@@ -101,6 +102,30 @@ func (controller *MemberController) IsValidMember(ctx *gin.Context) {
 	response.Success(ctx, codes.MemberOK)
 }
 
+// RefreshToken
+// @Summary Generate Refresh Token
+// @Description
+// If access token is expired, client should request with refresh token in body.
+// Service checks the refresh token expiration. If it does, generate new one.
+// @Tags members
+// @Accept json
+// @Produce json
+// @Param request body data.RefreshToken true "query params"
+// @Success 200 {object} data.AccessToken
+// @Router /auth/token [post]
 func (controller *MemberController) RefreshToken(ctx *gin.Context) {
+	req := data.RefreshToken{}
+	err := ctx.ShouldBindJSON(&req)
+	if err != nil {
+		_ = ctx.Error(errorutils.NewNetError(codes.MemberInvalidJson, err))
+		return
+	}
 
+	// Generate New Token
+	access, err := controller.service.GenerateNewToken(ctx, req)
+	if err != nil {
+		_ = ctx.Error(err)
+	}
+
+	response.SuccessWith(ctx, codes.MemberLoginSuccess, access)
 }

@@ -22,12 +22,13 @@ func NewMemberRouter(controller *controller.MemberController) *gin.Engine {
 	{
 		router.Use(auth.TokenAuthMiddleware())
 		router.GET("/:memId/valid", controller.IsValidMember)
+
 	}
 
 	authRouter := engine.Group("/auth")
 	{
 		authRouter.POST("/login", controller.LoginMember)
-		router.POST("/register", controller.RegisterMember)
+		authRouter.POST("/register", controller.RegisterMember)
 		authRouter.POST("/token", controller.RefreshToken)
 	}
 

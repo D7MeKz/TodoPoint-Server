@@ -15,7 +15,41 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/members/register": {
+        "/auth/login": {
+            "post": {
+                "description": "If you login, Create tokens(Refresh, Access Token)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "members"
+                ],
+                "summary": "Login Member",
+                "parameters": [
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/data.LoginReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/data.TokenPair"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/register": {
             "post": {
                 "description": "Register Member",
                 "consumes": [
@@ -48,14 +82,74 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/auth/token": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "members"
+                ],
+                "summary": "Generate Refresh Token",
+                "parameters": [
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/data.RefreshToken"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/data.AccessToken"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "data.AccessToken": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "data.LoginReq": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "data.MemberId": {
             "type": "object",
             "properties": {
                 "id": {
                     "type": "integer"
+                }
+            }
+        },
+        "data.RefreshToken": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
                 }
             }
         },
@@ -69,6 +163,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "data.TokenPair": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "refresh_token": {
                     "type": "string"
                 }
             }

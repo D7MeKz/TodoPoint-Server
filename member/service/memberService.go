@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
+	"strconv"
 	"time"
 	"todopoint/common/auth"
 	"todopoint/common/errorutils"
@@ -63,6 +64,7 @@ func (s *MemberService) LoginMember(ctx *gin.Context, req data.LoginReq) (*data.
 	claim := auth.NewTokenClaims(memId)
 	access, err := claim.Generate()
 	if err != nil {
+		logrus.Error(err)
 		return nil, &errorutils.NetError{Code: codes.TokenCreationErr, Err: err}
 	}
 
@@ -70,8 +72,9 @@ func (s *MemberService) LoginMember(ctx *gin.Context, req data.LoginReq) (*data.
 	refresh := uuid.NewString()
 	redisStore := persistence.NewRedisStore()
 	expires := time.Now().Add(time.Hour * 24 * 7).Unix()
-	redisErr := redisStore.Create(refresh, memId, expires)
+	redisErr := redisStore.Create(ctx, refresh, strconv.Itoa(memId), expires)
 	if redisErr != nil {
+		logrus.Error(redisErr)
 		return nil, &errorutils.NetError{Code: codes.TokenCreationError, Err: err}
 	}
 
@@ -90,4 +93,23 @@ func (s *MemberService) CheckIsValid(ctx *gin.Context, memId int) (bool, *erroru
 	}
 
 	return true, nil
+}
+
+func (s *MemberService) GenerateNewToken(ctx *gin.Context, token data.RefreshToken) (*data.AccessToken, *errorutils.NetError) {
+	// Check refresh token validation
+	redisStore := persistence.NewRedisStore()
+	memId, err := redisStore.FindOne(ctx, token.RefreshToken)
+	// If redis value did not exist, response error. Login again
+	if err != nil {
+		return nil, &errorutils.NetError{Code: codes.TokenExpired, Err: err}
+	}
+
+	// Generate new access token
+	claim := auth.NewTokenClaims(memId)
+	access, err := claim.Generate()
+	if err != nil {
+		return nil, &errorutils.NetError{Code: codes.TokenCreationErr, Err: err}
+	}
+
+	return &data.AccessToken{AccessToken: access}, nil
 }
