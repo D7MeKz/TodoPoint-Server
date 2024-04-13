@@ -1,3 +1,4 @@
+import 'package:app/common/view/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:app/common/component/custom_text_form_field.dart';
 import 'package:app/user/view/login_screen.dart';
@@ -20,9 +21,9 @@ class _App extends StatelessWidget {
         fontFamily: 'NotoSans'
       ),
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
+      home: const Scaffold(
         backgroundColor: Colors.white,
-        body: LoginScreen()
+        body: SplashScreen(),
       ),
     );
   }

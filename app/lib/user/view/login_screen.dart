@@ -1,16 +1,30 @@
+import 'package:app/common/const/data.dart';
+import 'package:app/common/view/root_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:app/common/layout/default_layout.dart';
 import 'package:app/common/const/colors.dart';
 import 'package:app/common/component/custom_text_form_field.dart';
+import 'package:dio/dio.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  String username = '';
+  String password = '';
 
   @override
   Widget build(BuildContext context) {
+    final dio = Dio();
+
     return DefaultLayout(
+        title: '',
         child: SingleChildScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: SafeArea(
                 top: true,
                 bottom: false,
@@ -20,42 +34,72 @@ class LoginScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       _Title(),
-                      const SizedBox(height: 10.0,),
+                      const SizedBox(
+                        height: 10.0,
+                      ),
                       _SubTitle(),
                       Image.asset(
                         'asset/img/misc/logo.png',
-                        width: MediaQuery.of(context).size.width/3 * 2,
+                        width: MediaQuery.of(context).size.width / 3 * 2,
                       ),
                       CustomTextFormField(
-                        hintText:'이메일을 입력해주세요.',
-                        onChanged: (String value){},
+                        hintText: '이메일을 입력해주세요.',
+                        onChanged: (String value) {
+                          username = value;
+
+                        },
                       ),
-                      const SizedBox(height: 12.0,),
+                      const SizedBox(
+                        height: 12.0,
+                      ),
                       CustomTextFormField(
                           hintText: "비밀번호를 입력해주세요.",
-                          onChanged: (String value){},
-                          obscureText: true
+                          onChanged: (String value) {
+                            password = value;
+                          },
+                          obscureText: true),
+                      const SizedBox(
+                        height: 12.0,
                       ),
-                      const SizedBox(height: 12.0,),
                       ElevatedButton(
-                          onPressed: (){},
+                          onPressed: () async {
+                            // Codec<String, String> stringToBase64 = utf8.fuse(base64);
+                            // String token = stringToBase64.encode(rawString);
+                            final resp = await dio.post('http://localhost:3000/auth/login',
+                                data: {'email': username, 'password': password}
+                            );
+                            final accessToken = resp.data['access_token'];
+                            final refreshToken = resp.data['refresh_token'];
+
+                            await storage.write(key: REFRESH_TOKEN_KEY, value: refreshToken);
+                            await storage.write(key: ACCESS_TOKNE_KEY, value: accessToken);
+
+                            if (resp.statusCode == 200){
+                              Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (_) =>RootTab(),
+                                  )
+                              );
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
                             backgroundColor: PRIMARY_COLOR,
                           ),
-                          child: Text(
-                              '로그인'
-                          )
-                      ),
+                          child: Text('로그인')),
                       TextButton(
-                          onPressed: (){},
+                          onPressed: () async {
+                            // Codec<String, String> stringToBase64 = utf8.fuse(base64);
+                            // String token = stringToBase64.encode(rawString);
+                            final resp = await dio.post('http://localhost:3000/auth/token',
+                                data: {'email': username, 'password': password}
+                            );
+
+                          },
                           style: TextButton.styleFrom(
                             foregroundColor: BODY_TEXT_COLOR,
                           ),
-                          child: Text(
-                              '회원가입'
-                          )
-                      )
+                          child: Text('회원가입'))
                     ],
                   ),
                 )
@@ -73,10 +117,7 @@ class _Title extends StatelessWidget {
     return Text(
       "환영합니다.",
       style: TextStyle(
-        fontSize: 34,
-        fontWeight: FontWeight.w500,
-        color: Colors.black
-      ),
+          fontSize: 34, fontWeight: FontWeight.w500, color: Colors.black),
     );
   }
 }
@@ -87,7 +128,7 @@ class _SubTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      "로그인해주세요!\n오늘도 즐거운 하루를 보내기를!" ,
+      "로그인해주세요!\n오늘도 즐거운 하루를 보내기를!",
       style: TextStyle(
         fontSize: 16,
         color: BODY_TEXT_COLOR,
@@ -95,5 +136,3 @@ class _SubTitle extends StatelessWidget {
     );
   }
 }
-
-
