@@ -66,16 +66,21 @@ func (controller *MemberController) RegisterMember(ctx *gin.Context) {
 // @Success 200 {object} data.TokenPair
 // @Router /auth/login [post]
 func (controller *MemberController) LoginMember(ctx *gin.Context) {
+	// Get body
 	req := data.LoginReq{}
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
+		logrus.Errorf("Invalid Json format : %v ", err)
 		_ = ctx.Error(errorutils.NewNetError(codes.MemberInvalidJson, err))
 		return
 	}
+
 	// login Member
-	pair, err := controller.service.LoginMember(ctx, req)
-	if err != nil {
-		_ = ctx.Error(err)
+	pair, err2 := controller.service.LoginMember(ctx, req)
+	if err2 != nil {
+		logrus.Errorf("Login failed")
+		_ = ctx.Error(err2)
+		return
 	}
 	logrus.Debug(pair)
 	response.SuccessWith(ctx, codes.MemberLoginSuccess, pair)

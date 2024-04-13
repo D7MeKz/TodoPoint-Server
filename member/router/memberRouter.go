@@ -16,6 +16,7 @@ import (
 // @host localhost:3000
 func NewMemberRouter(controller *controller.MemberController) *gin.Engine {
 	engine := gin.Default()
+	// engine.Use(middleware.SetHeader())
 	engine.Use(middleware.ErrorHandler())
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router := engine.Group("/members")

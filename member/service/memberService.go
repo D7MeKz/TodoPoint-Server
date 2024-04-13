@@ -54,19 +54,23 @@ func (s *MemberService) LoginMember(ctx *gin.Context, req data.LoginReq) (*data.
 	memId, err := s.Store.GetIDByLogin(ctx, req)
 	if err != nil {
 		if ent.IsNotFound(err) {
+			logrus.Errorf("Member not found : %v", err)
 			return nil, &errorutils.NetError{Code: codes.MemberNotFound, Err: err}
 		} else {
+			logrus.Errorf("Internal server error : %v", err)
 			return nil, &errorutils.NetError{Code: codes.MemberInternalServerError, Err: err}
 		}
 	}
+	logrus.Debugf("Get memberId from login : %d", memId)
 
 	// Create Token
 	claim := auth.NewTokenClaims(memId)
 	access, err := claim.Generate()
 	if err != nil {
-		logrus.Error(err)
+		logrus.Errorf("Token creation Error : %v", err)
 		return nil, &errorutils.NetError{Code: codes.TokenCreationErr, Err: err}
 	}
+	logrus.Debug("Success : Access Token generation")
 
 	// Create Access, Refresh Token
 	refresh := uuid.NewString()
@@ -77,6 +81,7 @@ func (s *MemberService) LoginMember(ctx *gin.Context, req data.LoginReq) (*data.
 		logrus.Error(redisErr)
 		return nil, &errorutils.NetError{Code: codes.TokenCreationError, Err: err}
 	}
+	logrus.Debug("Success : Refresh Token generation")
 
 	return &data.TokenPair{AccessToken: access, RefreshToken: refresh}, nil
 }
@@ -98,7 +103,7 @@ func (s *MemberService) CheckIsValid(ctx *gin.Context, memId int) (bool, *erroru
 func (s *MemberService) GenerateNewToken(ctx *gin.Context, token data.RefreshToken) (*data.AccessToken, *errorutils.NetError) {
 	// Check refresh token validation
 	redisStore := persistence.NewRedisStore()
-	memId, err := redisStore.FindOne(ctx, token.RefreshToken)
+	memId, err := redisStore.Find(ctx, token.RefreshToken)
 	// If redis value did not exist, response error. Login again
 	if err != nil {
 		return nil, &errorutils.NetError{Code: codes.TokenExpired, Err: err}

@@ -21,9 +21,6 @@ func NewRedisStore() *RedisStore {
 }
 
 func (s *RedisStore) Create(ctx *gin.Context, key string, value string, expires int64) error {
-	if s.client == nil {
-		logrus.Error("Redis client is not exist")
-	}
 	rt := time.Unix(expires, 0) // Convert TO UTC
 	err := s.client.Set(ctx.Request.Context(), key, value, rt.Sub(time.Now())).Err()
 	if err != nil {
@@ -33,10 +30,10 @@ func (s *RedisStore) Create(ctx *gin.Context, key string, value string, expires 
 	return nil
 }
 
-func (s *RedisStore) FindOne(ctx *gin.Context, key string) (int, error) {
+func (s *RedisStore) Find(ctx *gin.Context, key string) (int, error) {
 	memId, err := s.client.Get(ctx, key).Result()
 	if errors.Is(err, redis.Nil) {
-		return -1, err
+		return 0, err
 	} else if err != nil {
 		panic(err)
 	} else {
@@ -47,5 +44,4 @@ func (s *RedisStore) FindOne(ctx *gin.Context, key string) (int, error) {
 		}
 		return converted, nil
 	}
-
 }

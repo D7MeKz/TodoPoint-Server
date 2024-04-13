@@ -34,8 +34,9 @@ func NewTokenClaims(uid int) *TokenClaims {
 }
 
 func (t TokenClaims) Generate() (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, t)
-	return token.SignedString([]byte(secret))
+	claim := jwt.NewWithClaims(jwt.SigningMethodHS256, t)
+	token, err := claim.SignedString([]byte(secret))
+	return token, err
 }
 
 func validate(token string) (*TokenClaims, error) {
