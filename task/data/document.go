@@ -14,7 +14,7 @@ type Task struct {
 	ModifiedAt string             `bson:"modified_at" json:"modified_at"`
 }
 
-func NewTaskInfo(req CreateReq) *Task {
+func NewTask(req CreateReq) *Task {
 	return &Task{
 		UserId:     req.UserId,
 		Title:      req.Title,

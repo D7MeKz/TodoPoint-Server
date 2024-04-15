@@ -15,10 +15,11 @@ import (
 type TaskStore interface {
 	Create(ctx *gin.Context, req data.CreateReq) (*mongo.InsertOneResult, error)
 	IsExist(ctx *gin.Context, taskId int) (bool, error)
+	GetManyFrom(ctx *gin.Context, uid int) ([]data.TaskInfo, error)
 }
 
 type TaskService struct {
-	Store TaskStore
+	Store *persistence.Store
 }
 
 func NewTaskService(s *persistence.Store) *TaskService {
@@ -53,4 +54,16 @@ func (s *TaskService) CreateTask(ctx *gin.Context, req data.CreateReq) (*data.Ta
 		return &data.TaskId{Id: oid.Hex()}, nil
 	}
 	return nil, &errorutils.NetError{Code: codes.TaskCreationError, Err: err}
+}
+
+// GetTasksFrom
+// Get All tasks
+// NOTE : Only get 3 tasks, if I learn pagination, I'll change my logic.
+func (s *TaskService) GetTasksFrom(ctx *gin.Context, uid int) ([]data.TaskInfo, error) {
+	// Get Tasks from users task
+	tasks, err := s.Store.GetManyFrom(ctx, uid)
+	if err != nil {
+		return nil, &errorutils.NetError{Code: codes.TaskListError, Err: err}
+	}
+	return tasks, nil
 }

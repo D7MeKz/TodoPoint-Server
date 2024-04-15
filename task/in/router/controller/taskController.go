@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"todopoint/common/auth"
 	"todopoint/common/errorutils"
 	"todopoint/common/errorutils/codes"
 	"todopoint/common/netutils/response"
@@ -43,4 +44,27 @@ func (c *TaskController) CreateTask(ctx *gin.Context) {
 	}
 	response.SuccessWith(ctx, codes.TaskCreationSuccess, oid)
 	return
+}
+
+// GetList
+// @Summary Get Task list
+// @Description Get All List
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Success 200 {object}
+// @Router /tasks [get]
+func (c *TaskController) GetList(ctx *gin.Context) {
+	// Get Token From Header
+	uid, tokenErr := auth.GetToken(ctx)
+	if tokenErr != nil {
+		_ = ctx.Error(tokenErr)
+		return
+	}
+	tasks, err := c.service.GetTasksFrom(ctx, uid)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+	response.SuccessWith(ctx, codes.TaskListSuccess, tasks)
 }

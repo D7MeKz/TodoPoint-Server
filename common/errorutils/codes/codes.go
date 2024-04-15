@@ -30,7 +30,10 @@ const (
 	TokenCreationError        WebCode = 150002
 	TokenExpiredErr           WebCode = 150003
 	// ---------- Task ---------------
-	// NOTE : 200
+	//NOTE : 200
+	TaskListSuccess WebCode = 220001
+
+	// NOTE : 201
 	TaskCreationSuccess WebCode = 220101
 
 	// NOTE : 400
@@ -38,6 +41,7 @@ const (
 
 	// NOTE : 500
 	TaskCreationError WebCode = 250001
+	TaskListError     WebCode = 250002
 
 	// NOTE : 503
 	TaskMemberUnavailable WebCode = 250301

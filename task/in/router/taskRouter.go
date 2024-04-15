@@ -21,6 +21,7 @@ func NewTaskRouter(controller *controller.TaskController) *gin.Engine {
 	router := engine.Group("/tasks")
 	{
 		router.POST("/create", controller.CreateTask)
+		router.GET("", controller.GetList)
 	}
 
 	return engine
