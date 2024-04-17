@@ -4,42 +4,69 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"todopoint/common/config/mongodb"
 	"todopoint/task/data"
+	"todopoint/task/data/model"
 )
 
-type Store struct {
-	client     *mongo.Client
-	collection *mongo.Collection
+type TaskStore struct {
+	client       *mongo.Client
+	tCollection  *mongo.Collection
+	stCollection *mongo.Collection
 }
 
-func (s *Store) IsExist(ctx *gin.Context, taskId int) (bool, error) {
+func (s *TaskStore) IsExist(ctx *gin.Context, taskId int) (bool, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func NewStore(colName string) *Store {
+func NewTaskStore() *TaskStore {
 	client := mongodb.GetClient()
-	return &Store{
-		client:     client,
-		collection: mongodb.GetCollection(client, colName),
+	return &TaskStore{
+		client:       client,
+		tCollection:  mongodb.GetCollection(client, "task"),
+		stCollection: mongodb.GetCollection(client, "subtask"),
 	}
 }
 
-func (s *Store) Create(ctx *gin.Context, req data.CreateReq) (*mongo.InsertOneResult, error) {
-	taskData := data.NewTask(req)
-	id, err := s.collection.InsertOne(ctx, taskData)
+func (s *TaskStore) Create(ctx *gin.Context, req data.CreateReq, uid int) (*mongo.InsertOneResult, error) {
+	taskData := model.NewTask(uid, req.Title)
+	id, err := s.tCollection.InsertOne(ctx, taskData)
 	if err != nil {
 		return nil, err
 	}
 	return id, nil
 }
 
-func (s *Store) GetManyFrom(ctx *gin.Context, uid int) ([]data.TaskInfo, error) {
+func (s *TaskStore) GetOneFrom(ctx *gin.Context, filter bson.D) (*mongo.SingleResult, error) {
+	// Check task is exist
+	result := s.tCollection.FindOne(ctx, filter)
+	if result.Err() != nil {
+		mongoErr := result.Err()
+		logrus.Errorf("MongoDB Error : %v", mongoErr)
+		return nil, mongoErr
+	}
+	return result, nil
+}
+
+func (s *TaskStore) GetSubById(ctx *gin.Context, oid primitive.ObjectID) (*model.SubTask, error) {
+	result := s.stCollection.FindOne(ctx, bson.D{{"_id", oid}})
+
+	// Decode to Subtask
+	var subtask = model.SubTask{}
+	err := result.Decode(&subtask)
+	if err != nil {
+		return nil, err
+	}
+
+	return &subtask, nil
+}
+func (s *TaskStore) GetManyFrom(ctx *gin.Context, uid int) ([]data.TaskInfo, error) {
 	// Get Cursor
 	filter := bson.D{{"user_id", uid}}
-	cursor, findErr := s.collection.Find(ctx, filter)
+	cursor, findErr := s.tCollection.Find(ctx, filter)
 	if findErr != nil {
 		logrus.Fatal(findErr)
 		return nil, findErr
@@ -54,6 +81,7 @@ func (s *Store) GetManyFrom(ctx *gin.Context, uid int) ([]data.TaskInfo, error) 
 	for cursor.Next(ctx) {
 		var task data.TaskInfo
 		taskErr := cursor.Decode(&task)
+
 		if taskErr != nil {
 			logrus.Fatal(taskErr)
 		}
@@ -74,4 +102,34 @@ func (s *Store) GetManyFrom(ctx *gin.Context, uid int) ([]data.TaskInfo, error) 
 
 	return tasks, nil
 
+}
+
+func (s *TaskStore) CreateSubtask(ctx *gin.Context, title string) (*mongo.InsertOneResult, error) {
+	// Create subtask
+	subtask := model.NewSubTask(title)
+	result, err := s.stCollection.InsertOne(ctx, subtask)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+// Add
+// Update Subtask into task
+func (s *TaskStore) Add(ctx *gin.Context, tid string, subId primitive.ObjectID) (bool, error) {
+	toid, convertErr := primitive.ObjectIDFromHex(tid)
+	if convertErr != nil {
+		return false, convertErr
+	}
+
+	_, err := s.tCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": toid}, // String to ObjectID
+		bson.M{"$push": bson.M{"subtasks": subId}},
+	)
+	if err != nil {
+		return false, err
+	}
+	return true, err
 }

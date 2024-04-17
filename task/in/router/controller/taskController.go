@@ -30,6 +30,14 @@ func NewTaskController(s service.TaskService) *TaskController {
 // @Success 200 {object} data.TaskId
 // @Router /tasks/create [post]
 func (c *TaskController) CreateTask(ctx *gin.Context) {
+	// Get Token From Header
+	uid, tokenErr := auth.GetToken(ctx)
+	if tokenErr != nil {
+		_ = ctx.Error(tokenErr)
+		return
+	}
+
+	// Get Request from request
 	r := data.CreateReq{}
 	err := ctx.ShouldBindJSON(&r)
 	if err != nil {
@@ -37,7 +45,7 @@ func (c *TaskController) CreateTask(ctx *gin.Context) {
 		return
 	}
 
-	oid, err2 := c.service.CreateTask(ctx, r)
+	oid, err2 := c.service.CreateTask(ctx, r, uid)
 	if err2 != nil {
 		_ = ctx.Error(err2)
 		return
@@ -67,4 +75,53 @@ func (c *TaskController) GetList(ctx *gin.Context) {
 		return
 	}
 	response.SuccessWith(ctx, codes.TaskListSuccess, tasks)
+}
+
+// GetToday
+// @Summary Get Today's task
+// @Description Get today's task
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Success 200 {object} data.TaskDetail
+// @Router /tasks/today [get]
+func (c *TaskController) GetToday(ctx *gin.Context) {
+	// Get Token From Header
+	uid, tokenErr := auth.GetToken(ctx)
+	if tokenErr != nil {
+		_ = ctx.Error(tokenErr)
+		return
+	}
+
+	// Get Today's tasks
+	task, err := c.service.GetTodayFrom(ctx, uid)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+	response.SuccessWith(ctx, codes.TaskOneSuccess, task)
+}
+
+func (c *TaskController) AddSubtask(ctx *gin.Context) {
+	uid, tokenErr := auth.GetToken(ctx)
+	if tokenErr != nil {
+		_ = ctx.Error(tokenErr)
+		return
+	}
+
+	// Get Request from request
+	r := data.AddSubReq{}
+	err := ctx.ShouldBindJSON(&r)
+	if err != nil {
+		_ = ctx.Error(errorutils.NewNetError(codes.SubtaskInvalidJson, err))
+		return
+	}
+
+	// Add subtask
+	tid, err := c.service.AddSubOne(ctx, r, uid)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+	response.SuccessWith(ctx, codes.SubtaskOneSuccess, tid)
 }

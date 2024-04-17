@@ -9,7 +9,7 @@ type NetError struct {
 	Err  error
 }
 
-func NewNetError(code codes.WebCode, err error) error {
+func NewNetError(code codes.WebCode, err error) *NetError {
 	return &NetError{Code: code, Err: err}
 }
 
