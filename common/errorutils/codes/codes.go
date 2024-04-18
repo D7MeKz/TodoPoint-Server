@@ -31,8 +31,9 @@ const (
 	TokenExpiredErr           WebCode = 150003
 	// ---------- Task ---------------
 	//NOTE : 200
-	TaskOneSuccess  WebCode = 220000
-	TaskListSuccess WebCode = 220001
+	TaskOneSuccess    WebCode = 220000
+	TaskListSuccess   WebCode = 220001
+	TaskUpdateSuccess WebCode = 2200002
 
 	SubtaskOneSuccess  WebCode = 220050
 	SubtaskListSuccess WebCode = 220051
@@ -43,6 +44,8 @@ const (
 
 	// NOTE : 400
 	TaskInvalidJson  WebCode = 240001
+	TaskInvalidUri   WebCode = 240002
+	TaskInvalidQuery WebCode = 240003
 	TaskDoesNotFound WebCode = 240400
 
 	SubtaskInvalidJson  WebCode = 240051
@@ -54,6 +57,7 @@ const (
 
 	SubtaskCreationErr WebCode = 250051
 	SubtaskAdditionErr WebCode = 250054
+	SubtaskUpdateErr   WebCode = 250055
 
 	// NOTE : 503
 	TaskMemberUnavailable WebCode = 250301

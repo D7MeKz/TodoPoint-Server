@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"strconv"
 	"todopoint/common/config/mongodb"
 	"todopoint/task/data"
 	"todopoint/task/data/model"
@@ -132,4 +133,24 @@ func (s *TaskStore) Add(ctx *gin.Context, tid string, subId primitive.ObjectID) 
 		return false, err
 	}
 	return true, err
+}
+
+func (s *TaskStore) UpdateStatus(ctx *gin.Context, subId primitive.ObjectID, status string) (bool, error) {
+	// Change status type, int to bool
+	var st bool
+	st, err := strconv.ParseBool(status)
+	if err != nil {
+		return false, err
+	}
+
+	// Update value
+	_, err = s.stCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": subId}, // String to ObjectID
+		bson.M{"$set": bson.M{"status": st}},
+	)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }

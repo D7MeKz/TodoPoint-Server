@@ -1,6 +1,7 @@
 package errorutils
 
 import (
+	"github.com/sirupsen/logrus"
 	"todopoint/common/errorutils/codes"
 )
 
@@ -10,6 +11,7 @@ type NetError struct {
 }
 
 func NewNetError(code codes.WebCode, err error) *NetError {
+	logrus.Errorf("Code : %d, Error : %v", code, err)
 	return &NetError{Code: code, Err: err}
 }
 

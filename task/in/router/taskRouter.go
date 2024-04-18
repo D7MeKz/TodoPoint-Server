@@ -23,12 +23,14 @@ func NewTaskRouter(controller *controller.TaskController) *gin.Engine {
 		router.POST("/create", controller.CreateTask)
 		router.GET("", controller.GetList)
 		router.GET("/today", controller.GetToday)
+
 	}
 
 	// SubTask Router
 	subRouter := engine.Group("/subtasks")
 	{
 		subRouter.POST("/create", controller.AddSubtask)
+		subRouter.GET("/:subtask_id", controller.CheckSubtask)
 	}
 	return engine
 }

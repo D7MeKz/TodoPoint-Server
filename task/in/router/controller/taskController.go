@@ -125,3 +125,29 @@ func (c *TaskController) AddSubtask(ctx *gin.Context) {
 	}
 	response.SuccessWith(ctx, codes.SubtaskOneSuccess, tid)
 }
+
+func (c *TaskController) CheckSubtask(ctx *gin.Context) {
+	// Get Task Id
+	tid, ok := ctx.Params.Get("subtask_id")
+	if ok == false {
+		_ = ctx.Error(errorutils.NewNetError(codes.TaskInvalidUri, nil))
+		return
+	}
+
+	// Get query
+	status := ctx.Query("checked")
+	if status == "" {
+		_ = ctx.Error(errorutils.NewNetError(codes.TaskInvalidQuery, nil))
+		return
+	}
+
+	// Change check status
+	ok, err := c.service.CheckSubtask(ctx, tid, status)
+	if err != nil {
+		_ = ctx.Error(err)
+		return
+	}
+
+	response.Success(ctx, codes.TaskUpdateSuccess)
+
+}

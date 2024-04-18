@@ -78,18 +78,6 @@ func (s *TaskService) GetTodayFrom(ctx *gin.Context, uid int) (*data.TaskDetail,
 	return &detail, nil
 }
 func (s *TaskService) CreateTask(ctx *gin.Context, req data.CreateReq, uid int) (*data.TaskId, *errorutils.NetError) {
-	// Check user isExist
-	//info, err := external.RequestTo(uid)
-	//if err != nil {
-	//	logrus.Error(err.Error())
-	//	return nil, &errorutils.NetError{Code: codes.TaskMemberUnavailable, Err: err}
-	//}
-	//
-	//if !info.IsSuccess() {
-	//	logrus.Error(err.Error())
-	//	return nil, &errorutils.NetError{Code: info.Code, Err: err}
-	//}
-
 	// Create Task
 	result, err := s.Store.Create(ctx, req, uid)
 	if err != nil {
@@ -128,6 +116,7 @@ func (s *TaskService) AddSubOne(ctx *gin.Context, req data.AddSubReq, uid int) (
 	if subOk {
 		addOk, addErr := s.Store.Add(ctx, req.TaskId, subOid)
 		if addErr != nil && !addOk {
+			logrus.Errorf("Can't add subtask in task : %v", addErr)
 			return nil, &errorutils.NetError{Code: codes.SubtaskAdditionErr, Err: err}
 		}
 
@@ -140,4 +129,19 @@ func (s *TaskService) AddSubOne(ctx *gin.Context, req data.AddSubReq, uid int) (
 	}
 	return nil, &errorutils.NetError{Code: codes.SubtaskAdditionErr, Err: err}
 
+}
+
+func (s *TaskService) CheckSubtask(ctx *gin.Context, stid string, status string) (bool, *errorutils.NetError) {
+	// if checkSubtask is exist
+	stoid, err := primitive.ObjectIDFromHex(stid)
+	if err != nil {
+		return false, errorutils.NewNetError(codes.TaskDecodingErr, err)
+	}
+
+	// Update status
+	ok, err := s.Store.UpdateStatus(ctx, stoid, status)
+	if !ok && err != nil {
+		return false, errorutils.NewNetError(codes.SubtaskUpdateErr, err)
+	}
+	return true, nil
 }

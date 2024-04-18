@@ -28,6 +28,7 @@ func NewTask(uid int, title string) *Task {
 		Status:     TaskNotChecked,
 		CreatedAt:  time.Now().Format("2006-01-02"),
 		ModifiedAt: time.Now().Format("2006-01-02 15:01"),
+		SubTask:    []primitive.ObjectID{},
 	}
 }
 
