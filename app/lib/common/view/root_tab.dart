@@ -1,8 +1,7 @@
-import 'package:app/common/const/colors.dart';
-import 'package:app/common/layout/default_layout.dart';
-import 'package:app/restaurant/view/restaurant_screen.dart';
+import 'package:Todopoint/common/const/colors.dart';
+import 'package:Todopoint/common/layout/default_layout.dart';
+import 'package:Todopoint/task/view/task_screen.dart';
 import 'package:flutter/material.dart';
-
 
 class RootTab extends StatefulWidget {
   const RootTab({super.key});
@@ -11,7 +10,7 @@ class RootTab extends StatefulWidget {
   State<RootTab> createState() => _RootTabState();
 }
 
-class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
+class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin{
   int index = 0;
   late TabController controller; // 나중에 이 값이 입력될거야.. 하지만 무조건 값을 넣을거야.!
 
@@ -29,6 +28,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
     controller.removeListener(tabListener);
     super.dispose();
   }
+
   void tabListener(){
     setState(() {
       index = controller.index;
@@ -38,7 +38,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      title: 'Todo',
+      title: 'todo',
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: PRIMARY_COLOR,
         unselectedItemColor: BODY_TEXT_COLOR,
@@ -51,20 +51,20 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
         currentIndex: index,
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              label:'Home'
+            icon: Icon(Icons.check),
+            label: 'Todo'
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.fastfood_outlined),
-              label:'Food'
+              icon: Icon(Icons.calendar_today_rounded),
+              label: 'Calendar'
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.receipt_long_outlined),
-              label:'Receipt'
+              icon: Icon(Icons.person_outline),
+              label: 'Community'
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person_outlined),
-              label:'Profile',
+              icon: Icon(Icons.settings),
+              label: 'Settings'
           ),
         ],
       ),
@@ -72,13 +72,12 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
         physics: const NeverScrollableScrollPhysics(),
         controller: controller,
         children: [
-          RestaurantScreen(),
-          Container(child: Text('Food'),),
-          Container(child: Text('Order'),),
-          Container(child: Text('Profile'),),
+          TaskScreen(),
+          Container(child:Text('Helloworld')),
+          Container(child:Text('Helloworld')),
+         Container(child:Text('Helloworld')),
         ],
       ),
     );
   }
 }
-

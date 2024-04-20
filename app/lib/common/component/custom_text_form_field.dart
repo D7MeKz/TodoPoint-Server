@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:app/common/const/colors.dart';
+
+import '../const/colors.dart';
 
 class CustomTextFormField extends StatelessWidget {
   final String? hintText; // Get from params
@@ -14,12 +15,12 @@ class CustomTextFormField extends StatelessWidget {
     this.obscureText = false,
     this.hintText,
     this.errorText,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final baseBorder = OutlineInputBorder(
+    const baseBorder = OutlineInputBorder(
         borderSide: BorderSide(
             color: INPUT_BORDER_COLOR,
             width: 1.0)); // 테두리가 있는 입력하는 border,default는 underline
@@ -33,7 +34,7 @@ class CustomTextFormField extends StatelessWidget {
       decoration: InputDecoration(
           contentPadding: EdgeInsets.all(20),
           hintText: hintText,
-          hintStyle: TextStyle(
+          hintStyle: const TextStyle(
             color: BODY_TEXT_COLOR,
             fontSize: 14.0,
           ),
@@ -44,7 +45,9 @@ class CustomTextFormField extends StatelessWidget {
           enabledBorder: baseBorder,
           focusedBorder: baseBorder.copyWith(
               borderSide:
-                  baseBorder.borderSide.copyWith(color: PRIMARY_COLOR))),
+                  baseBorder.borderSide.copyWith(color: PRIMARY_COLOR)
+          )
+      ),
     );
   }
 }

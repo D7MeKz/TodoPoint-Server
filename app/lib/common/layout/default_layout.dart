@@ -6,7 +6,7 @@ class DefaultLayout extends StatelessWidget {
   final String? title;
   final Widget? bottomNavigationBar;
 
-  const DefaultLayout({required this.child,super.key, this.backgroundColor, required this.title, this.bottomNavigationBar});
+  const DefaultLayout({super.key, this.backgroundColor, required this.child, this.title, this.bottomNavigationBar});
 
   @override
   Widget build(BuildContext context) {
@@ -18,18 +18,18 @@ class DefaultLayout extends StatelessWidget {
     );
   }
 
-  AppBar? renderAppBar(){
-    if(title  == null){
+  AppBar? renderAppBar() {
+    if (title == null) {
       return null;
-    }else{
+    } else {
       return AppBar(
         backgroundColor: Colors.white,
         elevation: 0, // 앞으로 튀어나오는 효과
         title: Text(
           title!, // Not null
           style: const TextStyle(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w500
+              fontSize: 16.0,
+              fontWeight: FontWeight.w500
           ),
         ),
         foregroundColor: Colors.black,

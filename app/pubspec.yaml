@@ -1,4 +1,4 @@
-name: app
+name: Todopoint
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -32,7 +32,7 @@ dependencies:
     sdk: flutter
 
 
-  # The following adds the Cupertino Icons font to your application.
+  # The following adds the Cupertino Icons fonts to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
   dio: ^5.4.2+1
@@ -41,7 +41,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  dio: ^5.4.2+1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -56,7 +55,7 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
 
-  # The following line ensures that the Material Icons font is
+  # The following line ensures that the Material Icons fonts is
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
@@ -65,12 +64,6 @@ flutter:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
-  assets:
-    - asset/img/misc/
-    - asset/img/food/
-    - asset/svg/icon/
-    - asset/img/logo/
-    - asset/rive/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -80,8 +73,8 @@ flutter:
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
+  # "family" key with the fonts family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the fonts. For
   # example:
   # fonts:
   #   - family: Schyler
@@ -95,22 +88,20 @@ flutter:
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #
-
   fonts:
     - family: NotoSans
       fonts:
-        - asset: asset/fonts/NotoSansKR-Black.otf
+        - asset: assets/fonts/NotoSansKR-Black.otf
           weight: 900
-        - asset: asset/fonts/NotoSansKR-Bold.otf
+        - asset: assets/fonts/NotoSansKR-Bold.otf
           weight: 700
-        - asset: asset/fonts/NotoSansKR-Medium.otf
+        - asset: assets/fonts/NotoSansKR-Medium.otf
           weight: 500
-        - asset: asset/fonts/NotoSansKR-Regular.otf
+        - asset: assets/fonts/NotoSansKR-Regular.otf
           weight: 400
-        - asset: asset/fonts/NotoSansKR-Light.otf
+        - asset: assets/fonts/NotoSansKR-Light.otf
           weight: 300
-        - asset: asset/fonts/NotoSansKR-Thin.otf
+        - asset: assets/fonts/NotoSansKR-Thin.otf
           weight: 100
-
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
