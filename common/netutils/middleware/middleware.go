@@ -3,7 +3,9 @@ package middleware
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"net/http"
+	"time"
 	"todopoint/common/errorutils"
 	"todopoint/common/errorutils/codes"
 	"todopoint/common/netutils/response"
@@ -18,10 +20,10 @@ func ErrorHandler() gin.HandlerFunc {
 
 		if err != nil {
 			var netErr *errorutils.NetError
+			// Get data from NetError
 			if errors.As(err, &netErr) {
-				convertedError, _ := errorutils.Convert(err)
-
-				code := convertedError.GetCode()
+				code := netErr.GetCode()
+				logrus.Errorf("ErrorCode: %d", code)
 				statusCode := codes.GetStatus(code)
 				res := response.NewErrorResponse(code)
 
@@ -37,6 +39,17 @@ func ErrorHandler() gin.HandlerFunc {
 			}
 
 		}
+	}
+}
+
+func SetHeader() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Cache-Control", "no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0")
+		c.Header("Last-Modified", time.Now().String())
+		c.Header("Pragma", "no-cache")
+		c.Header("Expires", "-1")
+		c.Next()
 	}
 
 }

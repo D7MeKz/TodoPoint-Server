@@ -17,21 +17,47 @@ const (
 	// 400 : Bad Request
 	MemberInvalidJson WebCode = 140001
 	MemberInvalidUri  WebCode = 140002
+
+	// 401
+	TokenExpired     WebCode = 140100
+	TokenCreationErr WebCode = 140101
+
 	// 404 : Not Found
 	MemberNotFound WebCode = 140400
 
 	MemberInternalServerError WebCode = 150000
 	MemberCreationError       WebCode = 150001
-
+	TokenCreationError        WebCode = 150002
+	TokenExpiredErr           WebCode = 150003
 	// ---------- Task ---------------
-	// NOTE : 200
-	TaskCreationSuccess WebCode = 220101
+	//NOTE : 200
+	TaskOneSuccess    WebCode = 220000
+	TaskListSuccess   WebCode = 220001
+	TaskUpdateSuccess WebCode = 2200002
+
+	SubtaskOneSuccess  WebCode = 220050
+	SubtaskListSuccess WebCode = 220051
+
+	// NOTE : 201
+	TaskCreationSuccess    WebCode = 220101
+	SubtaskCreationSuccess WebCode = 220151
 
 	// NOTE : 400
-	TaskInvalidJson WebCode = 240001
+	TaskInvalidJson  WebCode = 240001
+	TaskInvalidUri   WebCode = 240002
+	TaskInvalidQuery WebCode = 240003
+	TaskDoesNotFound WebCode = 240400
 
+	SubtaskInvalidJson  WebCode = 240051
+	SubtaskDoesNotFound WebCode = 240050
 	// NOTE : 500
 	TaskCreationError WebCode = 250001
+	TaskListError     WebCode = 250002
+	TaskDecodingErr   WebCode = 250003
+
+	SubtaskCreationErr WebCode = 250051
+	SubtaskAdditionErr WebCode = 250054
+	SubtaskUpdateErr   WebCode = 250055
 
 	// NOTE : 503
 	TaskMemberUnavailable WebCode = 250301

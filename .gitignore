@@ -154,3 +154,6 @@ db/mysql/init/
 # MongoDB
 mongodb_data/
 mongod.conf
+
+# Redis
+redis/

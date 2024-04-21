@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"strconv"
 	"todopoint/common/errorutils"
 	"todopoint/common/errorutils/codes"
@@ -35,7 +36,7 @@ func NewMemberController(s service.MemberService) *MemberController {
 // @Produce json
 // @Param request body data.RegisterReq true "query params"
 // @Success 200 {object} data.MemberId
-// @Router /members/register [post]
+// @Router /auth/register [post]
 func (controller *MemberController) RegisterMember(ctx *gin.Context) {
 	req := data.RegisterReq{}
 	err := ctx.ShouldBindJSON(&req)
@@ -55,21 +56,34 @@ func (controller *MemberController) RegisterMember(ctx *gin.Context) {
 	response.SuccessWith(ctx, codes.MemberCreationSuccess, mid)
 }
 
+// LoginMember
+// @Summary Login Member
+// @Description If you login, Create tokens(Refresh, Access Token)
+// @Tags members
+// @Accept json
+// @Produce json
+// @Param request body data.LoginReq true "query params"
+// @Success 200 {object} data.TokenPair
+// @Router /auth/login [post]
 func (controller *MemberController) LoginMember(ctx *gin.Context) {
+	// Get body
 	req := data.LoginReq{}
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
+		logrus.Errorf("Invalid Json format : %v ", err)
 		_ = ctx.Error(errorutils.NewNetError(codes.MemberInvalidJson, err))
 		return
 	}
-	// login Member
-	memId, err := controller.service.LoginMember(ctx, req)
-	if err != nil {
-		_ = ctx.Error(err)
-	}
 
-	res := data.MemberId{MemberId: memId}
-	response.SuccessWith(ctx, codes.MemberLoginSuccess, res)
+	// login Member
+	pair, err2 := controller.service.LoginMember(ctx, req)
+	if err2 != nil {
+		logrus.Errorf("Login failed")
+		_ = ctx.Error(err2)
+		return
+	}
+	logrus.Debug(pair)
+	response.SuccessWith(ctx, codes.MemberLoginSuccess, pair)
 
 }
 
@@ -91,4 +105,32 @@ func (controller *MemberController) IsValidMember(ctx *gin.Context) {
 		return
 	}
 	response.Success(ctx, codes.MemberOK)
+}
+
+// RefreshToken
+// @Summary Generate Refresh Token
+// @Description
+// If access token is expired, client should request with refresh token in body.
+// Service checks the refresh token expiration. If it does, generate new one.
+// @Tags members
+// @Accept json
+// @Produce json
+// @Param request body data.RefreshToken true "query params"
+// @Success 200 {object} data.AccessToken
+// @Router /auth/token [post]
+func (controller *MemberController) RefreshToken(ctx *gin.Context) {
+	req := data.RefreshToken{}
+	err := ctx.ShouldBindJSON(&req)
+	if err != nil {
+		_ = ctx.Error(errorutils.NewNetError(codes.MemberInvalidJson, err))
+		return
+	}
+
+	// Generate New Token
+	access, err := controller.service.GenerateNewToken(ctx, req)
+	if err != nil {
+		_ = ctx.Error(err)
+	}
+
+	response.SuccessWith(ctx, codes.MemberLoginSuccess, access)
 }

@@ -1,7 +1,7 @@
 package errorutils
 
 import (
-	"errors"
+	"github.com/sirupsen/logrus"
 	"todopoint/common/errorutils/codes"
 )
 
@@ -10,28 +10,9 @@ type NetError struct {
 	Err  error
 }
 
-func NewNetError(code codes.WebCode, err error) error {
+func NewNetError(code codes.WebCode, err error) *NetError {
+	logrus.Errorf("Code : %d, Error : %v", code, err)
 	return &NetError{Code: code, Err: err}
-}
-
-func IsNetError(err error) bool {
-	if err == nil {
-		return false
-	}
-	var e *NetError
-	return errors.As(err, &e)
-}
-
-func Convert(err error) (*NetError, bool) {
-	for err != nil {
-		var netError *NetError
-		switch {
-		case errors.As(err, &netError):
-			return netError, true
-		}
-		err = errors.Unwrap(err)
-	}
-	return nil, false
 }
 
 func (e *NetError) GetCode() codes.WebCode {
@@ -40,9 +21,3 @@ func (e *NetError) GetCode() codes.WebCode {
 func (e *NetError) Error() string {
 	return e.Err.Error()
 }
-
-//	func (e *NetError) Unwrap() error {
-//		return e.Err
-//	}
-//
-// error to NetError

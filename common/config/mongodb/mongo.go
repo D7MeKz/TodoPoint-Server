@@ -24,6 +24,8 @@ func GetCollection(client *mongo.Client, colName string) *mongo.Collection {
 	return client.Database("todopoint").Collection(colName)
 }
 
+// NewMongoClient
+// Create New Mongo Client using .env file
 func NewMongoClient(path string) *mongo.Client {
 	dir, err := filepath.Abs(path)
 	if err != nil {
@@ -48,12 +50,6 @@ func NewMongoClient(path string) *mongo.Client {
 	if err != nil {
 		panic(err)
 	}
-
-	//defer func() {
-	//	if err := client.Disconnect(context.TODO()); err != nil {
-	//		panic(err)
-	//	}
-	//}()
 
 	return client
 }
