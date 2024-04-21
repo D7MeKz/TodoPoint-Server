@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+	"todopoint/common/d7redis"
 	"todopoint/member/out/ent"
 	"todopoint/member/out/persistence"
 	"todopoint/member/router"
@@ -30,6 +31,16 @@ func main() {
 
 	// set client
 	config.SetClient(client)
+
+	// Redis
+	redisClient := d7redis.NewRedisClient()
+	d7redis.SetClient(redisClient)
+
+	ok := d7redis.IsExist(redisClient)
+	if !ok {
+		panic("Redis client did not set")
+	}
+
 	// Set Router
 	store := persistence.NewStore()
 	memService := service.NewMemberService(store)
