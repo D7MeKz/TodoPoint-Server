@@ -13,5 +13,4 @@ func RequestTo(memId int) (*networking.ExternalInfo, error) {
 
 	}
 	return info, nil
-
 }

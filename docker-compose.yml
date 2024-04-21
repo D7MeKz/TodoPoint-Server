@@ -41,3 +41,14 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: point1234
       ME_CONFIG_MONGODB_URL: mongodb://root:point1234@mongodb:27017
+
+  redis: # container name
+    image: redis:6.2.6-alpine
+    container_name: redis
+    ports: # 바인딩할 포트:내부 포트
+      - 6379:6379
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes: # 마운트할 볼륨 설정
+      - ./redis/data:/data
+      - ./redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
+    restart: always

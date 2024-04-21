@@ -1,6 +1,10 @@
 package data
 
 type CreateReq struct {
-	UserId int    `json:"user_id"`
+	Title string `json:"title"`
+}
+
+type AddSubReq struct {
+	TaskId string `json:"task_id"`
 	Title  string `json:"title"`
 }

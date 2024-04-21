@@ -42,7 +42,6 @@ func (s *Store) GetMemberByEmail(ctx *gin.Context, email string) (*ent.Member, e
 		return nil, err
 	}
 	return mem, nil
-
 }
 
 func (s *Store) GetIDByLogin(ctx *gin.Context, req data.LoginReq) (int, error) {
