@@ -34,10 +34,7 @@ func NewMemberService(s MemberStore) *MemberService {
 func (s *MemberService) CreateMember(ctx *gin.Context, req data.RegisterReq) (*ent.Member, *errorutils.NetError) {
 	// Check member Exist
 	existedMem, err := s.Store.GetMemberByEmail(ctx, req.Email)
-	if err != nil {
-		logrus.Print("Get By Email Error")
-		return nil, &errorutils.NetError{Code: codes.MemberInternalServerError, Err: err}
-	}
+
 	if ent.IsNotFound(err) {
 		logrus.Print("Member does not exist")
 		mem, err2 := s.Store.Create(ctx, req)
@@ -45,6 +42,10 @@ func (s *MemberService) CreateMember(ctx *gin.Context, req data.RegisterReq) (*e
 			return nil, &errorutils.NetError{Code: codes.MemberCreationError, Err: err2}
 		}
 		return mem, nil
+	}
+	if err != nil {
+		logrus.Print("Get By Email Error")
+		return nil, &errorutils.NetError{Code: codes.MemberInternalServerError, Err: err}
 	}
 	return existedMem, nil
 }
