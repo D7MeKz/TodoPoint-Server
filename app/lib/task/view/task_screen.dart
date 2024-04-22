@@ -11,7 +11,11 @@ class TaskScreen extends StatelessWidget {
       child: const Center(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child:TaskCard(),
+          child: TaskCard(
+            content: "Hello",
+            isChecked: false,
+            date: "2000",
+          ),
         ),
       ),
     );
