@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"time"
 	"todopoint/common/config/mongodb"
+	"todopoint/common/rabbitmq"
 	"todopoint/task/in/router"
 	"todopoint/task/in/router/controller"
 	"todopoint/task/out/persistence"
@@ -18,6 +19,23 @@ func main() {
 	client := mongodb.NewMongoClient(filepath.Dir(os.Args[0]))
 	mongodb.SetClient(client)
 
+	// RabbitMQ
+	err := rabbitmq.SetClient("amqp://guest:guest@localhost:5672/")
+	if err != nil {
+		panic(err)
+	}
+
+	err = rabbitmq.SetChannel()
+	if err != nil {
+		panic(err)
+	}
+
+	err = rabbitmq.ConfigChannel("task")
+	if err != nil {
+		panic(err)
+	}
+
+	// Gin Settings
 	store := persistence.NewTaskStore()
 	taskService := service.NewTaskService(store)
 	taskController := controller.NewTaskController(*taskService)

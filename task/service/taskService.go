@@ -76,6 +76,7 @@ func (s *TaskService) GetTodayFrom(ctx *gin.Context, uid int) (*data.TaskDetail,
 	// TaskInfo to TaskDetail
 	detail := data.TaskDetail{TaskId: info.TaskId, CreatedAt: info.CreatedAt, Status: info.Status, Subtasks: subtasks}
 	return &detail, nil
+	
 }
 func (s *TaskService) CreateTask(ctx *gin.Context, req data.CreateReq, uid int) (*data.TaskId, *errorutils.NetError) {
 	// Create Task
