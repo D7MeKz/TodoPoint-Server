@@ -8,9 +8,8 @@ import (
 	"time"
 	"todopoint/common/config/mongodb"
 	"todopoint/common/rabbitmq"
-	"todopoint/task/in/router"
-	"todopoint/task/in/router/controller"
 	"todopoint/task/out/persistence"
+	"todopoint/task/router"
 	"todopoint/task/service"
 )
 
@@ -38,7 +37,7 @@ func main() {
 	// Gin Settings
 	store := persistence.NewTaskStore()
 	taskService := service.NewTaskService(store)
-	taskController := controller.NewTaskController(*taskService)
+	taskController := router.NewTaskController(*taskService)
 	routes := router.NewTaskRouter(taskController)
 	server := &http.Server{
 		Addr:           ":3001",
