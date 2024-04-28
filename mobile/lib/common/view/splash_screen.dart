@@ -29,14 +29,20 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void checkToken() async{
     final refreshToken = await storage.read(key:REFRESH_TOKEN_KEY);
-    final accessToken = await storage.read(key:ACCESS_TOKNE_KEY);
+    final accessToken = await storage.read(key:ACCESS_TOKEN_KEY);
     final dio = Dio();
 
     // TODO Validate token
     try{
       final resp = await dio.post('http://localhost:3000/auth/token',
-          data: {'refresh_token': refreshToken}
+        options: Options(
+          headers: {
+            'authorization' : 'Bearer $refreshToken',
+          }
+        )
       );
+
+      await storage.write(key: ACCESS_TOKEN_KEY, value: resp.data['accessToken']);
 
       // Go to Root Tab
       Navigator.of(context).pushAndRemoveUntil(

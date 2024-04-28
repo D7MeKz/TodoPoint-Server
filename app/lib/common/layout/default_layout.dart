@@ -24,6 +24,7 @@ class DefaultLayout extends StatelessWidget {
     } else {
       return AppBar(
         backgroundColor: Colors.white,
+        automaticallyImplyLeading: false, // 뒤로 가기 버튼 삭제
         elevation: 0, // 앞으로 튀어나오는 효과
         title: Text(
           title!, // Not null
