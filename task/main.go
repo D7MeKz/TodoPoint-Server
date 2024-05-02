@@ -29,7 +29,7 @@ func main() {
 		panic(err)
 	}
 
-	err = rabbitmq.ConfigChannel("task")
+	err = rabbitmq.ConfigChannel("taskA")
 	if err != nil {
 		panic(err)
 	}
@@ -48,4 +48,5 @@ func main() {
 	}
 	log.Println("Server started on port 3000")
 	log.Fatal(server.ListenAndServe())
+	Encoder
 }

@@ -27,7 +27,7 @@ func NewTaskStore() *TaskStore {
 	client := mongodb.GetClient()
 	return &TaskStore{
 		client:       client,
-		tCollection:  mongodb.GetCollection(client, "task"),
+		tCollection:  mongodb.GetCollection(client, "taskA"),
 		stCollection: mongodb.GetCollection(client, "subtask"),
 	}
 }
@@ -42,7 +42,7 @@ func (s *TaskStore) Create(ctx *gin.Context, req data.CreateReq, uid int) (*mong
 }
 
 func (s *TaskStore) GetOneFrom(ctx *gin.Context, filter bson.D) (*mongo.SingleResult, error) {
-	// Check task is exist
+	// Check taskA is exist
 	result := s.tCollection.FindOne(ctx, filter)
 	if result.Err() != nil {
 		mongoErr := result.Err()
@@ -117,7 +117,7 @@ func (s *TaskStore) CreateSubtask(ctx *gin.Context, title string) (*mongo.Insert
 }
 
 // Add
-// Update Subtask into task
+// Update Subtask into taskA
 func (s *TaskStore) Add(ctx *gin.Context, tid string, subId primitive.ObjectID) (bool, error) {
 	toid, convertErr := primitive.ObjectIDFromHex(tid)
 	if convertErr != nil {

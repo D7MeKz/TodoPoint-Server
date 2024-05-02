@@ -6,7 +6,7 @@ COPY common /common
 
 WORKDIR /task
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o ./bin/task main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o ./bin/taskA main.go
 
 # Stage 2
 FROM scratch

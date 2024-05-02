@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/tasks/create": {
             "post": {
-                "description": "If user is valid, create task.",
+                "description": "If user is valid, create taskA.",
                 "consumes": [
                     "application/json"
                 ],
@@ -27,7 +27,7 @@ const docTemplate = `{
                 "tags": [
                     "tasks"
                 ],
-                "summary": "Create task",
+                "summary": "Create taskA",
                 "parameters": [
                     {
                         "description": "query params",

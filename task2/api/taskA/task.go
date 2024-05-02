@@ -1,8 +1,9 @@
-package api
+package taskA
 
 import "github.com/gin-gonic/gin"
 
 type TaskController struct {
+	core core.TaskCore
 }
 
 func (t *TaskController) Create(ctx *gin.Context) {

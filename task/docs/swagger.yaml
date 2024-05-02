@@ -18,7 +18,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: If user is valid, create task.
+      description: If user is valid, create taskA.
       parameters:
       - description: query params
         in: body
@@ -33,7 +33,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/data.TaskId'
-      summary: Create task
+      summary: Create taskA
       tags:
       - tasks
 swagger: "2.0"

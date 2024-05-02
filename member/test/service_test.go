@@ -66,7 +66,6 @@ func (suite *memberSuite) TestCreate() {
 	suite.Nil(emptyMember, "Member are not nil.")
 	suite.NoError(err, "No Error When member is created.")
 	suite.Equal(result.Password, emptyMember.Password, "Test and result are same.")
-
 }
 
 func TestMemberService(t *testing.T) {

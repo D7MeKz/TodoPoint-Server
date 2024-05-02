@@ -21,8 +21,8 @@ func NewTaskController(s service.TaskService) *TaskController {
 }
 
 // CreateTask
-// @Summary Create task
-// @Description If user is valid, create task.
+// @Summary Create taskA
+// @Description If user is valid, create taskA.
 // @Tags tasks
 // @Accept json
 // @Produce json
@@ -78,8 +78,8 @@ func (c *TaskController) GetList(ctx *gin.Context) {
 }
 
 // GetToday
-// @Summary Get Today's task
-// @Description Get today's task
+// @Summary Get Today's taskA
+// @Description Get today's taskA
 // @Tags tasks
 // @Accept json
 // @Produce json

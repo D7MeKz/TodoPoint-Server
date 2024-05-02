@@ -31,7 +31,7 @@ func NewTaskService(s *persistence.TaskStore) *TaskService {
 }
 
 func (s *TaskService) GetTodayFrom(ctx *gin.Context, uid int) (*data.TaskDetail, *errorutils.NetError) {
-	// Get today's task
+	// Get today's taskA
 	today := time.Now().Format("2006-01-02")
 	cond := bson.D{{"created_at", today}, {"user_id", uid}}
 	task, err := s.Store.GetOneFrom(ctx, cond)
@@ -76,7 +76,7 @@ func (s *TaskService) GetTodayFrom(ctx *gin.Context, uid int) (*data.TaskDetail,
 	// TaskInfo to TaskDetail
 	detail := data.TaskDetail{TaskId: info.TaskId, CreatedAt: info.CreatedAt, Status: info.Status, Subtasks: subtasks}
 	return &detail, nil
-	
+
 }
 func (s *TaskService) CreateTask(ctx *gin.Context, req data.CreateReq, uid int) (*data.TaskId, *errorutils.NetError) {
 	// Create Task
@@ -98,7 +98,7 @@ func (s *TaskService) CreateTask(ctx *gin.Context, req data.CreateReq, uid int) 
 // Get All tasks
 // NOTE : Only get 3 tasks, if I learn pagination, I'll change my logic.
 func (s *TaskService) GetTasksFrom(ctx *gin.Context, uid int) ([]data.TaskInfo, error) {
-	// Get Tasks from users task
+	// Get Tasks from users taskA
 	tasks, err := s.Store.GetManyFrom(ctx, uid)
 	if err != nil {
 		return nil, &errorutils.NetError{Code: codes.TaskListError, Err: err}
@@ -112,12 +112,12 @@ func (s *TaskService) AddSubOne(ctx *gin.Context, req data.AddSubReq, uid int) (
 	if err != nil {
 		return nil, &errorutils.NetError{Code: codes.SubtaskCreationErr, Err: err}
 	}
-	// Update subtask into task
+	// Update subtask into taskA
 	subOid, subOk := result.InsertedID.(primitive.ObjectID)
 	if subOk {
 		addOk, addErr := s.Store.Add(ctx, req.TaskId, subOid)
 		if addErr != nil && !addOk {
-			logrus.Errorf("Can't add subtask in task : %v", addErr)
+			logrus.Errorf("Can't add subtask in taskA : %v", addErr)
 			return nil, &errorutils.NetError{Code: codes.SubtaskAdditionErr, Err: err}
 		}
 
