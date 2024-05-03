@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:app/common/dio/dio.dart';
 import 'package:app/common/model/cursor_pagination_model.dart';
 import 'package:app/common/model/pagination_params.dart';
+import 'package:app/common/repository/base_repository.dart';
 import 'package:app/restaurant/model/restaurant_detail_model.dart';
 import 'package:app/restaurant/model/restaurant_model.dart';
 import 'package:dio/dio.dart' hide Headers;
@@ -22,7 +25,7 @@ final restaurantRepositoryProvider = Provider<RestaurantRepository>(
 );
 
 @RestApi()
-abstract class RestaurantRepository {
+abstract class RestaurantRepository implements IBasePaginationRepository<RestaurantModel> {
   factory RestaurantRepository(Dio dio, {String baseUrl}) =
       _RestaurantRepository;
 
@@ -38,4 +41,5 @@ abstract class RestaurantRepository {
   Future<RestaurantDetailModel> getRestaurantDetail({
     @Path('id') required String id,
   });
+
 }

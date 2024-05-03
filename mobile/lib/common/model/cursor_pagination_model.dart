@@ -31,8 +31,11 @@ class CursorPagination<T> extends CursorPaginationBase {
   CursorPagination copyWith({
     CursorPaginationMeta? meta,
     List<T>? data,
-  }){
-    return CursorPagination(meta:  meta ?? this.meta, data: data ?? this.data);
+  }) {
+    return CursorPagination<T>(
+      meta: meta ?? this.meta,
+      data: data ?? this.data,
+    );
   }
 
   factory CursorPagination.fromJson(
@@ -50,9 +53,11 @@ class CursorPaginationMeta {
   CursorPaginationMeta copyWith({
     int? count,
     bool? hasMore,
-}){
-    return CursorPaginationMeta(count: count ?? this.count, hasMore: hasMore ?? this.hasMore);
+  }) {
+    return CursorPaginationMeta(
+        count: count ?? this.count, hasMore: hasMore ?? this.hasMore);
   }
+
   factory CursorPaginationMeta.fromJson(Map<String, dynamic> json) =>
       _$CursorPaginationMetaFromJson(json);
 }
@@ -66,10 +71,9 @@ class CursorPaginationRefetching<T> extends CursorPagination<T> {
 
 // 리스트 맨 아래로 내려서
 // 추가 데이터를 요청할 때
-class CursorPaginationFetchingMore<T> extends CursorPagination<T>{
+class CursorPaginationFetchingMore<T> extends CursorPagination<T> {
   CursorPaginationFetchingMore({
     required super.meta,
     required super.data,
   });
 }
-
