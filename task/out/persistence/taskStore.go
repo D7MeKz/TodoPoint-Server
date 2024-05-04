@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"strconv"
-	"todopoint/common/config/mongodb"
+	"todopoint/common2/config/mongodb"
 	"todopoint/task/data"
 	"todopoint/task/data/model"
 )

@@ -7,7 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"strconv"
 	"time"
-	"todopoint/common/d7redis"
+	"todopoint/common2/d7redis"
 )
 
 type RedisStore struct {

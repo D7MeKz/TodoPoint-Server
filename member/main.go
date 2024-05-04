@@ -6,11 +6,11 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-	"todopoint/common/d7redis"
+	"todopoint/common2/d7redis"
+	"todopoint/member/api"
+	"todopoint/member/api/controller"
 	"todopoint/member/out/ent"
 	"todopoint/member/out/persistence"
-	"todopoint/member/router"
-	"todopoint/member/router/controller"
 	"todopoint/member/service"
 	"todopoint/member/utils/config"
 )
@@ -45,7 +45,7 @@ func main() {
 	store := persistence.NewStore()
 	memService := service.NewMemberService(store)
 	memController := controller.NewMemberController(*memService)
-	routes := router.NewMemberRouter(memController)
+	routes := api.NewMemberRouter(memController)
 	server := &http.Server{
 		Addr:           ":3000",
 		Handler:        routes,

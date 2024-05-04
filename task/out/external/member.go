@@ -2,7 +2,7 @@ package external
 
 import (
 	"fmt"
-	"todopoint/common/netutils/networking"
+	"todopoint/common2/netutils/networking"
 )
 
 func RequestTo(memId int) (*networking.ExternalInfo, error) {

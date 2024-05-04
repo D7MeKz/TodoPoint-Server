@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"todopoint/common/netutils/middleware"
+	"todopoint/common2/netutils/middleware"
 	_ "todopoint/task/docs"
 )
 

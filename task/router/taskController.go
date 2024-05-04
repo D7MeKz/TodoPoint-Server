@@ -2,10 +2,10 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"todopoint/common/auth"
-	"todopoint/common/errorutils"
-	"todopoint/common/errorutils/codes"
-	"todopoint/common/netutils/response"
+	"todopoint/common2/auth"
+	"todopoint/common2/errorutils"
+	"todopoint/common2/errorutils/codes"
+	"todopoint/common2/netutils/response"
 	"todopoint/task/data"
 	"todopoint/task/service"
 )

@@ -6,8 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-	"todopoint/common/config/mongodb"
-	"todopoint/common/rabbitmq"
+	"todopoint/common2/config/mongodb"
+	"todopoint/common2/rabbitmq"
 	"todopoint/task/out/persistence"
 	"todopoint/task/router"
 	"todopoint/task/service"
@@ -48,5 +48,4 @@ func main() {
 	}
 	log.Println("Server started on port 3000")
 	log.Fatal(server.ListenAndServe())
-	Encoder
 }
