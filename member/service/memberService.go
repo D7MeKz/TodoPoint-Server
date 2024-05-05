@@ -105,7 +105,7 @@ func (s *MemberService) GenerateNewToken(ctx *gin.Context, token data.RefreshTok
 	// Check refresh token validation
 	redisStore := persistence.NewRedisStore()
 	memId, err := redisStore.Find(ctx, token.RefreshToken)
-	// If redis value did not exist, response error. Login again
+	// If redis value did not exist, domain error. Login again
 	if err != nil {
 		return nil, &errorutils.NetError{Code: codes.TokenExpired, Err: err}
 	}

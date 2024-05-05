@@ -18,7 +18,7 @@ func NewRedisStore() *RedisStore {
 	return &RedisStore{
 		client: d7redis.GetClient(),
 	}
-}
+
 
 func (s *RedisStore) Create(ctx *gin.Context, key string, value string, expires int64) error {
 	rt := time.Unix(expires, 0) // Convert TO UTC

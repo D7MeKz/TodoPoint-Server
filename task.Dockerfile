@@ -2,7 +2,7 @@
 FROM golang:1.22-alpine as build
 
 COPY task /task
-COPY common /common
+COPY ha /common
 
 WORKDIR /task
 
