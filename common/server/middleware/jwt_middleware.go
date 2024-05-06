@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 	"todopoint/common/d7errors/codes"
+	"todopoint/common/security/d7jwt"
 	"todopoint/common/server/httpdata/response"
 )
 
@@ -31,7 +32,7 @@ func TokenAuthMiddleware() gin.HandlerFunc {
 		}
 
 		// Validate Token
-		ok, err := IsNotExpired(token)
+		ok, err := d7jwt.IsExpired(token)
 		if err != nil {
 			logrus.Errorf("Invalid Token : %v", err)
 			ctx.AbortWithStatus(http.StatusUnauthorized)

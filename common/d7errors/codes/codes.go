@@ -12,8 +12,10 @@ const (
 
 	// User
 	// NOTE : 200(OK)
-	UserOK           WebCode = 120000
-	UserLoginSuccess WebCode = 120001
+	UserSuccess           WebCode = 120000
+	UserLoginSuccess      WebCode = 120001
+	UserTokenSetupSuccess WebCode = 120002
+
 	// 201 : Created
 	UserCreationSuccess WebCode = 120101
 	// 400 : Bad Request
@@ -21,8 +23,9 @@ const (
 	UserInvalidUri   WebCode = 140002
 	UserAlreadyExist WebCode = 140003
 	// 401
-	TokenExpired     WebCode = 140100
-	TokenCreationErr WebCode = 140101
+	TokenInvalid     WebCode = 140100
+	TokenExpired     WebCode = 140101
+	TokenCreationErr WebCode = 140102
 
 	// 404 : Not Found
 	UserNotFound WebCode = 140400
@@ -31,6 +34,9 @@ const (
 	UserCreationError       WebCode = 150001
 	TokenCreationError      WebCode = 150002
 	TokenExpiredErr         WebCode = 150003
+
+	UserRedisErr    WebCode = 150010
+	UserRedisSetErr WebCode = 150011
 	// ---------- Task ---------------
 	//NOTE : 200
 	TaskOneSuccess    WebCode = 220000
