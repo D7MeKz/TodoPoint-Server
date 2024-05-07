@@ -1,26 +1,35 @@
 import 'package:Todopoint/user/view/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main(){
+void main() {
   runApp(
-    _App(),
+    ProviderScope(
+      child: _App(),
+    ),
   );
 }
 
-class _App extends StatelessWidget {
+// Private Widget
+class _App extends ConsumerWidget {
   const _App({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref  ) {
     return MaterialApp(
-      theme: ThemeData(
-        fontFamily: 'NotoSans'
-      ),
+      theme: ThemeData(fontFamily: 'NotoSans'),
       debugShowCheckedModeBanner: false,
-      home: const Scaffold(
-        backgroundColor: Colors.white,
-        body: LoginScreen(),
-      ),
+      home: LoginScreen(),
     );
+    // final router = ref.watch(routerProvider);
+    //
+    // return MaterialApp.router(
+    //   theme: ThemeData(fontFamily: 'NotoSans'),
+    //   debugShowCheckedModeBanner: false,
+    //   routerDelegate: router.routerDelegate,
+    //   routeInformationParser: router.routeInformationParser,
+    //   routeInformationProvider: router.routeInformationProvider,
+    // );
   }
 }
+
