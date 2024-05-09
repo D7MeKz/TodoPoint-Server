@@ -20,7 +20,7 @@ func NewUserStore(client *ent.Client) *UserStore {
 func (m *UserStore) IsExist(ctx *gin.Context, data interface{}) (bool, error) {
 	cred, ok := data.(dio.Credential)
 	if !ok {
-		return false, errors.New("IsExist : Invalid data type")
+		return false, errors.New("IsExist : Invalid httpdata type")
 	}
 
 	// Find user exist
@@ -39,7 +39,7 @@ func (m *UserStore) IsExist(ctx *gin.Context, data interface{}) (bool, error) {
 func (m *UserStore) Create(ctx *gin.Context, data interface{}) error {
 	req, ok := data.(request.RegisterRequest)
 	if !ok {
-		return errors.New("Invalid data type")
+		return errors.New("Invalid httpdata type")
 	}
 
 	_, err := m.client.User.Create().SetEmail(req.Email).SetPassword(req.Password).SetUsername(req.Username).Save(ctx)
@@ -53,7 +53,7 @@ func (m *UserStore) GetId(ctx *gin.Context, data interface{}) (int, error) {
 	cred, ok := data.(dio.Credential)
 
 	if !ok {
-		return 0, errors.New("GetId : Invalid data type")
+		return 0, errors.New("GetId : Invalid httpdata type")
 	}
 
 	u, err := m.client.User.Query().Where(user.EmailEQ(cred.Email), user.PasswordEQ(cred.Password)).First(ctx)

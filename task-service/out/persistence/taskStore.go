@@ -74,7 +74,7 @@ func (s *TaskStore) GetManyFrom(ctx *gin.Context, uid int) ([]data.TaskInfo, err
 	// Close cursor
 	defer cursor.Close(ctx)
 
-	// Get data.TaskInfo from data.Task
+	// Get httpdata.TaskInfo from httpdata.Task
 	var tasks []data.TaskInfo
 	var cnt int = 0
 	for cursor.Next(ctx) {

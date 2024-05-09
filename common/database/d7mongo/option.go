@@ -51,7 +51,7 @@ func (m *setupOptions) getAuth() options.Credential {
 	// load env
 	m.loadEnv()
 
-	// extract data
+	// extract httpdata
 	username := os.Getenv("MONGODB_USERNAME")
 	pw := os.Getenv("MONGODB_PASSWORD")
 

@@ -23,7 +23,7 @@ func NewRedisStore() *RedisStore {
 func (s *RedisStore) Create(ctx *gin.Context, data interface{}) error {
 	params, ok := data.(params.RedisParams)
 	if !ok {
-		return errors.New("Invalid data type")
+		return errors.New("Invalid httpdata type")
 	}
 
 	rt := time.Unix(params.Expires, 0) // Convert TO UTC
@@ -38,7 +38,7 @@ func (s *RedisStore) Create(ctx *gin.Context, data interface{}) error {
 func (s *RedisStore) IsExist(ctx *gin.Context, data interface{}) (bool, error) {
 	key, ok := data.(string)
 	if !ok {
-		return false, errors.New("Invalid data type")
+		return false, errors.New("Invalid httpdata type")
 	}
 
 	_, err := s.client.Get(ctx.Request.Context(), key).Result()
@@ -53,10 +53,10 @@ func (s *RedisStore) IsExist(ctx *gin.Context, data interface{}) (bool, error) {
 
 // Modify modifies refresh token in redis through the user id.
 func (s *RedisStore) Modify(ctx *gin.Context, data interface{}) error {
-	// check the data type
+	// check the httpdata type
 	d, ok := data.(params.RedisParams)
 	if !ok {
-		return errors.New("Invalid data type")
+		return errors.New("Invalid httpdata type")
 	}
 
 	// modify

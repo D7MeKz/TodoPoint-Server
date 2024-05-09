@@ -1,8 +1,8 @@
-package response
+package httpdata
 
 import (
 	"github.com/gin-gonic/gin"
-	"todopoint/common/d7errors/codes"
+	"todopoint/common/server/httpdata/d7errors/codes"
 )
 
 type SuccessResponse struct {
@@ -17,7 +17,7 @@ func NewSuccessResponse(code codes.WebCode) *SuccessResponse {
 type SuccessResponseWith struct {
 	Code    codes.WebCode `json:"code"`
 	Message string        `json:"message"`
-	Data    any           `json:"data"`
+	Data    any           `json:"httpdata"`
 }
 
 func NewSuccessResponseWith(code codes.WebCode, data any) *SuccessResponseWith {
@@ -48,6 +48,12 @@ func NewBaseResponse(code codes.WebCode, data interface{}) *BaseResponse {
 }
 
 func (b BaseResponse) Success(ctx *gin.Context) {
+	status := codes.GetStatus(b.Code)
+	ctx.Header("Content-Type", "application/json")
+	ctx.AbortWithStatusJSON(status, b)
+}
+
+func (b BaseResponse) Error(ctx *gin.Context) {
 	status := codes.GetStatus(b.Code)
 	ctx.Header("Content-Type", "application/json")
 	ctx.AbortWithStatusJSON(status, b)

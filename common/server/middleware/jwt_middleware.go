@@ -6,9 +6,9 @@ import (
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
-	"todopoint/common/d7errors/codes"
 	"todopoint/common/security/d7jwt"
-	"todopoint/common/server/httpdata/response"
+	"todopoint/common/server/httpdata/d7errors/codes"
+	"todopoint/common/server/httpdata/d7success"
 )
 
 const (
@@ -41,7 +41,7 @@ func TokenAuthMiddleware() gin.HandlerFunc {
 		// if token expired
 		if !ok {
 			logrus.Error("Token expired")
-			res := response.NewErrorResponse(codes.TokenExpired)
+			res := d7success.NewErrorResponse(codes.TokenExpired)
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
 			return
 		}

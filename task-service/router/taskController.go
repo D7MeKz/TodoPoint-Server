@@ -2,10 +2,10 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"todopoint/common/d7errors"
-	"todopoint/common/d7errors/codes"
 	"todopoint/common/security/d7jwt"
-	"todopoint/common/server/httpdata/response"
+	data2 "todopoint/common/server/httpdata"
+	"todopoint/common/server/httpdata/d7errors"
+	"todopoint/common/server/httpdata/d7errors/codes"
 	"todopoint/task/data"
 	"todopoint/task/service"
 )
@@ -50,7 +50,7 @@ func (c *TaskController) CreateTask(ctx *gin.Context) {
 		_ = ctx.Error(err2)
 		return
 	}
-	response.SuccessWith(ctx, codes.TaskCreationSuccess, oid)
+	data2.SuccessWith(ctx, codes.TaskCreationSuccess, oid)
 	return
 }
 
@@ -75,7 +75,7 @@ func (c *TaskController) GetList(ctx *gin.Context) {
 		_ = ctx.Error(err)
 		return
 	}
-	response.SuccessWith(ctx, codes.TaskListSuccess, tasks)
+	data2.SuccessWith(ctx, codes.TaskListSuccess, tasks)
 }
 
 // GetToday
@@ -100,7 +100,7 @@ func (c *TaskController) GetToday(ctx *gin.Context) {
 		_ = ctx.Error(err)
 		return
 	}
-	response.SuccessWith(ctx, codes.TaskOneSuccess, task)
+	data2.SuccessWith(ctx, codes.TaskOneSuccess, task)
 }
 
 func (c *TaskController) AddSubtask(ctx *gin.Context) {
@@ -124,7 +124,7 @@ func (c *TaskController) AddSubtask(ctx *gin.Context) {
 		_ = ctx.Error(err)
 		return
 	}
-	response.SuccessWith(ctx, codes.SubtaskOneSuccess, tid)
+	data2.SuccessWith(ctx, codes.SubtaskOneSuccess, tid)
 }
 
 func (c *TaskController) CheckSubtask(ctx *gin.Context) {
@@ -149,6 +149,6 @@ func (c *TaskController) CheckSubtask(ctx *gin.Context) {
 		return
 	}
 
-	response.Success(ctx, codes.TaskUpdateSuccess)
+	data2.Success(ctx, codes.TaskUpdateSuccess)
 
 }

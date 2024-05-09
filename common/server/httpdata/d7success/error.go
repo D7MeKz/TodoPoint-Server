@@ -1,7 +1,7 @@
-package response
+package d7success
 
 import (
-	"todopoint/common/d7errors/codes"
+	"todopoint/common/server/httpdata/d7errors/codes"
 )
 
 // Response

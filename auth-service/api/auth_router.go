@@ -13,9 +13,9 @@ import (
 func NewAuthRouter(controller *controller.AuthController) *gin.Engine {
 	engine := gin.Default()
 	engine.Use(middleware.ErrorHandler())
-	router := engine.Group("/auth-service")
+	router := engine.Group("/auth")
 	{
-		router.GET("/login", controller.Login)
+		router.POST("/login", controller.Login)
 		router.POST("/register", controller.Register)
 		router.GET("/token", controller.Issue)
 		router.GET("/valid", controller.Valid)

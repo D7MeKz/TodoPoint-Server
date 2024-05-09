@@ -26,9 +26,7 @@ const (
 	TokenInvalid     WebCode = 140100
 	TokenExpired     WebCode = 140101
 	TokenCreationErr WebCode = 140102
-
-	// 404 : Not Found
-	UserNotFound WebCode = 140400
+	UserNotFound     WebCode = 140110
 
 	UserInternalServerError WebCode = 150000
 	UserCreationError       WebCode = 150001

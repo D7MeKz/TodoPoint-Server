@@ -3,17 +3,17 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"todopoint/auth/data/request"
-	"todopoint/common/d7errors"
-	"todopoint/common/d7errors/codes"
-	"todopoint/common/server/httpdata/response"
+	"todopoint/common/server/httpdata"
+	"todopoint/common/server/httpdata/d7errors"
+	"todopoint/common/server/httpdata/d7errors/codes"
 )
 
 //go:generate mockery --name AuthOperator --case underscore
 type AuthOperator interface {
-	Login(ctx *gin.Context) (*response.BaseResponse, *d7errors.NetError)
-	Register(ctx *gin.Context, req request.RegisterRequest) (*response.BaseResponse, *d7errors.NetError)
-	Issue(ctx *gin.Context) (*response.BaseResponse, *d7errors.NetError)
-	Valid(ctx *gin.Context) (*response.BaseResponse, *d7errors.NetError)
+	Login(ctx *gin.Context) (*httpdata.BaseResponse, *d7errors.NetError)
+	Register(ctx *gin.Context, req request.RegisterRequest) (*httpdata.BaseResponse, *d7errors.NetError)
+	Issue(ctx *gin.Context) (*httpdata.BaseResponse, *d7errors.NetError)
+	Valid(ctx *gin.Context) (*httpdata.BaseResponse, *d7errors.NetError)
 }
 
 type AuthController struct {

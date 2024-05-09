@@ -3,12 +3,10 @@ package middleware
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
-	"net/http"
 	"time"
-	"todopoint/common/d7errors"
-	"todopoint/common/d7errors/codes"
-	"todopoint/common/server/httpdata/response"
+	"todopoint/common/server/httpdata"
+	"todopoint/common/server/httpdata/d7errors"
+	"todopoint/common/server/httpdata/d7errors/codes"
 )
 
 func ErrorHandler() gin.HandlerFunc {
@@ -20,21 +18,18 @@ func ErrorHandler() gin.HandlerFunc {
 
 		if err != nil {
 			var netErr *d7errors.NetError
-			// Get data from NetError
+			// Get httpdata from NetError
 			if errors.As(err, &netErr) {
 				code := netErr.GetCode()
-				logrus.Errorf("ErrorCode: %d", code)
-				statusCode := codes.GetStatus(code)
-				res := response.NewErrorResponse(code)
-
+				res := httpdata.NewBaseResponse(code, nil)
 				// Abort with the appropriate status code and domain
 				if !isBodyWritten {
-					ctx.AbortWithStatusJSON(int(statusCode), res)
+					res.Error(ctx)
 				}
 			} else {
-				res := response.NewErrorResponse(codes.GlobalInternalServerError)
+				res := httpdata.NewBaseResponse(codes.GlobalInternalServerError, nil)
 				if !isBodyWritten {
-					ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
+					res.Error(ctx)
 				}
 			}
 

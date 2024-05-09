@@ -38,7 +38,6 @@ func GetCredential(ctx *gin.Context) (*dio.Credential, error) {
 		return nil, err
 
 	}
-
 	// Decode base64 from token
 	cred, err := convert(token)
 	if err != nil {
@@ -68,6 +67,7 @@ func extractId(ctx *gin.Context) (*UserId, error) {
 // convert is a function that convert base64 encoded token to Credential struct.
 func convert(token string) (*dio.Credential, error) {
 	// Decode
+	print(token)
 	b64data, err := base64.StdEncoding.DecodeString(token)
 	if err != nil {
 		return nil, errors.New("authorization Header:Base64 Decoding error")

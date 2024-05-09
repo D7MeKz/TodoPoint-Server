@@ -8,10 +8,10 @@ import (
 	"todopoint/auth/data/dio"
 	"todopoint/auth/data/params"
 	"todopoint/auth/data/request"
-	"todopoint/common/d7errors"
-	"todopoint/common/d7errors/codes"
 	"todopoint/common/security/d7jwt"
-	"todopoint/common/server/httpdata/response"
+	"todopoint/common/server/httpdata"
+	"todopoint/common/server/httpdata/d7errors"
+	"todopoint/common/server/httpdata/d7errors/codes"
 )
 
 type Storer interface {
@@ -38,7 +38,7 @@ func NewAuthService(redis Storer, mysql MysqlStorer) *AuthService {
 	}
 }
 
-func (a *AuthService) Login(ctx *gin.Context) (*response.BaseResponse, *d7errors.NetError) {
+func (a *AuthService) Login(ctx *gin.Context) (*httpdata.BaseResponse, *d7errors.NetError) {
 	// Get crediential from header
 	cred, err := GetCredential(ctx)
 	if err != nil {
@@ -65,10 +65,10 @@ func (a *AuthService) Login(ctx *gin.Context) (*response.BaseResponse, *d7errors
 		return nil, d7errors.NewNetError(codes.TokenCreationError, err)
 	}
 
-	return response.NewBaseResponse(codes.UserLoginSuccess, pair), nil
+	return httpdata.NewBaseResponse(codes.UserLoginSuccess, pair), nil
 }
 
-func (a *AuthService) Register(ctx *gin.Context, req request.RegisterRequest) (*response.BaseResponse, *d7errors.NetError) {
+func (a *AuthService) Register(ctx *gin.Context, req request.RegisterRequest) (*httpdata.BaseResponse, *d7errors.NetError) {
 
 	// Check user exist
 	ok, err := a.mysqlStore.IsExist(ctx, dio.Credential{Email: req.Email, Password: req.Password})
@@ -82,13 +82,13 @@ func (a *AuthService) Register(ctx *gin.Context, req request.RegisterRequest) (*
 		if err != nil {
 			return nil, d7errors.NewNetError(codes.UserCreationError, err)
 		}
-		return response.NewBaseResponse(codes.UserCreationSuccess, nil), nil
+		return httpdata.NewBaseResponse(codes.UserCreationSuccess, nil), nil
 	}
 
 	return nil, d7errors.NewNetError(codes.UserAlreadyExist, errors.New("User already exist"))
 }
 
-func (a *AuthService) Issue(ctx *gin.Context) (*response.BaseResponse, *d7errors.NetError) {
+func (a *AuthService) Issue(ctx *gin.Context) (*httpdata.BaseResponse, *d7errors.NetError) {
 	// Check Refresh token is expired
 	uid, err := extractId(ctx)
 	if err != nil {
@@ -107,10 +107,10 @@ func (a *AuthService) Issue(ctx *gin.Context) (*response.BaseResponse, *d7errors
 	if err != nil {
 		return nil, d7errors.NewNetError(codes.UserRedisSetErr, err)
 	}
-	return response.NewBaseResponse(codes.UserTokenSetupSuccess, access), nil
+	return httpdata.NewBaseResponse(codes.UserTokenSetupSuccess, access), nil
 }
 
-func (a *AuthService) Valid(ctx *gin.Context) (*response.BaseResponse, *d7errors.NetError) {
+func (a *AuthService) Valid(ctx *gin.Context) (*httpdata.BaseResponse, *d7errors.NetError) {
 
 	uid, err := extractId(ctx)
 
@@ -118,5 +118,5 @@ func (a *AuthService) Valid(ctx *gin.Context) (*response.BaseResponse, *d7errors
 		return nil, d7errors.NewNetError(codes.TokenExpired, err)
 	}
 
-	return response.NewBaseResponse(codes.UserTokenSetupSuccess, uid), nil
+	return httpdata.NewBaseResponse(codes.UserTokenSetupSuccess, uid), nil
 }
