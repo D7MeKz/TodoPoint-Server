@@ -2,7 +2,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"todopoint/common/server/middleware"
+	"todopoint/d7modules/server/middleware"
 )
 
 // NewTaskRouter

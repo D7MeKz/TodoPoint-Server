@@ -2,10 +2,10 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"modules/common/server/httpdata"
+	"modules/common/server/httpdata/d7errors"
+	"modules/common/server/httpdata/d7errors/codes"
 	"todopoint/auth/data/request"
-	"todopoint/common/server/httpdata"
-	"todopoint/common/server/httpdata/d7errors"
-	"todopoint/common/server/httpdata/d7errors/codes"
 )
 
 //go:generate mockery --name AuthOperator --case underscore
@@ -29,10 +29,10 @@ func NewAuthController(s AuthOperator) *AuthController {
 // Login
 // @Summary Login
 // @Description Login
-// @Tags auth-service
+// @Tags auth
 // @Accept json
 // @Produce json
-// @Router /auth-service/login [post]
+// @Router /auth/login [post]
 // @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization
@@ -51,10 +51,10 @@ func (controller *AuthController) Login(ctx *gin.Context) {
 // Register
 // @Summary Register user
 // @Description Register user using email, password and username
-// @Tags auth-service
+// @Tags auth
 // @Accept json
 // @Produce json
-// @Router /auth-service/register [post]
+// @Router /auth/register [post]
 func (controller *AuthController) Register(ctx *gin.Context) {
 	// Check body
 	req := request.RegisterRequest{}
@@ -78,10 +78,10 @@ func (controller *AuthController) Register(ctx *gin.Context) {
 // Issue
 // @Summary Issue token
 // @Description Issue refresh token when access token is expired
-// @Tags auth-service
+// @Tags auth
 // @Accept json
 // @Produce json
-// @Router /auth-service/token [get]
+// @Router /auth/token [get]
 // @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization
@@ -101,10 +101,10 @@ func (controller *AuthController) Issue(ctx *gin.Context) {
 // Valid
 // @Summary Check token is valid
 // @Description Check token is valid
-// @Tags auth-service
+// @Tags auth
 // @Accept json
 // @Produce json
-// @Router /auth-service/valid [get]
+// @Router /auth/valid [get]
 // @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization

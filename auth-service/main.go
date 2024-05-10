@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"modules/d7mysql/ent"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -11,7 +12,6 @@ import (
 	"todopoint/auth/config"
 	"todopoint/auth/service"
 	"todopoint/auth/spi/mysqlS"
-	"todopoint/auth/spi/mysqlS/ent"
 	"todopoint/auth/spi/redisS"
 )
 

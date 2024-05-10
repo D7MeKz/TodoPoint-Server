@@ -3,15 +3,15 @@ package service
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"modules/common/security/d7jwt"
+	"modules/common/server/httpdata"
+	"modules/common/server/httpdata/d7errors"
+	"modules/common/server/httpdata/d7errors/codes"
 	"strconv"
 	"time"
 	"todopoint/auth/data/dio"
 	"todopoint/auth/data/params"
 	"todopoint/auth/data/request"
-	"todopoint/common/security/d7jwt"
-	"todopoint/common/server/httpdata"
-	"todopoint/common/server/httpdata/d7errors"
-	"todopoint/common/server/httpdata/d7errors/codes"
 )
 
 type Storer interface {
@@ -90,7 +90,7 @@ func (a *AuthService) Register(ctx *gin.Context, req request.RegisterRequest) (*
 
 func (a *AuthService) Issue(ctx *gin.Context) (*httpdata.BaseResponse, *d7errors.NetError) {
 	// Check Refresh token is expired
-	uid, err := extractId(ctx)
+	uid, err := extractIdFrom(ctx)
 	if err != nil {
 		return nil, d7errors.NewNetError(codes.TokenInvalid, err)
 	}
@@ -112,7 +112,7 @@ func (a *AuthService) Issue(ctx *gin.Context) (*httpdata.BaseResponse, *d7errors
 
 func (a *AuthService) Valid(ctx *gin.Context) (*httpdata.BaseResponse, *d7errors.NetError) {
 
-	uid, err := extractId(ctx)
+	uid, err := extractIdFrom(ctx)
 
 	if err != nil {
 		return nil, d7errors.NewNetError(codes.TokenExpired, err)

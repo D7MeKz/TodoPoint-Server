@@ -6,10 +6,10 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 	"log"
+	"modules/d7mysql/ent"
 	"os"
 	"path/filepath"
 	"time"
-	"todopoint/auth/spi/mysqlS/ent"
 )
 
 var (

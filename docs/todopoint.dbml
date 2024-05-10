@@ -10,6 +10,14 @@ Table mysql.Member as Mem {
     created_at datetime [default: `now()`]
 }
 
+Table mysql.Profile as Pro {
+    id int [pk, increment]
+    user_id int [ref:- Mem.id]
+    username varchar
+    img_url varchar
+    modified_at datetime [default: `now()`]
+}
+
 Table redis.Token as T {
     refresh_token string [note: "UUID"]
     user_id string

@@ -6,9 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
+	"modules/common/security/d7jwt"
 	"strings"
 	"todopoint/auth/data/dio"
-	"todopoint/common/security/d7jwt"
 )
 
 type TokenPair struct {
@@ -50,8 +50,8 @@ type UserId struct {
 	Id int `json:"user_id"`
 }
 
-// extractId extracts user id from Authorization header.
-func extractId(ctx *gin.Context) (*UserId, error) {
+// extractIdFrom extracts user id from Authorization header.
+func extractIdFrom(ctx *gin.Context) (*UserId, error) {
 	token, tokenErr := d7jwt.GetBearerToken(ctx)
 	if tokenErr != nil {
 		return nil, tokenErr

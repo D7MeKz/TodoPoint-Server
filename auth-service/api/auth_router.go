@@ -2,8 +2,8 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"modules/common/server/middleware"
 	"todopoint/auth/api/controller"
-	"todopoint/common/server/middleware"
 )
 
 // NewAuthRouter

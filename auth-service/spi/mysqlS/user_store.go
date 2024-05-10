@@ -3,10 +3,10 @@ package mysqlS
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"modules/d7mysql/ent"
+	"modules/d7mysql/ent/user"
 	"todopoint/auth/data/dio"
 	"todopoint/auth/data/request"
-	"todopoint/auth/spi/mysqlS/ent"
-	"todopoint/auth/spi/mysqlS/ent/user"
 )
 
 type UserStore struct {
@@ -42,7 +42,13 @@ func (m *UserStore) Create(ctx *gin.Context, data interface{}) error {
 		return errors.New("Invalid httpdata type")
 	}
 
-	_, err := m.client.User.Create().SetEmail(req.Email).SetPassword(req.Password).SetUsername(req.Username).Save(ctx)
+	u, err := m.client.User.Create().SetEmail(req.Email).SetPassword(req.Password).Save(ctx)
+	if err != nil {
+		return nil
+	}
+
+	// Save username to profile
+	_, err = m.client.Profile.Create().SetUser(u).SetUsername(req.Username).Save(ctx)
 	if err != nil {
 		return err
 	}

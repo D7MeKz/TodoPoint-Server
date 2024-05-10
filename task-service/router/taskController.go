@@ -2,10 +2,10 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"todopoint/common/security/d7jwt"
-	data2 "todopoint/common/server/httpdata"
-	"todopoint/common/server/httpdata/d7errors"
-	"todopoint/common/server/httpdata/d7errors/codes"
+	"todopoint/d7modules/security/d7jwt"
+	data2 "todopoint/d7modules/server/httpdata"
+	"todopoint/d7modules/server/httpdata/d7errors"
+	"todopoint/d7modules/server/httpdata/d7errors/codes"
 	"todopoint/task/data"
 	"todopoint/task/service"
 )
