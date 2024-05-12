@@ -2,6 +2,6 @@ go 1.22.1
 
 use (
 	./../d7modules/common
-	./../d7modules/database/d7mongo
-	.
+	./../d7modules/database/d7mysql
+	./
 )

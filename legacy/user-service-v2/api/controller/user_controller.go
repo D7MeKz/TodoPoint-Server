@@ -41,6 +41,7 @@ func (controller *UserController) Me(ctx *gin.Context) {
 
 	res.Success(ctx)
 	return
+	
 }
 
 func (controller *UserController) Create(ctx *gin.Context) {

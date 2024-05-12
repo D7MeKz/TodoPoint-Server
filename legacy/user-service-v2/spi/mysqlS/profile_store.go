@@ -1,6 +1,7 @@
 package mysqlS
 
 import (
+	"entgo.io/ent/dialect/sql"
 	"github.com/gin-gonic/gin"
 	"modules/d7mysql/ent"
 	"modules/d7mysql/ent/profile"
@@ -9,6 +10,7 @@ import (
 
 type ProfileStore struct {
 	client *ent.Client
+	sql.Builder
 }
 
 func NewProfileStore(client *ent.Client) *ProfileStore {
