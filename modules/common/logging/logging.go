@@ -25,7 +25,7 @@ func NewAppLogger() *AppLogger {
 			FullTimestamp: true,
 		})
 		appLogger.aLogger.SetReportCaller(true)
-		appLogger.aLogger.SetOutput(os.Stdout)
+		appLogger.aLogger.SetOutput(os.Stderr)
 	})
 	return appLogger
 }
@@ -41,17 +41,41 @@ func NewLoggingField(url string, code int) *logrus.Fields {
 }
 
 func (l *AppLogger) Info(ctx *gin.Context, code int, msg string) {
-	l.aLogger.WithFields(*NewLoggingField(ctx.Request.URL.Path, code)).Info(msg)
+	if ctx != nil {
+		l.aLogger.WithFields(*NewLoggingField(ctx.Request.URL.Path, code)).Info(msg)
+	}
+	l.aLogger.Info(msg)
 }
 
 func (l *AppLogger) Debug(ctx *gin.Context, code int, msg string) {
-	l.aLogger.WithFields(*NewLoggingField(ctx.Request.URL.Path, code)).Debug(msg)
+	if ctx != nil {
+		l.aLogger.WithFields(*NewLoggingField(ctx.Request.URL.Path, code)).Debug(msg)
+	}
+	l.aLogger.Debug(msg)
 }
 
 func (l *AppLogger) Error(ctx *gin.Context, code int, msg string) {
-	l.aLogger.WithFields(*NewLoggingField(ctx.Request.URL.Path, code)).Error(msg)
+	if ctx != nil {
+		l.aLogger.WithFields(*NewLoggingField(ctx.Request.URL.Path, code)).Error(msg)
+	}
+	l.aLogger.Error(msg)
+}
+func (l *AppLogger) Warn(ctx *gin.Context, code int, msg string) {
+	if ctx != nil {
+		l.aLogger.WithFields(*NewLoggingField(ctx.Request.URL.Path, code)).Warn(msg)
+	}
+	l.aLogger.Warn(msg)
+}
+func (l *AppLogger) Fatal(ctx *gin.Context, code int, msg string) {
+	if ctx != nil {
+		l.aLogger.WithFields(*NewLoggingField(ctx.Request.URL.Path, code)).Fatal(msg)
+	}
+	l.aLogger.Fatal(msg)
 }
 
-func (l *AppLogger) Warn(ctx *gin.Context, code int, msg string) {
-	l.aLogger.WithFields(*NewLoggingField(ctx.Request.URL.Path, code)).Warn(msg)
+func (l *AppLogger) Panic(ctx *gin.Context, code int, msg string) {
+	if ctx != nil {
+		l.aLogger.WithFields(*NewLoggingField(ctx.Request.URL.Path, code)).Panic(msg)
+	}
+	l.aLogger.Panic(msg)
 }

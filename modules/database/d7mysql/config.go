@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/joho/godotenv"
 	"log"
 	"modules/d7mysql/ent"
 	"os"
@@ -22,12 +21,12 @@ type setupOptions struct {
 
 type SetupOption func(o *setupOptions) error
 
-func WithEnv(env string) SetupOption {
-	return func(o *setupOptions) error {
-		o.env = env
-		return nil
-	}
-}
+//func WithEnv(env string) SetupOption {
+//	return func(o *setupOptions) error {
+//		o.env = env
+//		return nil
+//	}
+//}
 
 func mergeSetupOptions(opts ...SetupOption) *setupOptions {
 	var o setupOptions
@@ -41,10 +40,10 @@ func mergeSetupOptions(opts ...SetupOption) *setupOptions {
 }
 
 func (m *setupOptions) getDsn() string {
-	err := godotenv.Load(m.env)
-	if err != nil {
-		panic("Error loading .env file")
-	}
+	//err := godotenv.Load(m.env)
+	//if err != nil {
+	//	panic("Error loading .env file")
+	//}
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
 		os.Getenv("DB_USERNAME"),

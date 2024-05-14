@@ -19,7 +19,7 @@ func main() {
 	logger := logging.NewAppLogger()
 
 	// Database setup
-	client, err := d7mysql.NewEntClient(d7mysql.WithEnv("./.env"))
+	client, err := d7mysql.NewEntClient()
 	if err != nil {
 		logger.Fatal(nil, 0, err.Error())
 	}

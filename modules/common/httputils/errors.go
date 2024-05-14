@@ -1,4 +1,4 @@
-package errorutils
+package httputils
 
 // NetError have options and ErrorCode that contains status code.
 type NetError struct {

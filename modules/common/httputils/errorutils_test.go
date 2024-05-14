@@ -1,9 +1,9 @@
-package errorutils_test
+package httputils_test
 
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"modules/common/httputils/errorutils"
+	"modules/common/httputils"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -11,14 +11,14 @@ import (
 
 func setupRouter() *gin.Engine {
 	r := gin.Default()
-	r.Use(errorutils.ErrorMiddleware())
+	r.Use(httputils.ErrorMiddleware())
 
 	return r
 }
 
 func TestSuccessResponse(t *testing.T) {
 	r := setupRouter()
-	res := errorutils.NewSuccessBaseResponse(nil)
+	res := httputils.NewSuccessBaseResponse(nil)
 
 	// Set table
 	tests := []struct {
@@ -66,8 +66,8 @@ func TestFailed(t *testing.T) {
 	r := setupRouter()
 
 	// Set error based data and response
-	netErr := errorutils.NewNetError(errorutils.CreateFailed, nil)
-	res := errorutils.NewErrorBaseResponse(*netErr)
+	netErr := httputils.NewNetError(httputils.CreateFailed, nil)
+	res := httputils.NewErrorBaseResponse(*netErr)
 
 	tests := []struct {
 		description  string
@@ -99,7 +99,7 @@ func TestFailed(t *testing.T) {
 				t.Errorf("Expected %d, got %d", tc.expectedCode, w.Code)
 			}
 
-			var baseRes errorutils.BaseResponse
+			var baseRes httputils.BaseResponse
 			resErr := json.Unmarshal(w.Body.Bytes(), &baseRes)
 			if resErr != nil {
 				t.Fatalf("Failed to unmarshal response")

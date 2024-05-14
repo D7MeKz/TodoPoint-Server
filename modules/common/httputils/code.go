@@ -1,4 +1,4 @@
-package errorutils
+package httputils
 
 type ErrorCode uint64
 
