@@ -101,7 +101,6 @@ func TestUserStore_Create(t *testing.T) {
 			input: data.RegisterRequest{
 				Email:    "Test",
 				Password: "Test",
-				Username: "Test",
 			},
 			isError: false,
 		},
@@ -110,7 +109,6 @@ func TestUserStore_Create(t *testing.T) {
 			input: data.RegisterRequest{
 				Email:    "",
 				Password: "",
-				Username: "Test",
 			},
 			isError: true,
 		},

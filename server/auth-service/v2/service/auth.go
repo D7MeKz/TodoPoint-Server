@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
-	"modules/common/security/d7jwt"
+	"modules/v2/common/security/d7jwt"
 	"strings"
 	"todopoint/auth/v2/data"
 )
