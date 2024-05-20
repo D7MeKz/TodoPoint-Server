@@ -1,29 +1,31 @@
 import 'package:flutter/material.dart';
 
+import '../const/color.dart';
+
 class DefaultLayout extends StatelessWidget {
-  final Color? backgroundColor;
   final Widget child;
   final String? title;
   final Widget? bottomNavigationBar;
+  final Color? backgroundColor;
 
-  const DefaultLayout({super.key, this.backgroundColor, required this.child, this.title, this.bottomNavigationBar});
+  const DefaultLayout({required this.child,super.key, required this.title, this.bottomNavigationBar, this.backgroundColor});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor ?? Colors.white,
+      backgroundColor: backgroundColor ?? BACKGROUND_COLOR,
       appBar: renderAppBar(),
       body: child,
       bottomNavigationBar: bottomNavigationBar,
     );
   }
 
-  AppBar? renderAppBar() {
-    if (title == null) {
+  AppBar? renderAppBar(){
+    if(title  == null){
       return null;
-    } else {
+    }else{
       return AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: backgroundColor ?? BACKGROUND_COLOR,
         elevation: 0, // 앞으로 튀어나오는 효과
         title: Text(
           title!, // Not null
@@ -32,7 +34,7 @@ class DefaultLayout extends StatelessWidget {
               fontWeight: FontWeight.w500
           ),
         ),
-        foregroundColor: Colors.black,
+        foregroundColor: PRIMARY_TEXT_COLOR,
       );
     }
   }
