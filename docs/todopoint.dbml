@@ -1,0 +1,72 @@
+Project TodoPoint {
+  database_type: 'Mysql, Redis, MongoDB'
+}
+
+Table mysql.Member as Mem {
+    id int [pk, increment]
+    email varchar
+    username varchar
+    password varchar
+    created_at datetime [default: `now()`]
+}
+
+Table mysql.Profile as Pro {
+    id int [pk, increment]
+    user_id int [ref:- Mem.id]
+    username varchar
+    img_url varchar
+    modified_at datetime [default: `now()`]
+}
+
+Table redis.Token as T {
+    refresh_token string [note: "UUID"]
+    user_id string
+}
+
+// ------------- MongoDB ---------------
+
+// Task
+Table mongo.Task as t {
+    _id ObjectID [unique]
+    user_id int
+    status bool
+    created_at datetime [default: `now()`]
+    modified_at datetime
+    subtasks SubTask [note: "Reference subtask, One-to-Many"]
+}
+
+Table mongo.SubTask as st {
+    _id ObjectID [unique]
+    title string
+    status bool
+    created_at datetime [default: `now()`]
+    modified_at datetime
+    record string [note: "Photo or Text"]
+}
+
+// Many to one
+Ref: st._id > t.subtasks
+
+// Point
+Enum charge_type {
+    midday [note : "12:00"]
+    midnight [note : "24:00"]
+}
+
+Table mongo.PointReceipt as pr{
+    _id ObjectID [unique]
+    today datetime [note : "Today, Format YYYY-MM-DD"]
+    type charge_type [note : "Charge Type, midday or midnight"]
+    total int [note : "total points"]
+    points Point [ref : <p._id, note: "Reference point, One-to-Many"]
+}
+
+Table mongo.Point as p {
+    _id ObjectID [unique]
+    subtask ObjectID [ref: - st._id, note : "Reference One-to-One"]
+    penalty int
+    point int
+}
+
+
+
