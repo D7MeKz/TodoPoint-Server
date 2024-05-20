@@ -148,12 +148,12 @@ member/go.work
 member/.env
 
 # Mysql
-mysql_data/
-db/mysql/init/
+server/mysql_data/
+server/db/mysql/init/
 
 # MongoDB
-mongodb_data/
-mongod.conf
+server/mongodb_data/
+server/mongod.conf
 
 # Redis
-redis/
+server/redis/
