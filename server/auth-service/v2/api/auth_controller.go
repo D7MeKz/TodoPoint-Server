@@ -2,7 +2,8 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"modules/common/httputils"
+	"modules/v2/common/httputils"
+	"modules/v2/common/httputils/codes"
 	"todopoint/auth/v2/data"
 )
 
@@ -58,7 +59,7 @@ func (controller *AuthController) Register(ctx *gin.Context) {
 	req := data.RegisterRequest{}
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
-		_ = ctx.Error(httputils.NewNetError(httputils.CreateFailed, err))
+		_ = ctx.Error(httputils.NewNetError(codes.CreateFailed, err))
 		return
 	}
 

@@ -7,12 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-	"todopoint/auth/api"
-	"todopoint/auth/api/controller"
-	"todopoint/auth/config"
-	"todopoint/auth/service"
-	"todopoint/auth/spi/mysqlS"
-	"todopoint/auth/spi/redisS"
 )
 
 func main() {

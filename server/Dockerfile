@@ -1,7 +1,7 @@
 # Stage 1: Build modules
 FROM golang:1.22 as modules-build
 
-COPY ./modules/common /modules/common
+COPY modules/v2/common /modules/common
 COPY ./modules/database/d7mysql /modules/database/d7mysql
 COPY ./modules/database/d7redis /modules/database/d7redis
 

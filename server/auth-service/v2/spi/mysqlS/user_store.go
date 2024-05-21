@@ -3,8 +3,8 @@ package mysqlS
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"modules/d7mysql/ent"
-	"modules/d7mysql/ent/user"
+	"modules/v2/d7mysql/ent"
+	"modules/v2/d7mysql/ent/user"
 	"todopoint/auth/v2/data"
 )
 
@@ -41,16 +41,11 @@ func (m *UserStore) Create(ctx *gin.Context, d interface{}) error {
 		return errors.New("Invalid httpdata type")
 	}
 
-	u, err := m.client.User.Create().SetEmail(req.Email).SetPassword(req.Password).Save(ctx)
+	_, err := m.client.User.Create().SetEmail(req.Email).SetPassword(req.Password).Save(ctx)
 	if err != nil {
 		return err
 	}
 
-	// Save username to profile
-	_, err = m.client.Profile.Create().SetUser(u).SetUsername(req.Username).Save(ctx)
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -69,5 +64,13 @@ func (m *UserStore) GetId(ctx *gin.Context, d interface{}) (int, error) {
 }
 
 func (m *UserStore) Modify(ctx *gin.Context, data interface{}) error {
+	return nil
+}
+
+func (m *UserStore) IsValid(ctx *gin.Context, uid int) error {
+	_, err := m.client.User.Query().Where(user.IDEQ(uid)).First(ctx)
+	if err != nil {
+		return err
+	}
 	return nil
 }

@@ -42,16 +42,11 @@ func (m *UserStore) Create(ctx *gin.Context, data interface{}) error {
 		return errors.New("Invalid httpdata type")
 	}
 
-	u, err := m.client.User.Create().SetEmail(req.Email).SetPassword(req.Password).Save(ctx)
-	if err != nil {
-		return nil
-	}
-
-	// Save username to profile
-	_, err = m.client.Profile.Create().SetUser(u).SetUsername(req.Username).Save(ctx)
+	_, err := m.client.User.Create().SetEmail(req.Email).SetPassword(req.Password).Save(ctx)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
