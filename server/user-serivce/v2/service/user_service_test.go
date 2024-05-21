@@ -1,8 +1,8 @@
 package service_test
 
 import (
-	"modules/common/httputils/codes"
-	"modules/common/testutils"
+	"modules/v2/common/httputils/codes"
+	"modules/v2/common/testutils"
 	"testing"
 	"todopoint/user/v2/data"
 	"todopoint/user/v2/service"
@@ -59,5 +59,4 @@ func TestGetMe(t *testing.T) {
 			}
 		})
 	}
-
 }

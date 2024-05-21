@@ -15,6 +15,7 @@ const (
 	BadAuthenticationData ErrorCode = 201
 	TokenExpired          ErrorCode = 202
 	TokenCreateFailed     ErrorCode = 203
+	InvalidToken          ErrorCode = 204
 
 	// 3xx is Conflict error code
 	AlreadyExist ErrorCode = 300
@@ -26,6 +27,10 @@ const (
 	FindFail            ErrorCode = 404
 	FileSaveFailed      ErrorCode = 405
 	MetaDataUpdateError ErrorCode = 406
+
+	// 5xx is Service Unavailable error code
+	ExternalServiceUnavailable ErrorCode = 500
+	AuthServerUnavailable      ErrorCode = 501
 )
 
 var errorMessage = map[ErrorCode]string{
@@ -38,6 +43,7 @@ var errorMessage = map[ErrorCode]string{
 	BadAuthenticationData: "Authentication failed due to invalid credentials.",
 	TokenExpired:          "The authentication token has expired.",
 	TokenCreateFailed:     "The creation of the authentication token failed.",
+	InvalidToken:          "The provided token is invalid.",
 
 	AlreadyExist: "The requested resource already exists.",
 
@@ -47,6 +53,9 @@ var errorMessage = map[ErrorCode]string{
 	FindFail:            "The requested resource was not found.",
 	FileSaveFailed:      "The file save failed.",
 	MetaDataUpdateError: "The metadata update failed.",
+
+	ExternalServiceUnavailable: "The external service is unavailable.",
+	AuthServerUnavailable:      "The authentication server is unavailable.",
 }
 
 func GetErrorMsg(code ErrorCode) string {
@@ -66,6 +75,8 @@ func ParseStatusCode(code ErrorCode) int {
 		return 409
 	case 4:
 		return 500
+	case 5:
+		return 503 // Service Unavailable
 	default:
 		return 500
 	}

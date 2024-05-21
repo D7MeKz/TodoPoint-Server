@@ -2,8 +2,8 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"modules/common/httputils"
-	"modules/common/security/d7jwt"
+	"modules/v2/common/httputils"
+	"modules/v2/common/security/d7jwt"
 )
 
 // NewUserRouter
@@ -14,9 +14,10 @@ func NewUserRouter(controller *UserController) *gin.Engine {
 	engine := gin.Default()
 	engine.Use(httputils.ErrorMiddleware())
 	engine.Use(d7jwt.TokenAuthMiddleware())
-	router := engine.Group("/user")
+	router := engine.Group("/users")
 	{
-		router.GET("/get/me", controller.GetMe)
+		router.GET("/me", controller.GetMe)
+		router.POST("/profile", controller.UpdateProfile)
 	}
 	return engine
 }

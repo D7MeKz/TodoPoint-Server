@@ -55,7 +55,7 @@ func (m *setupOptions) getAuth() options.Credential {
 	username := os.Getenv("MONGODB_USERNAME")
 	pw := os.Getenv("MONGODB_PASSWORD")
 
-	if username != "" && pw != "" {
+	if username == "" && pw == "" {
 		username = "admin"
 		pw = "admin"
 	}

@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 	"log"
-	"modules/d7mysql/ent"
+	"modules/v2/d7mysql/ent"
 	"net/http"
 	"os"
 	"time"
@@ -38,6 +40,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed opening connection to sqlite: %v", err)
 	}
+
+	if err := client.Schema.Create(context.Background()); err != nil {
+		log.Fatalf("failed creating schema resources: %v", err)
+	}
 	//// Database setup
 	//client, err := d7mysql.NewEntClient()
 	//if err != nil {
@@ -54,7 +60,7 @@ func main() {
 	routes := api.NewUserRouter(ctr)
 
 	srv := http.Server{
-		Addr:           ":3001",
+		Addr:           ":3000",
 		Handler:        routes,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,

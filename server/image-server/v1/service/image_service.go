@@ -7,6 +7,7 @@ import (
 	"modules/v2/common/httputils/codes"
 	"modules/v2/common/security/d7jwt"
 	"path/filepath"
+	"todopoint/image/data"
 )
 
 type ImageStore interface {
@@ -52,6 +53,6 @@ func (i *ImageService) UploadImage(ctx *gin.Context) (*httputils.BaseResponse, *
 		return nil, httputils.NewNetError(codes.FileSaveFailed, err)
 	}
 
-	return httputils.NewSuccessBaseResponse(nil), nil
+	return httputils.NewSuccessBaseResponse(data.ImageUrl{Url: filePath}), nil
 
 }

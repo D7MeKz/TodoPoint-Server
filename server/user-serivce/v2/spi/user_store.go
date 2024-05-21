@@ -2,9 +2,9 @@ package spi
 
 import (
 	"github.com/gin-gonic/gin"
-	"modules/d7mysql/ent"
-	"modules/d7mysql/ent/profile"
-	"modules/d7mysql/ent/user"
+	"modules/v2/d7mysql/ent"
+	"modules/v2/d7mysql/ent/profile"
+	"modules/v2/d7mysql/ent/user"
 	"todopoint/user/v2/data"
 )
 
@@ -40,5 +40,26 @@ func (m *UserStore) Create(ctx *gin.Context, info *data.UserInfo) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (m *UserStore) Update(ctx *gin.Context, uid int, me data.Me) error {
+	// Get profile with uid
+	p, err := m.client.Profile.Query().Where(profile.HasUserWith(user.ID(uid))).Only(ctx)
+	// if is not found create new one
+	if ent.IsNotFound(err) {
+		_, cerr := m.client.Profile.Create().SetUserID(uid).SetUsername(me.Username).SetImgURL(me.ImgUrl).Save(ctx)
+		if cerr != nil {
+			return cerr
+		}
+	} else if err != nil {
+		return err
+	} else {
+		_, err = m.client.Profile.UpdateOne(p).SetUsername(me.Username).SetImgURL(me.ImgUrl).Save(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

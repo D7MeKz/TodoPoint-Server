@@ -39,6 +39,9 @@ func main() {
 			fmt.Print("\n")
 		}
 	}))
+	if err != nil {
+		log.Fatalf("failed opening connection to sqlite: %v", err)
+	}
 
 	defer func(client *ent.Client) {
 		_ = client.Close()
@@ -46,10 +49,6 @@ func main() {
 
 	if err := client.Schema.Create(context.Background()); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
-	}
-
-	if err != nil {
-		log.Fatalf("failed opening connection to sqlite: %v", err)
 	}
 	//// Database setup
 	//client, err := d7mysql.NewEntClient()

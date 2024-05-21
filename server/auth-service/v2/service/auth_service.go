@@ -21,7 +21,7 @@ type Storer interface {
 //go:generate mockery --name MysqlStorer --case underscore
 type MysqlStorer interface {
 	Storer
-
+	IsValid(ctx *gin.Context, uid int) error
 	GetId(ctx *gin.Context, data interface{}) (int, error)
 }
 
@@ -111,9 +111,13 @@ func (a *AuthService) Issue(ctx *gin.Context) (*httputils.BaseResponse, *httputi
 func (a *AuthService) Valid(ctx *gin.Context) (*httputils.BaseResponse, *httputils.NetError) {
 
 	uid, err := extractIdFrom(ctx)
-
 	if err != nil {
-		return nil, httputils.NewNetError(codes.TokenExpired, err)
+		return nil, httputils.NewNetError(codes.InvalidToken, err)
+	}
+
+	err = a.mysqlStore.IsValid(ctx, uid.Id)
+	if err != nil {
+		return nil, httputils.NewNetError(codes.Unauthorized, err)
 	}
 
 	return httputils.NewSuccessBaseResponse(uid), nil

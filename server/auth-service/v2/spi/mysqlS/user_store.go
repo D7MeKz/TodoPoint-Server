@@ -66,3 +66,11 @@ func (m *UserStore) GetId(ctx *gin.Context, d interface{}) (int, error) {
 func (m *UserStore) Modify(ctx *gin.Context, data interface{}) error {
 	return nil
 }
+
+func (m *UserStore) IsValid(ctx *gin.Context, uid int) error {
+	_, err := m.client.User.Query().Where(user.IDEQ(uid)).First(ctx)
+	if err != nil {
+		return err
+	}
+	return nil
+}

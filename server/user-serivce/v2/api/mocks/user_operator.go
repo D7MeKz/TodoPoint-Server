@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	httputils "modules/common/httputils"
+	httputils "modules/v2/common/httputils"
 
 	gin "github.com/gin-gonic/gin"
 

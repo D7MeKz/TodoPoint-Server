@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"modules/v2/common/httputils/codes"
 )
 
@@ -44,7 +45,7 @@ type ErrorResponse struct {
 }
 
 func NewErrorBaseResponse(data *NetError) *BaseResponse {
-
+	logrus.Errorf("Error: %v", data)
 	res := ErrorResponse{Code: data.Code, Message: codes.GetErrorMsg(data.Code)}
 	return &BaseResponse{
 		Status: "Error",
