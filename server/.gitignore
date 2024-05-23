@@ -1,3 +1,9 @@
 init-mongo.js
 
 db
+
+mongod.conf
+mongod.lock
+mongodb_data
+
+redis
