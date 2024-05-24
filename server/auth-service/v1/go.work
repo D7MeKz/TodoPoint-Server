@@ -1,8 +1,0 @@
-go 1.22.1
-
-use (
-	./../../modules/v1/common
-	./../../modules/v1/database/d7mysql
-	./../../modules/v1/database/d7redis
-	./
-)

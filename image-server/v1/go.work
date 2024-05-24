@@ -1,0 +1,8 @@
+go 1.22.1
+
+use (
+	./../../modules/v2/common
+	../../modules/v2/database/d7mongo
+	.
+)
+

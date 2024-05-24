@@ -1,4 +1,0 @@
-const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN';
-const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN';
-
-const ip = "127.0.0.1:3000";
