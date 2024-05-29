@@ -4,6 +4,7 @@ GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOFMT=$(GOCMD) fmt
 BINARY_NAME=app
+SERVICE_VERSION=1.0.2
 
 .PHONY: all build test clean
 

@@ -1,22 +1,22 @@
 #!/bin/bash
 set -e
 
-MODULES=(
-      "/modules/common"
-      "/modules/database/d7mysql"
-      "/modules/database/d7redis"
-)
+source ./parse_packages.sh
 
 download_modules (){
   local module_path=$1
   echo "Downloading modules : $module_path"
-  cd $module_path
+  cd "$module_path"
   go mod download
   cd - > /dev/null # Back to previous directory
 }
 
+# parse package list
+parse_package_list "$1"
+
 # Iterate over each module path and download
-for module in "${MODULES[@]}"; do
+# shellcheck disable=SC2154
+for module in "${list[@]}"; do
   download_modules $module
 done
 

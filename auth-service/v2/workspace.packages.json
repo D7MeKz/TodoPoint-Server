@@ -1,0 +1,8 @@
+{
+  "packages": [
+    "/modules/common",
+    "/modules/database/d7mysql",
+    "/modules/database/d7redis"
+  ]
+
+}
