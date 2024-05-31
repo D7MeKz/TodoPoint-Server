@@ -28,4 +28,4 @@ clean:
 .PHONY: docker-build
 
 docker-build:
-	docker build -t auth:$(SERVICE_VERSION) -f Dockerfile .
+	docker build -t auth:$(SERVICE_VERSION) -f Dockerfile ../..
