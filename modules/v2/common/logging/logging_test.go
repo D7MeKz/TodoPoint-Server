@@ -2,8 +2,8 @@ package logging_test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"modules/v2/common/logging"
-	"modules/v2/common/testutils"
+	"modules/common/v2/logging"
+	"modules/common/v2/testutils"
 	"testing"
 )
 

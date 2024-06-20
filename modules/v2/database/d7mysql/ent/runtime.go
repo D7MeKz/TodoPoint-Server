@@ -3,9 +3,9 @@
 package ent
 
 import (
-	"modules/v2/d7mysql/ent/profile"
-	"modules/v2/d7mysql/ent/schema"
-	"modules/v2/d7mysql/ent/user"
+	"modules/d7mysql/v2/ent/profile"
+	"modules/d7mysql/v2/ent/schema"
+	"modules/d7mysql/v2/ent/user"
 	"time"
 )
 

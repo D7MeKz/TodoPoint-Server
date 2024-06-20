@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"modules/v2/common/httputils"
+	"modules/common/v2/httputils"
 )
 
 // NewAuthRouter

@@ -6,8 +6,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"modules/v2/d7mysql/ent/profile"
-	"modules/v2/d7mysql/ent/user"
+	"modules/d7mysql/v2/ent/profile"
+	"modules/d7mysql/v2/ent/user"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"

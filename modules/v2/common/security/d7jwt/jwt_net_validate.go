@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/gin-gonic/gin"
-	"modules/v2/common/httputils"
-	"modules/v2/common/netservice"
+	"modules/common/v2/httputils"
+	"modules/common/v2/netservice"
 )
 
 // Validate is a function to validate token

@@ -4,11 +4,11 @@ package enttest
 
 import (
 	"context"
-	"modules/v2/d7mysql/ent"
+	"modules/d7mysql/v2/ent"
 	// required by schema hooks.
-	_ "modules/v2/d7mysql/ent/runtime"
+	_ "modules/d7mysql/v2/ent/runtime"
 
-	"modules/v2/d7mysql/ent/migrate"
+	"modules/d7mysql/v2/ent/migrate"
 
 	"entgo.io/ent/dialect/sql/schema"
 )

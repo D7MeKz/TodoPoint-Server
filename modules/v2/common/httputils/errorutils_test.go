@@ -3,8 +3,8 @@ package httputils_test
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"modules/v2/common/httputils"
-	"modules/v2/common/httputils/codes"
+	"modules/common/v2/httputils"
+	"modules/common/v2/httputils/codes"
 	"net/http"
 	"net/http/httptest"
 	"testing"

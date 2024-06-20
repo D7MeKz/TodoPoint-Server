@@ -38,11 +38,13 @@ function calculate_md5 {
 
 function update_md5() {
 
-  # Read package names from workspace.packages.json and concatenate them
+  version=$(jq -r '.version' $PACKAGE_FILE)
   packages=$(jq -r '.packages[]' $PACKAGE_FILE | tr -d '\n')
+  combined="$version$packages"
+  echo "Combined version and packages: $combined"
 
-  # Calculate MD5 hash of the concatenated package names
-  md5_hash=$(calculate_md5 "$packages")
+  # Calculate MD5 hash of the combined string
+  md5_hash=$(calculate_md5 "$combined")
 
   current_hash=$(jq -r '.hash' $PACKAGE_FILE)
   if [ -z "$current_hash" ] || [ "$current_hash" != "$md5_hash" ]; then
