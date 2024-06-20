@@ -145,14 +145,4 @@ member/go.work
 
 member/.env
 
-# Mysql
-server/mysql_data/
-server/db/mysql/init/
-
-# MongoDB
-server/mongodb_data/
-server/mongod.conf
-
-# Redis
-server/redis/
-
+.DS_Store
