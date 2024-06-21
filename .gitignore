@@ -151,3 +151,5 @@ mysql_data
 mongodb_data
 mongod.conf
 init-mongo.js
+
+.idea
