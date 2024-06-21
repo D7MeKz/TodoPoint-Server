@@ -6,7 +6,8 @@ PACKAGE_FILE="workspace.packages.json"
 function init_workspace {
     # Check if go.mod already exists
     if [ -f go.work ]; then
-        echo "Go workspace already initialized."
+        rm go.work
+        go work init
     else
         go work init
         echo "Go workspace initialized."
@@ -21,6 +22,18 @@ function install_common_modules {
     # Loop through each package and install
     for package in $packages; do
         go work use "$package"
+        if [ "$package" == "." ]; then
+          continue
+        fi
+        go mod download
+        if  [ $? -ne 0 ]; then
+            echo "Error: Failed to download Go modules"
+            exit 1
+        else
+            echo "Go modules downloaded successfully."
+        fi
+
+
     done
 
     echo "Common modules installed."

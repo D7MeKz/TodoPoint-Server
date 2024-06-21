@@ -146,3 +146,8 @@ member/go.work
 member/.env
 
 .DS_Store
+
+mysql_data
+mongodb_data
+mongod.conf
+init-mongo.js

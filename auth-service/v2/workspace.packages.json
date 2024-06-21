@@ -1,10 +1,10 @@
 {
   "version": "2.0.2",
   "packages": [
-    "../../modules/v2/common",
-    "../../modules/v2/database/d7mysql",
-    "../../modules/v2/database/d7redis",
-    "."
+    ".",
+    "../modules/common",
+    "../modules/database/d7mysql",
+    "../modules/database/d7redis"
   ],
-  "hash": "45d9eff25cceecdcdb1f8b6186448bef"
+  "hash" : ""
 }
