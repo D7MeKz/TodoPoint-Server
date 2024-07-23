@@ -4,8 +4,8 @@ package ent
 
 import (
 	"context"
-	"modules/v2/d7mysql/ent/predicate"
-	"modules/v2/d7mysql/ent/user"
+	"modules/d7mysql/v2/ent/predicate"
+	"modules/d7mysql/v2/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

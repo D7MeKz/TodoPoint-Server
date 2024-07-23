@@ -2,8 +2,8 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"modules/v2/common/httputils"
-	"modules/v2/common/httputils/codes"
+	"modules/common/v2/httputils"
+	"modules/common/v2/httputils/codes"
 	"todopoint/auth/v2/data"
 )
 

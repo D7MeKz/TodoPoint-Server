@@ -1,4 +1,4 @@
-module modules/v2/d7mongo
+module modules/d7mongo/v2
 
 go 1.22.1
 

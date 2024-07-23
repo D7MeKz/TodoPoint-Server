@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"modules/v2/common/httputils/codes"
+	"modules/common/v2/httputils/codes"
 )
 
 // BaseResponse is common response that use in success and failed
