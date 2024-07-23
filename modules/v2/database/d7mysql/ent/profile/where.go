@@ -3,7 +3,7 @@
 package profile
 
 import (
-	"modules/v2/d7mysql/ent/predicate"
+	"modules/d7mysql/v2/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"

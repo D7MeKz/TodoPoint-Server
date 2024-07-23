@@ -1,6 +1,6 @@
 package httputils
 
-import "modules/v2/common/httputils/codes"
+import "modules/common/v2/httputils/codes"
 
 // NetError have options and ErrorCode that contains status code.
 type NetError struct {

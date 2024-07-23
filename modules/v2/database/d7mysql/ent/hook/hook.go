@@ -5,7 +5,7 @@ package hook
 import (
 	"context"
 	"fmt"
-	"modules/v2/d7mysql/ent"
+	"modules/d7mysql/v2/ent"
 )
 
 // The ProfileFunc type is an adapter to allow the use of ordinary

@@ -3,9 +3,9 @@ package service
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"modules/v2/common/httputils"
-	"modules/v2/common/httputils/codes"
-	"modules/v2/common/security/d7jwt"
+	"modules/common/v2/httputils"
+	"modules/common/v2/httputils/codes"
+	"modules/common/v2/security/d7jwt"
 	"strconv"
 	"time"
 	"todopoint/auth/v2/data"

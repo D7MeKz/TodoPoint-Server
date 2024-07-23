@@ -9,10 +9,10 @@ import (
 	"log"
 	"reflect"
 
-	"modules/v2/d7mysql/ent/migrate"
+	"modules/d7mysql/v2/ent/migrate"
 
-	"modules/v2/d7mysql/ent/profile"
-	"modules/v2/d7mysql/ent/user"
+	"modules/d7mysql/v2/ent/profile"
+	"modules/d7mysql/v2/ent/user"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
-	"modules/v2/d7mysql/ent"
+	"modules/d7mysql/v2/ent"
 	"os"
 )
 

@@ -6,8 +6,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 	"log"
-	"modules/v2/d7mysql/ent"
-	"modules/v2/d7redis"
+	"modules/d7mysql/v2/ent"
+	"modules/d7redis"
 	"net/http"
 	"os"
 	"time"
@@ -58,8 +58,12 @@ func main() {
 	//defer func(client *ent.Client) {
 	//	_ = client.Close()
 	//}(client)
-	//
-	rClient := d7redis.NewRedisClient()
+
+	// Get Redis config
+	addr := os.Getenv("REDIS_HOST") + ":" + os.Getenv("REDIS_PORT")
+	pass := os.Getenv("REDIS_PASSWORD")
+
+	rClient := d7redis.NewRedisClient(addr, pass)
 	defer func(rClient *d7redis.RedisClient) {
 		_ = rClient.Client.Close()
 	}(rClient)

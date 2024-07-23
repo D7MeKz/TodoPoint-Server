@@ -1,4 +1,4 @@
-module modules/v2/common
+module modules/common/v2
 
 go 1.22.1
 

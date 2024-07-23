@@ -4,8 +4,8 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"modules/v2/common/httputils"
-	"modules/v2/common/httputils/codes"
+	"modules/common/v2/httputils"
+	"modules/common/v2/httputils/codes"
 	"net/http"
 )
 

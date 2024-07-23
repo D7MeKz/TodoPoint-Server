@@ -3,8 +3,8 @@ package mysqlS
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"modules/v2/d7mysql/ent"
-	"modules/v2/d7mysql/ent/user"
+	"modules/d7mysql/v2/ent"
+	"modules/d7mysql/v2/ent/user"
 	"todopoint/auth/v2/data"
 )
 
